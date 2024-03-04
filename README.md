@@ -1,1 +1,1 @@
-# AIChat
+# AIChat v 1.0

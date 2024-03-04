@@ -1,0 +1,49 @@
+obj_xaic#:#AI Chat
+objs_xaic#:#AI Chats
+obj_xaic_duplicate#:#Kopieren
+objs_xaic_duplicate#:#Kopiere AI Chats
+obj_xaic_select#:#Wähle AI Chat
+xaic_add#:#AI Chat hinzufügen
+xaic_new#:#Neues AI Chat
+xaic_read#:#Lesezugriff auf AI Chat
+xaic_write#:#AI Chat bearbeiten
+xaic_delete#:#AI Chat löschen
+xaic_visible#:#AI Chat ist sichtbar
+xaic_edit_permission#:#Zugriffsrecht bearbeiten
+crs_create_xaic#:#Erstelle AI Chat
+grp_create_xaic#:#Erstelle AI Chat
+fold_create_xaic#:#Erstelle AI Chat
+root_create_xaic#:#Erstelle AI Chat
+cat_create_xaic#:#Erstelle AI Chat
+title#:#Titel
+description#:#Beschreibung
+api_key#:#API Key
+online#:#Online
+save#:#Speichern
+update#:#Update
+properties#:#Eigenschaften
+content#:#Chat
+copy#:#Kopieren
+edit#:#Bearbeiten
+offline:#:Offline
+important#:#Wichtig
+online_status#:#Online Status
+update_successful#:Die Änderungen wurden gespeichert.
+news_title#:#Titel (en)
+news_content#:#Inhalt (en)
+xaic_copy#:#AI Chat kopieren
+offline#:#Offline
+status#:#Status
+global_apikey#:#Verwenden Sie den globalen API Key
+info_global_api_key#:#Wählen Sie, ob die Chats einen globalen Api-Schlüssel verwenden oder vom Benutzer eingegeben werden müssen.
+apikey#:#Globaler API-Schlüssel
+info_apikey#:#Geben Sie den globalen API-Schlüssel ein.
+obj_apikey_input#:#Geben Sie Ihren OpenAI API Key ein
+model#:#GPT-Modell
+info_model#:#Wählen Sie das GPT-Modell aus.
+settings#:#Konfigurationen
+error_http_openai#:#Fehler beim Abrufen der Antwort von OpenAI.
+error_apikey#:#Fehler beim Abrufen des API Key.
+chat#:#Chat
+clear_chat#:#Chat löschen
+info_config_saved#:#Die Konfiguration wurde gespeichert.

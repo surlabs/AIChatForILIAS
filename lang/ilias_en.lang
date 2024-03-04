@@ -1,0 +1,49 @@
+obj_xaic#:#AI Chat
+objs_xaic#:#AI Chats
+obj_xaic_duplicate#:#Copy
+objs_xaic_duplicate#:#Copy AI Chats
+obj_xaic_select#:#Select AI Chat
+xaic_add#:#Add AI Chat
+xaic_new#:#Add New AI Chat
+xaic_read#:#Read access to AI Chat
+xaic_write#:#Edit AI Chat
+xaic_delete#:#Delete AI Chat
+xaic_visible#:#AI Chat is visible
+xaic_edit_permission#:#Change permission settings
+crs_create_xaic#:#Create AI Chat
+grp_create_xaic#:#Create AI Chat
+fold_create_xaic#:#Create AI Chat
+root_create_xaic#:#Create AI Chat
+cat_create_xaic#:#Create AI Chat
+title#:#Title
+description#:#Description
+api_key#:#API Key
+online#:#Online
+save#:#Save
+update#:#Update
+properties#:#Properties
+content#:#Chat
+copy#:#Copy
+edit#:#Edit
+offline:#:Offline
+important#:#Important
+online_status#:#Online Status
+update_successful#:#Update Successful
+news_title#:#Title (en)
+news_content#:#Content (en)
+xaic_copy#:#Copy AI Chat
+offline#:#Offline
+status#:#Status
+global_apikey#:#Use global API key
+info_global_api_key#:#Choose whether the chats will use a global Api Key or must be entered by the user.
+apikey#:#Global API key
+info_apikey#:#Enter the API key that will be used by the AI Chat globally.
+obj_apikey_input#:#Enter your OpenAI API Key
+model#:#GPT Model
+info_model#:#Choose the GPT model that will be used by the AI Chat.
+settings#:#Configuration
+error_http_openai#:#Error: Error communicating with OpenAI
+error_apikey#:#You have not entered an ApiKey or it is invalid.
+chat#:#Chat
+clear_chat#:#Clear Chat
+info_config_saved#:#Configuration saved successfully.
