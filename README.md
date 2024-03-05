@@ -1,16 +1,20 @@
 # AI Chat plugin for ILIAS
 
 Welcome to the official repository for [AI Chat plugin for ILIAS](https://www.surlabs.es).
-This plugin is created and maintained by [SURLABS](https://www.surlabs.es) and is designed to work with ILIAS 8.0 and above.
+This plugin is created and maintained by Daniel Cazalla and Jesús Copado, founders of [SURLABS](https://www.surlabs.es) and is designed to work with ILIAS 8.0 and above.
 
 ## What is AI Chat for ILIAS?
 
-This plugin adds a new repository object to your platform, where chatrooms with an LLM are created and saved. Allowing users to interact with the LLM in a natural way within the ILIAS platform.
+This plugin adds a new repository object to your platform, where chatrooms with an LLM can be held by the users. Allowing users to interact with the LLM in a natural way within the ILIAS platform.
 
 ## Which LLMs are currently supported?
 
 This plugin currently supports the following LLMs:
 - [OpenAI](https://openai.com) GPT-4
+
+## Can I use different API-keys for different Objects?
+
+This plugin has been developed to allow the use of different API-keys for different objects. This means that you can use different API-keys for different chatrooms, and it has also the option at plugin configuration, to set one API-key for all chatrooms, disabling, api key field from each object's configuration.
 
 ## Installation & Update
 
