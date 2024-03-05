@@ -13,15 +13,9 @@ $fields = array(
         'length' => 1,
         'notnull' => false
     ),
-    'option_one' => array(
+    'apikey' => array(
         'type' => 'text',
-        'length' => 10,
-        'fixed' => false,
-        'notnull' => false
-    ),
-    'option_two' => array(
-        'type' => 'text',
-        'length' => 10,
+        'length' => 255,
         'fixed' => false,
         'notnull' => false
     )
@@ -34,25 +28,74 @@ if(!$ilDB->tableExists("rep_robj_xaic_data")) {
     $ilDB->addPrimaryKey("rep_robj_xaic_data", array("id"));
 }
 ?>
+
 <#2>
 <?php
-$apikey = array(
+$config = array(
+    'key_setting' => array(
+        'type' => 'text',
+        'length' => 50,
+        'notnull' => true,
+    ),
+    'value_setting' => array(
+        'type' => 'text',
+        'length' => 255,
+        'fixed' => false,
+        'notnull' => false
+    ),
+);
+
+if(!$ilDB->tableExists("rep_robj_xaic_config")) {
+    $ilDB->createTable("rep_robj_xaic_config", $config);
+    $ilDB->addPrimaryKey("rep_robj_xaic_config", array("key"));
+    $ilDB->insert("rep_robj_xaic_config", array(
+        'key_setting' => 'global_apikey',
+        'value_setting' => '0',
+    ));
+    $ilDB->insert("rep_robj_xaic_config", array(
+        'key_setting' => 'apikey',
+        'value_setting' => '',
+    ));
+    $ilDB->insert("rep_robj_xaic_config", array(
+        'key_setting' => 'model',
+        'value_setting' => 'gpt-4',
+    ));
+
+}
+?>
+
+<#3>
+<?php
+$chats = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => true,
+    ),
+    'user_id' => array(
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => true
+    ),
     'obj_id' => array(
         'type' => 'integer',
         'length' => 4,
         'notnull' => true
     ),
-    'apikey' => array(
+    'messages' => array(
         'type' => 'text',
-        'length' => 255,
         'fixed' => false,
+        'notnull' => false
+    ),
+    'date' => array(
+        'type' => 'timestamp',
         'notnull' => false
     )
 );
 
-if(!$ilDB->tableExists("rep_robj_xaic_apikey")) {
-    $ilDB->createTable("rep_robj_xaic_apikey", $apikey);
-    $ilDB->createSequence("rep_robj_xaic_apikey");
-    $ilDB->addPrimaryKey("rep_robj_xaic_apikey", array("obj_id"));
+if(!$ilDB->tableExists("rep_robj_xaic_chats")) {
+    $ilDB->createTable("rep_robj_xaic_chats", $chats);
+    $ilDB->createSequence("rep_robj_xaic_chats");
+    $ilDB->addPrimaryKey("rep_robj_xaic_chats", array("id"));
 }
 ?>
