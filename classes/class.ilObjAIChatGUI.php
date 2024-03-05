@@ -31,12 +31,12 @@ use ILIAS\UI\Factory;
  */
 class ilObjAIChatGUI extends ilObjectPluginGUI
 {
-    protected $ctrl;
-    protected $tabs;
-    public $tpl;
+    protected ilCtrl $ctrl;
+    protected ilTabsGUI $tabs;
+    public ilGlobalTemplateInterface $tpl;
     protected ilAIChatConfig $config;
     private static Factory $factory;
-    protected $control;
+    protected ilCtrlInterface $control;
     protected Renderer $renderer;
 
     protected function afterConstructor() : void
@@ -265,12 +265,20 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         global $DIC;
 
-        $DIC->globalScreen()->layout()->meta()->addJs('Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/render/templates/default/index.js');
-        $tpl = new ilTemplate('index.html', true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/render");
+        $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+
+        $host = $_SERVER['HTTP_HOST'];
+
+        $urlCompleta = $protocolo . "://" . $host;
+
+        $DIC->globalScreen()->layout()->meta()->addJs('Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/templates/default/index.js');
+        $tpl = new ilTemplate('index.html', true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/");
 
         $tpl->setVariable("CLEAR_TEXT", $this->plugin->txt("clear_chat"));
         $tpl->setVariable("ID", $this->object->getRefId());
+        $tpl->setVariable("URL", $urlCompleta);
         $this->tpl->setContent($tpl->get());
+
 
     }
 
@@ -284,8 +292,10 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         global $ilUser;
 
         $userId = $ilUser->getId();
-        $this->initObject($_POST["id"]);
-        $request= json_decode($_POST["messages"]);
+        $this->initObject((int)$_POST["id"]);
+        $request= json_decode((string)$_POST["messages"]);
+
+
 
         if(!$this->object instanceof ilObjAIChat){
             return;
@@ -326,8 +336,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         global $ilUser;
 
         $userId = $ilUser->getId();
-        $id = json_decode($_POST["id"]);
-        $this->initObject($id);
+        $id = json_decode((string)$_POST["id"]);
+        $this->initObject((int)$id);
         if(!$this->object instanceof ilObjAIChat){
             return;
         }

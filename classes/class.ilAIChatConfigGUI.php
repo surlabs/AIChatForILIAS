@@ -31,7 +31,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 {
     private ilAIChatConfig $object;
     private static Factory $factory;
-    protected $control;
+    protected ilCtrlInterface $control;
     protected ilGlobalTemplateInterface $tpl;
     protected $request;
     protected Renderer $renderer;
@@ -46,7 +46,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     /**
      * @throws ilException
      */
-    function performCommand($cmd): void
+    function performCommand(string $cmd): void
     {
         global $DIC;
 

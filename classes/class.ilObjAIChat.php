@@ -62,7 +62,7 @@ class ilObjAIChat extends ilObjectPlugin
             " WHERE id = " . $ilDB->quote($this->getId(), "integer")
         );
         while ($rec = $ilDB->fetchAssoc($set)) {
-            $this->setOnline($rec["is_online"]);
+            $this->setOnline($rec["is_online"] == "1");
             $this->setApiKey($rec["apikey"]);
         }
     }
@@ -98,7 +98,7 @@ class ilObjAIChat extends ilObjectPlugin
 
     public function getUseGlobalApikey(): bool
     {
-        return $this->config->getValue('global_apikey');
+        return $this->config->getValue('global_apikey') == "1";
     }
 
     public function saveMessagesJson(string $messages, int $obj_id, int $user_id): void

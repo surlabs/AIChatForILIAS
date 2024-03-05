@@ -34,7 +34,7 @@ class ilObjAIChatAccess extends ilObjectPluginAccess
      * @param int    $user_id    user id (default is current user)
      * @return bool true, if everything is ok
      */
-    public function _checkAccess($a_cmd, $permission, $ref_id, $obj_id, $user_id = "") : bool
+    public function _checkAccess(string $cmd, string $permission, int $ref_id, int $obj_id, ?int $user_id = null) : bool
     {
         global $ilUser, $ilAccess;
 
