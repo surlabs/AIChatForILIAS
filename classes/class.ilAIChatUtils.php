@@ -38,7 +38,7 @@ class ilAIChatUtils
         return JWT::encode($value, self::encryptionKey, self::JWT_ALGORITHM);
     }
 
-    public static function sendToApi(object $request, ilObjAIChat $object, $userId)
+    public static function sendToApi(object $request, ilObjAIChat $object, $userId, $plugin)
     {
 
         $messages = $request->messages;
@@ -82,7 +82,7 @@ class ilAIChatUtils
         // Handle OpenAI API errors
         if ($errNo) {
             self::sendResponseJson([
-                "error" => $object->txt("error_http_openai") . ": " . $errMsg
+                "error" => $plugin->txt("error_http_openai") . ": " . $errMsg
             ], $httpcode);
             return;
         }
@@ -90,11 +90,11 @@ class ilAIChatUtils
         if ($httpcode != 200) {
             if ($httpcode === 401) {
                 self::sendResponseJson([
-                    "error" => $object->txt("error_apikey")
+                    "error" => $plugin->txt("error_apikey")
                 ], $httpcode);
             } else {
                 self::sendResponseJson([
-                    "error" => $object->txt("error_http_openai")
+                    "error" => $plugin->txt("error_http_openai")
                 ], $httpcode);
             }
             return;

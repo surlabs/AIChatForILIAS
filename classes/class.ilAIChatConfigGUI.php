@@ -4,6 +4,7 @@ declare(strict_types=1);
 use ILIAS\UI\Renderer;
 use ILIAS\UI\Factory;
 
+
 /*
  *  This file is part of the AI Chat Repository Object plugin for ILIAS, which allows your platform's users
  *  To connect with an external LLM service
@@ -30,7 +31,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 {
     private ilAIChatConfig $object;
     private static Factory $factory;
-    protected ilCtrlInterface $control;
+    protected $control;
     protected ilGlobalTemplateInterface $tpl;
     protected $request;
     protected Renderer $renderer;
@@ -45,7 +46,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     /**
      * @throws ilException
      */
-    function performCommand(string $cmd): void
+    function performCommand($cmd): void
     {
         global $DIC;
 
@@ -90,12 +91,11 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                     $this->plugin_object->txt('info_apikey'))
                     ->withValue($object->getValue('apikey') ? ilAIChatUtils::decode($object->getValue('apikey'))->apikey : '')
                     ->withRequired(true)
-                    ->withMaxLength(255)
                     ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                         function ($v) use ($object) {
                             if ($v) {
                                 $object->setValue('apikey', ilAIChatUtils::encode(["apikey" => $v]));
-                                $object->setValue('global_apikey', "1");
+                                $object->setValue('global_apikey', true);
                             }
 
                         }
@@ -108,7 +108,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                     function ($v) use ($object) {
                         if ($v == null) {
                             $object->setValue('apikey', "");
-                            $object->setValue('global_apikey', "0");
+                            $object->setValue('global_apikey', false);
                         }
 
                     }
@@ -135,6 +135,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $section = self::$factory->input()->field()->section($form_fields, $this->plugin_object->txt("settings"), "");
 
         } catch (Exception $e) {
+
             $section = self::$factory->messageBox()->failure($e->getMessage());
         }
 

@@ -31,12 +31,12 @@ use ILIAS\UI\Factory;
  */
 class ilObjAIChatGUI extends ilObjectPluginGUI
 {
-    protected ilCtrl $ctrl;
-    protected ilTabsGUI $tabs;
-    public ilGlobalTemplateInterface $tpl;
+    protected $ctrl;
+    protected $tabs;
+    public $tpl;
     protected ilAIChatConfig $config;
     private static Factory $factory;
-    protected ilCtrlInterface $control;
+    protected $control;
     protected Renderer $renderer;
 
     protected function afterConstructor() : void
@@ -291,7 +291,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             return;
         }
 
-        ilAIChatUtils::sendToApi($request, $this->object, $userId);
+        ilAIChatUtils::sendToApi($request, $this->object, $userId, $this->plugin);
 
     }
 
