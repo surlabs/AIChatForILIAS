@@ -31,7 +31,7 @@ git clone https://github.com/surlabs/AIChat.git
 cd AIChat
 git checkout ilias8
 ```
-3. STACK uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
+3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
 ```bash
 composer du
 php setup/setup.php update
