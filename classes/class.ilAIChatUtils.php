@@ -71,6 +71,14 @@ class ilAIChatUtils
             'Content-Type: application/json',
             'Authorization: Bearer ' . $apiKey,
         ]);
+        
+        //Add Proxy-Support
+        if (\ilProxySettings::_getInstance()->isActive()) {
+            $proxyHost = \ilProxySettings::_getInstance()->getHost();
+            $proxyPort = \ilProxySettings::_getInstance()->getPort();
+            $proxyURL = $proxyHost . ":" . $proxyPort;
+            curl_setopt($curlSession, CURLOPT_PROXY, $proxyURL);
+        }
 
         // Execute cURL and get the response
         $response = curl_exec($curlSession);
