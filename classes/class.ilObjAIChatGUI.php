@@ -31,13 +31,13 @@ use ILIAS\UI\Factory;
  */
 class ilObjAIChatGUI extends ilObjectPluginGUI
 {
-    protected ilCtrl $ctrl;
-    protected ilTabsGUI $tabs;
-    public ilGlobalTemplateInterface $tpl;
+    protected $ctrl;
+    protected $tabs;
+    public $tpl;
     protected ilAIChatConfig $config;
-    private static Factory $factory;
-    protected ilCtrlInterface $control;
-    protected Renderer $renderer;
+    private static $factory;
+    protected $control;
+    protected $renderer;
 
     protected function afterConstructor() : void
     {
@@ -146,7 +146,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $titleInput = self::$factory->input()->field()->text($this->plugin->txt("title"), '')
                 ->withValue($object->getTitle())
                 ->withRequired(true)
-                ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) use ($object) {
                         $object->setTitle($v);
                     }
@@ -154,7 +154,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
             $descriptionInput = self::$factory->input()->field()->text($this->plugin->txt("description"), '')
                 ->withValue($object->getDescription())
-                ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) use ($object) {
                         $object->setDescription($v);
                     }
@@ -167,7 +167,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
             $onlineCheckbox = self::$factory->input()->field()->checkbox($this->plugin->txt("online"), '')
                 ->withValue($object->isOnline())
-                ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) use ($object) {
                         $object->setOnline($v);
                     }
@@ -182,7 +182,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 $sectionObject = self::$factory->input()->field()->section([
                     "user_api_key" => self::$factory->input()->field()->text($this->plugin->txt("obj_apikey_input"), '')
                         ->withValue($object->getApiKey() ? ilAIChatUtils::decode($object->getApiKey())->apikey : '')
-                        ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                        ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                             function ($v) use ($object) {
                                 $object->setApiKey(ilAIChatUtils::encode(["apikey" => $v]));
                             }
@@ -266,17 +266,23 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         global $DIC;
 
         $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+		
+
 
         $host = $_SERVER['HTTP_HOST'];
 
         $urlCompleta = $protocolo . "://" . $host;
+		
+		$tpl = new ilTemplate('index.html', true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/");
 
         $DIC->globalScreen()->layout()->meta()->addJs('Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/templates/default/index.js');
-        $tpl = new ilTemplate('index.html', true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/");
-
+        
+        $cmdNode = $_GET['cmdNode'];
+        
         $tpl->setVariable("CLEAR_TEXT", $this->plugin->txt("clear_chat"));
         $tpl->setVariable("ID", $this->object->getRefId());
         $tpl->setVariable("URL", $urlCompleta);
+        $tpl->setVariable("CMD_NODE", $cmdNode);
         $this->tpl->setContent($tpl->get());
 
 
@@ -312,7 +318,6 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      */
     protected function getChatMessages()
     {
-
         global $ilUser;
         $userId = $ilUser->getId();
         $id = json_decode($_POST["id"]);

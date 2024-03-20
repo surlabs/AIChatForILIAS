@@ -30,11 +30,11 @@ use ILIAS\UI\Factory;
 class ilAIChatConfigGUI extends ilPluginConfigGUI
 {
     private ilAIChatConfig $object;
-    private static Factory $factory;
-    protected ilCtrlInterface $control;
-    protected ilGlobalTemplateInterface $tpl;
+    private static $factory;
+    protected $control;
+    protected $tpl;
     protected $request;
-    protected Renderer $renderer;
+    protected $renderer;
     protected array $models = array(
         "gpt-4-1106-preview" => "gpt-4-1106-preview",
         "gpt-4-vision-preview" => "gpt-4-vision-preview",
@@ -46,7 +46,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     /**
      * @throws ilException
      */
-    function performCommand(string $cmd): void
+    function performCommand($cmd): void
     {
         global $DIC;
 
