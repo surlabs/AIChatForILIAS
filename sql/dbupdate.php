@@ -48,19 +48,6 @@ $config = array(
 if(!$ilDB->tableExists("rep_robj_xaic_config")) {
     $ilDB->createTable("rep_robj_xaic_config", $config);
     $ilDB->addPrimaryKey("rep_robj_xaic_config", array("key_setting"));
-    $ilDB->insert("rep_robj_xaic_config", array(
-        'key_setting' => 'global_apikey',
-        'value_setting' => '0',
-    ));
-    $ilDB->insert("rep_robj_xaic_config", array(
-        'key_setting' => 'apikey',
-        'value_setting' => '',
-    ));
-    $ilDB->insert("rep_robj_xaic_config", array(
-        'key_setting' => 'model',
-        'value_setting' => 'gpt-4',
-    ));
-
 }
 ?>
 
