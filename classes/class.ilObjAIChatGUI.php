@@ -180,7 +180,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
             if ($object instanceof ilObjAIChat && !$object->getUseGlobalApikey()) {
                 $sectionObject = self::$factory->input()->field()->section([
-                    "user_api_key" => self::$factory->input()->field()->password($this->plugin->txt("obj_apikey_input"), '')
+                    "user_api_key" => self::$factory->input()->field()->text($this->plugin->txt("obj_apikey_input"), '')
                         ->withValue($object->getApiKey() ? ilAIChatUtils::decode($object->getApiKey())->apikey : '')
                         ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                             function ($v) use ($object) {
