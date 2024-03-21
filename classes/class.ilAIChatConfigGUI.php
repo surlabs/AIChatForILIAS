@@ -86,7 +86,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
             //Checkbox
             $field = self::$factory->input()->field()->optionalGroup([
-                "global_api_key" => self::$factory->input()->field()->text(
+                "global_api_key" => self::$factory->input()->field()->password(
                     $this->plugin_object->txt('apikey'),
                     $this->plugin_object->txt('info_apikey'))
                     ->withValue($object->getValue('apikey') ? ilAIChatUtils::decode($object->getValue('apikey'))->apikey : '')
