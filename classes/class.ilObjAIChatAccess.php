@@ -54,7 +54,7 @@ class ilObjAIChatAccess extends ilObjectPluginAccess
         return true;
     }
 
-    public static function checkOnline(int $a_id) : bool
+    public static function checkOnline($a_id)
     {
         global $ilDB;
 
