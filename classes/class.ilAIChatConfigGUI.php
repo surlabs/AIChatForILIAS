@@ -83,18 +83,23 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $form_fields = [];
 
             $object = $this->object;
-
+            $apikey = $object->getValue('apikey') ? ilAIChatUtils::decode($object->getValue('apikey'))->apikey : '';
             //Checkbox
             $field = self::$factory->input()->field()->optionalGroup([
-                "global_api_key" => self::$factory->input()->field()->text(
+                "global_api_key" => self::$factory->input()->field()->password(
                     $this->plugin_object->txt('apikey'),
                     $this->plugin_object->txt('info_apikey'))
-                    ->withValue($object->getValue('apikey') ? ilAIChatUtils::decode($object->getValue('apikey'))->apikey : '')
+                    ->withValue($apikey)
+                    ->withRevelation(true)
                     ->withRequired(true)
                     ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                         function ($v) use ($object) {
                             if ($v) {
-                                $object->setValue('apikey', ilAIChatUtils::encode(["apikey" => $v]));
+                                $reflectionClass = new ReflectionClass('ILIAS\Data\Password');
+                                $property = $reflectionClass->getProperty('pass');
+                                $property->setAccessible(true);
+                                $password = $property->getValue($v);
+                                $object->setValue('apikey', ilAIChatUtils::encode(["apikey" => $password]));
                                 $object->setValue('global_apikey', true);
                             }
 

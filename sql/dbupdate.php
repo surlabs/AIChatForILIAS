@@ -86,3 +86,15 @@ if(!$ilDB->tableExists("rep_robj_xaic_chats")) {
     $ilDB->addPrimaryKey("rep_robj_xaic_chats", array("id"));
 }
 ?>
+
+<#4>
+<?php
+if(!$ilDB->tableColumnExists("rep_robj_xaic_data", "disclaimer")) {
+    $ilDB->addTableColumn("rep_robj_xaic_data", "disclaimer", array(
+        'type' => 'text',
+        'fixed' => false,
+        'notnull' => false
+    ));
+}
+
+?>
