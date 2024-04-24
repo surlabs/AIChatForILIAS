@@ -28,7 +28,7 @@ class ilObjAIChat extends ilObjectPlugin
     protected string $model = '';
     private ilAIChatConfig $config;
 
-    protected string $disclaimer = '';
+    // protected string $disclaimer = '';
 
     public function __construct($a_ref_id = 0)
     {
@@ -47,10 +47,9 @@ class ilObjAIChat extends ilObjectPlugin
 
         $ilDB->manipulate(
             "INSERT INTO rep_robj_xaic_data " .
-            "(id, is_online, apikey, disclaimer) VALUES (" .
+            "(id, is_online, apikey) VALUES (" .
             $ilDB->quote($this->getId(), "integer") . "," .
             $ilDB->quote(0, "integer") . "," .
-            $ilDB->quote('', "text") . "," .
             $ilDB->quote('', "text") .
             ")"
         );
@@ -78,7 +77,6 @@ class ilObjAIChat extends ilObjectPlugin
             $up = "UPDATE rep_robj_xaic_data SET " .
                 " is_online = " . $ilDB->quote($this->isOnline(), "integer") .
                 ", apikey = " . $ilDB->quote($this->getApiKey(), "text") .
-                ", disclaimer = " . $ilDB->quote($this->getDisclaimer(), "text") .
                 " WHERE id = " . $ilDB->quote($this->getId(), "integer")
         );
     }
@@ -226,18 +224,9 @@ class ilObjAIChat extends ilObjectPlugin
         return $this->config->getValue('model');
     }
 
-    public function setModel(string $model): void
-    {
-        $this->model = $model;
-    }
-
     public function getConfig(): ilAIChatConfig
     {
         return $this->config;
     }
 
-    public function setConfig(ilAIChatConfig $config): void
-    {
-        $this->config = $config;
-    }
 }

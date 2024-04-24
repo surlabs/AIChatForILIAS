@@ -32,6 +32,10 @@ class ilAIChatConfig
 
         $ilDB = $DIC['ilDB'];
 
+        if($key == 'global_apikey'){
+            $value = $value ? "true" : "false";
+        }
+
         if (!is_string($this->getValue($key))) {
             $ilDB->insert(
                 "rep_robj_xaic_config", array(
@@ -50,13 +54,16 @@ class ilAIChatConfig
 
         switch ($key):
             case 'global_apikey':
-                $this->setUseGlobalApikey($value);
+                $this->setUseGlobalApikey($value == "true");
                 break;
             case 'apikey':
                 $this->setApikey($value);
                 break;
             case 'model':
                 $this->setModel($value);
+                break;
+            case 'disclaimer':
+                $this->setDisclaimer($value);
                 break;
         endswitch;
     }
@@ -109,5 +116,15 @@ class ilAIChatConfig
     public function setModel(string $model): void
     {
         $this->model = $model;
+    }
+    
+    public function getDisclaimer(): string
+    {
+        return $this->disclaimer;
+    }
+
+    public function setDisclaimer(string $disclaimer): void
+    {
+        $this->disclaimer = $disclaimer;
     }
 }

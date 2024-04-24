@@ -134,13 +134,24 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                     }
                 ));
 
+                $disclaimer = $object->getValue('disclaimer') ?: '';
+
+            $disclaimerArea = self::$factory->input()->field()->textarea($this->plugin_object->txt("disclaimer"), '')
+                ->withValue($disclaimer)
+                ->withMaxLimit(4000)
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                    function ($v) use ($object) {
+                        $object->setValue('disclaimer', $v);
+                    }
+                ));
+
             $form_fields["use_global_api_key"] = $field;
             $form_fields["model"] = $modelInput;
+            $form_fields['disclaimer'] = $disclaimerArea;
 
             $section = self::$factory->input()->field()->section($form_fields, $this->plugin_object->txt("settings"), "");
 
         } catch (Exception $e) {
-
             $section = self::$factory->messageBox()->failure($e->getMessage());
         }
 

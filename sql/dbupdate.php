@@ -98,3 +98,15 @@ if(!$ilDB->tableColumnExists("rep_robj_xaic_data", "disclaimer")) {
 }
 
 ?>
+
+<#5>
+<?php
+if($ilDB->tableColumnExists("rep_robj_xaic_config", "value_setting")) {
+    $ilDB->modifyTableColumn("rep_robj_xaic_config", "value_setting", array(
+        'type' => 'text',
+        'length' => 4000,
+        'fixed' => false,
+        'notnull' => false
+    ));
+}
+?>
