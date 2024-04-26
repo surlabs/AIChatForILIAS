@@ -208,7 +208,7 @@ class ilObjAIChat extends ilObjectPlugin
 
     public function getApiKey(): string
     {
-        if ($this->config->getValue('global_apikey')) {
+        if ($this->config->getValue('global_apikey') == "true") {
             return $this->config->getValue('apikey');
         }
         return $this->api_key;
