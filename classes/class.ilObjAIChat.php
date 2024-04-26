@@ -110,7 +110,7 @@ class ilObjAIChat extends ilObjectPlugin
 
     public function getUseGlobalApikey(): bool
     {
-        return $this->config->getValue('global_apikey') == "1";
+        return $this->config->getValue('global_apikey') == "true";
     }
 
     public function saveMessagesJson(string $messages, int $obj_id, int $user_id): void
