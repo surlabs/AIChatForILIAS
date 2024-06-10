@@ -27,8 +27,8 @@ This plugin has been developed to allow the use of different API-keys for differ
 2. In Customizing/global/plugins/Services/Repository/RepositoryObject/ 
 3. Then, execute:
 ```bash
-git clone https://github.com/surlabs/AIChat.git
-cd AIChat
+git clone https://github.com/surlabs/AIChatForILIAS.git
+cd AIChatForILIAS
 git checkout ilias8
 ```
 3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
