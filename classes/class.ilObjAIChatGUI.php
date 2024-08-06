@@ -83,11 +83,24 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
     }
 
+    private function index()
+    {
+        $this->content();
+    }
+
+    /**
+     * @throws ilTemplateException
+     */
     private function content()
     {
+        global $DIC;
         $this->tabs->activateTab("content");
+        $tpl = $DIC['tpl'];
+        //$tpl = new ilTemplate("index.html", false, false, $this->plugin->getDirectory());
+        $tpl->addCss($this->plugin->getDirectory() . "/templates/default/index.css");
+        $tpl->addJavascript($this->plugin->getDirectory() . "/templates/default/index.js");
 
-        $this->tpl->setContent("Hello World!");
+        $this->tpl->setContent("<div id='root'></div>");
     }
 
     private function settings()
