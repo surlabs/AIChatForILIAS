@@ -1,3 +1,4 @@
+obj_xaic#:#AI Chat
 config_prompt_selection#:#Prompt Selection
 config_prompt_selection_info#:#This prompt will be used as the initial message of a conversation, it will not be visible to the user, but the model will take it into account.
 config_model#:#Model
