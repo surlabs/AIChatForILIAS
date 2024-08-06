@@ -35,7 +35,7 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
         return [
             [
                 "permission" => "read",
-                "cmd" => "index",
+                "cmd" => "content",
                 "default" => true,
             ],
             [

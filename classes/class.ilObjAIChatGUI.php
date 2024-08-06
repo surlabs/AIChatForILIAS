@@ -83,11 +83,6 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
     }
 
-    private function index()
-    {
-        $this->content();
-    }
-
     /**
      * @throws ilTemplateException
      */
