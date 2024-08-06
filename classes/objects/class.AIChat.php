@@ -140,7 +140,20 @@ class AIChat
             $where["user_id"] = $user_id;
         }
 
-        return $database->select("xaic_chats", $where);
+        $chats = $database->select("xaic_chats", $where);
+
+        if (empty($chats) && isset($user_id) && $user_id > 0) {
+            $chat = new Chat();
+
+            $chat->setObjId($this->getId());
+            $chat->setUserId($user_id);
+
+            $chat->save();
+
+            return $this->getChatsForApi($user_id);
+        }
+
+        return $chats;
     }
 
     /**
