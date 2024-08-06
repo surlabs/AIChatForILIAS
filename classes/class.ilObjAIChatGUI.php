@@ -277,6 +277,16 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 } else {
                     return array("error" => "Chat ID, message or role not provided");
                 }
+            case "delete_chat":
+                if (isset($data["chat_id"])) {
+                    $chat = new Chat((int) $data["chat_id"]);
+
+                    $chat->delete();
+
+                    return true;
+                } else {
+                    return array("error" => "Chat ID not provided");
+                }
         }
 
         return false;
