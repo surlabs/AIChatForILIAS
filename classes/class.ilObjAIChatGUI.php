@@ -1,0 +1,54 @@
+<?php
+declare(strict_types=1);
+/**
+ *  This file is part of the AI Chat Repository Object plugin for ILIAS, which allows your platform's users
+ *  To connect with an external LLM service
+ *  This plugin is created and maintained by SURLABS.
+ *
+ *  The AI Chat Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
+ *  For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
+ *
+ *  To report bugs or participate in discussions, visit the Mantis system and filter by
+ *  the category "AI Chat" at https://mantis.ilias.de.
+ *
+ *  More information and source code are available at:
+ *  https://github.com/surlabs/AIChat
+ *
+ *  If you need support, please contact the maintainer of this software at:
+ *  info@surlabs.es
+ *
+ */
+
+/**
+ * Class ilObjAIChatGUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ * @ilCtrl_isCalledBy ilObjAIChatGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI
+ * @ilCtrl_Calls      ilObjAIChatGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI
+ */
+class ilObjAIChatGUI extends ilObjectPluginGUI
+{
+    public function getAfterCreationCmd(): string
+    {
+        return 'index';
+    }
+
+    public function getStandardCmd(): string
+    {
+        return 'index';
+    }
+
+    public function performCommand(string $cmd): void
+    {
+        $this->{$cmd}();
+    }
+
+    public function getType(): string
+    {
+        return ilAIChatPlugin::PLUGIN_ID;
+    }
+
+    private function index()
+    {
+        $this->tpl->setContent("Hello World!");
+    }
+}
