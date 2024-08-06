@@ -47,7 +47,6 @@ if (!$db->tableExists('xaic_objects')) {
 
     $db->createTable('xaic_objects', $fields);
     $db->addPrimaryKey('xaic_objects', ['id']);
-    $db->createSequence('xaic_objects');
 }
 
 if (!$db->tableExists('xaic_chats')) {

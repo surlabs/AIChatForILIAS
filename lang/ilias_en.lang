@@ -1,4 +1,8 @@
 obj_xaic#:#AI Chat
+objs_xaic#:#AI Chat Objects
+xaic_new#:#New AI Chat
+objs_xaic_duplicate#:#Duplicate AI Chat Object
+xaic_add#:#Add AI Chat
 config_prompt_selection#:#Prompt Selection
 config_prompt_selection_info#:#This prompt will be used as the initial message of a conversation, it will not be visible to the user, but the model will take it into account.
 config_model#:#Model
@@ -13,3 +17,16 @@ config_global_api_key#:#Global API Key
 config_use_global_api_key#:#Use Global API Key
 config_use_global_api_key_info#:#If this option is enabled, the global API Key will be forced to be used in all API requests, otherwise each AIChat object must have its API Key configured.
 config_msg_success#:#Configuration saved successfully.
+object_content#:#Content
+object_settings#:#Settings
+object_settings_basic#:#Basic Settings
+object_settings_advanced#:#Advanced Settings
+object_settings_title#:#Title
+object_settings_description#:#Description
+object_settings_online#:#Online
+object_settings_online_info#:#AI Chat will be available to users when this option is enabled.
+object_settings_api_key#:#API Key
+object_settings_api_key_info#:#API Key to use the AI Chat model if the global API Key is not enabled.
+object_settings_disclaimer_text#:#Disclaimer Text
+object_settings_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence.
+object_settings_msg_success#:#Settings saved successfully.

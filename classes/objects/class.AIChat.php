@@ -190,25 +190,18 @@ class AIChat
      */
     public function save(): void
     {
+        if (!isset($this->id) || $this->id == 0) {
+            throw new AIChatException("AIChat::save() - AIChat ID is 0");
+        }
+
         $database = new AIChatDatabase();
 
-        $data = [
-            "online" => $this->isOnline(),
-            "api_key" => $this->getApiKey(),
-            "disclaimer" => $this->getDisclaimer()
-        ];
-
-        if ($this->getId() > 0) {
-            $database->update("xaic_objects", $data, ["id" => $this->getId()]);
-        } else {
-            $id = $database->nextId("xaic_objects");
-
-            $this->setId($id);
-
-            $data["id"] = $id;
-
-            $database->insert("xaic_objects", $data);
-        }
+        $database->insertOnDuplicatedKey("xaic_objects", array(
+            "id" => $this->id,
+            "online" => (int) $this->online,
+            "api_key" => $this->api_key,
+            "disclaimer" => $this->disclaimer
+        ));
 
         foreach ($this->getChats() as $chat) {
             $chat->setObjId($this->getId());

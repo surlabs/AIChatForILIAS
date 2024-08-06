@@ -72,4 +72,9 @@ class ilObjAIChat extends ilObjectPlugin
     {
         $this->setType(ilAIChatPlugin::PLUGIN_ID);
     }
+
+    public function getAIChat(): AIChat
+    {
+        return $this->ai_chat;
+    }
 }

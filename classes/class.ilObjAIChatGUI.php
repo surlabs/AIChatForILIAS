@@ -19,6 +19,11 @@ declare(strict_types=1);
  *
  */
 
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
+use platform\AIChatConfig;
+use platform\AIChatException;
+
 /**
  * Class ilObjAIChatGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -27,14 +32,29 @@ declare(strict_types=1);
  */
 class ilObjAIChatGUI extends ilObjectPluginGUI
 {
+    private Factory $factory;
+    private Renderer $renderer;
+    private \ILIAS\Refinery\Factory $refinery;
+
+    public function __construct($a_ref_id = 0, $a_id_type = self::REPOSITORY_NODE_ID, $a_parent_node_id = 0)
+    {
+        global $DIC;
+
+        $this->factory = $DIC->ui()->factory();
+        $this->renderer = $DIC->ui()->renderer();
+        $this->refinery = $DIC->refinery();
+
+        parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
+    }
+
     public function getAfterCreationCmd(): string
     {
-        return 'index';
+        return 'content';
     }
 
     public function getStandardCmd(): string
     {
-        return 'index';
+        return 'content';
     }
 
     public function performCommand(string $cmd): void
@@ -47,8 +67,121 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         return ilAIChatPlugin::PLUGIN_ID;
     }
 
-    private function index()
+    protected function setTabs(): void
     {
+        $this->tabs->addTab("content", $this->plugin->txt("object_content"), $this->ctrl->getLinkTarget($this, "content"));
+
+        if ($this->checkPermissionBool("write")) {
+            $this->tabs->addTab("settings", $this->plugin->txt("object_settings"), $this->ctrl->getLinkTarget($this, "settings"));
+        }
+
+        if ($this->checkPermissionBool("edit_permission")) {
+            $this->tabs->addTab("perm_settings", $this->lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+                get_class($this),
+                "ilPermissionGUI",
+            ), "perm"));
+        }
+    }
+
+    private function content()
+    {
+        $this->tabs->activateTab("content");
+
         $this->tpl->setContent("Hello World!");
+    }
+
+    private function settings()
+    {
+        $this->tabs->activateTab("settings");
+
+        $form_action = $this->ctrl->getLinkTargetByClass("ilObjAIChatGUI", "settings");
+        $this->tpl->setContent($this->renderSettingsForm($form_action, $this->buildSettingsForm()));
+    }
+
+    private function renderSettingsForm(string $form_action, array $sections): string
+    {
+        $form = $this->factory->input()->container()->form()->standard(
+            $form_action,
+            $sections
+        );
+
+        $saving_info = "";
+
+        if ($this->request->getMethod() == "POST") {
+            $form = $form->withRequest($this->request);
+            $result = $form->getData();
+            if ($result) {
+                $saving_info = $this->saveSettings();
+            }
+        }
+
+        return $saving_info . $this->renderer->render($form);
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function buildSettingsForm(): array
+    {
+        $inputs_basic = array();
+        $inputs_advanced = array();
+
+        $inputs_basic[] = $this->factory->input()->field()->text(
+            $this->plugin->txt('object_settings_title')
+        )->withValue($this->object->getTitle())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->setTitle($v);
+            }
+        ))->withRequired(true);
+
+        $inputs_basic[] = $this->factory->input()->field()->textarea(
+            $this->plugin->txt('object_settings_description')
+        )->withValue($this->object->getDescription())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->setDescription($v);
+            }
+        ))->withRequired(true);
+
+        $inputs_basic[] = $this->factory->input()->field()->checkbox(
+            $this->plugin->txt('object_settings_online'), $this->plugin->txt('object_settings_online_info')
+        )->withValue($this->object->getAIChat()->isOnline())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->getAIChat()->setOnline($v);
+            }
+        ));
+
+        if (AIChatConfig::get("use_global_api_key") != "1") {
+            $inputs_advanced[] = $this->factory->input()->field()->text(
+                $this->plugin->txt('object_settings_api_key'), $this->plugin->txt('object_settings_api_key_info')
+            )->withValue($this->object->getAIChat()->getApiKey())->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) {
+                    $this->object->getAIChat()->setApiKey($v);
+                }
+            ))->withRequired(true);
+        }
+
+        $inputs_advanced[] = $this->factory->input()->field()->textarea(
+            $this->plugin->txt('object_settings_disclaimer_text'), $this->plugin->txt('object_settings_disclaimer_text_info')
+        )->withValue($this->object->getAIChat()->getDisclaimer())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->getAIChat()->setDisclaimer($v);
+            }
+        ));
+
+        return array(
+            $this->factory->input()->field()->section($inputs_basic, $this->plugin->txt("object_settings_basic"), ""),
+            $this->factory->input()->field()->section($inputs_advanced, $this->plugin->txt("object_settings_advanced"), "")
+        );
+    }
+
+    private function saveSettings(): string
+    {
+        global $DIC;
+
+        $renderer = $DIC->ui()->renderer();
+
+        $this->object->update();
+
+        return $renderer->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('object_settings_msg_success')));
     }
 }

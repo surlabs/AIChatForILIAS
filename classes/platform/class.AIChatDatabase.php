@@ -58,7 +58,6 @@ class AIChatDatabase
      */
     public function insert(string $table, array $data): void
     {
-        $data = $this->sanitizeData($data);
         if (!$this->validateTableName($table)) {
             throw new AIChatException("Invalid table name: " . $table);
         }
@@ -84,7 +83,6 @@ class AIChatDatabase
      */
     public function insertOnDuplicatedKey(string $table, array $data): void
     {
-        $data = $this->sanitizeData($data);
         if (!$this->validateTableName($table)) {
             throw new AIChatException("Invalid table name: " . $table);
         }
@@ -115,9 +113,6 @@ class AIChatDatabase
      */
     public function update(string $table, array $data, array $where): void
     {
-        $data = $this->sanitizeData($data);
-        $where = $this->sanitizeData($where);
-
         if (!$this->validateTableName($table)) {
             throw new AIChatException("Invalid table name: " . $table);
         }
@@ -149,8 +144,6 @@ class AIChatDatabase
      */
     public function delete(string $table, array $where): void
     {
-        $where = $this->sanitizeData($where);
-
         if (!$this->validateTableName($table)) {
             throw new AIChatException("Invalid table name: " . $table);
         }
@@ -180,13 +173,6 @@ class AIChatDatabase
      */
     public function select(string $table, ?array $where = null, ?array $columns = null, ?string $extra = ""): array
     {
-        if (is_array($where)) {
-            $where = $this->sanitizeData($where);
-        }
-        if (is_array($columns)) {
-            $columns = $this->sanitizeData($columns);
-        }
-
         if (!$this->validateTableName($table)) {
             throw new AIChatException("Invalid table name: " . $table);
         }
@@ -247,46 +233,4 @@ class AIChatDatabase
     {
         return in_array($identifier, self::ALLOWED_TABLES, true);
     }
-
-    /**
-     * Utility function to sanitize and validate data before it's processed in SQL queries.
-     * @throws AIChatException
-     */
-    private function sanitizeData(array $data): array
-    {
-        $sanitized = [];
-        foreach ($data as $key => $value) {
-
-            // Validate the key to prevent SQL injection via column names
-            if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $key)) {
-                throw new AIChatException("Invalid key '$key' in data array.");
-            }
-
-            // Depending on the type of the value, different sanitization might be needed
-            if (is_string($value)) {
-                // Strip tags and escape other potential HTML or SQL injection vectors
-                $sanitizedValue = htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
-                // Optionally, trim the value to remove unwanted white spaces
-                $sanitized[$key] = $sanitizedValue;
-            } elseif (is_int($value) || is_float($value)) {
-                // For numeric values, ensure they are indeed numeric
-                if (!is_numeric($value)) {
-                    throw new AIChatException("Non-numeric value provided for a numeric field '$key'.");
-                }
-                $sanitized[$key] = $value;
-            } elseif (is_bool($value)) {
-                // For booleans, explicitly cast to ensure boolean type integrity
-                $sanitized[$key] = (bool) $value;
-            } elseif (is_null($value)) {
-                // Null values are accepted as is
-                $sanitized[$key] = $value;
-            } else {
-                // For other types or complex types like arrays or objects, consider your specific needs
-                // Here, we might decide to throw an error or handle them specifically
-                throw new AIChatException("Unsupported data type for key '$key'.");
-            }
-        }
-        return $sanitized;
-    }
-
 }

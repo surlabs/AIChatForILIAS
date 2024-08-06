@@ -38,6 +38,11 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
                 "cmd" => "index",
                 "default" => true,
             ],
+            [
+                "permission" => "write",
+                "cmd" => "settings",
+                "txt" => $this->txt("object_settings")
+            ]
         ];
     }
 
@@ -53,7 +58,6 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
         }
 
         $props = parent::getCustomProperties($a_prop);
-
 
         if (ilObjAIChatAccess::_isOffline($this->obj_id)) {
             $props[] = array(
