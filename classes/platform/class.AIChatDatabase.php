@@ -219,7 +219,7 @@ class AIChatDatabase
     public function nextId(string $table): int
     {
         try {
-            return $this->db->nextId($table);
+            return (int) $this->db->nextId($table);
         } catch (Exception $e) {
             throw new AIChatException($e->getMessage());
         }
