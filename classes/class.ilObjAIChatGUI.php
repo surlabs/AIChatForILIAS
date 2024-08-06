@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
+use objects\Chat;
+use objects\Message;
 use platform\AIChatConfig;
 use platform\AIChatException;
 
@@ -191,5 +193,99 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         $this->object->update();
 
         return $renderer->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('object_settings_msg_success')));
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function apiCall()
+    {
+        if ($this->request->getMethod() == "GET") {
+            $this->sendApiResponse($this->processGetApiCall($_GET));
+        } else if ($this->request->getMethod() == "POST") {
+            $this->sendApiResponse($this->processPostApiCall($_POST));
+        } else {
+            $this->sendApiResponse(array("error" => "Method not allowed"));
+        }
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function processGetApiCall($data)
+    {
+        switch ($data["action"]) {
+            case "config":
+                return array(
+                    "title" => $this->object->getTitle(),
+                    "description" => $this->object->getDescription(),
+                    "online" => $this->object->getAIChat()->isOnline(),
+                    "api_key" => $this->object->getAIChat()->getApiKey(),
+                    "disclaimer" => $this->object->getAIChat()->getDisclaimer() ?? false,
+                    "prompt_selection" => AIChatConfig::get("prompt_selection") ?? false,
+                    "model" => AIChatConfig::get("model_selection") ?? false,
+                    "characters_limit" => AIChatConfig::get("characters_limit") ?? false,
+                    "n_memory_messages" => AIChatConfig::get("n_memory_messages") ?? false
+                );
+            case "chats":
+                global $DIC;
+
+                $user_id = $DIC->user()->getId();
+
+                return $this->object->getAIChat()->getChatsForApi($user_id);
+            case "chat":
+                if (isset($data["chat_id"])) {
+                    return new Chat((int) $data["chat_id"]);
+                } else {
+                    return array("error" => "Chat ID not provided");
+                }
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function processPostApiCall($data)
+    {
+        switch ($data["action"]) {
+            case "new_chat":
+                global $DIC;
+
+                $chat = new Chat();
+
+                $user_id = $DIC->user()->getId();
+
+                $chat->setUserId($user_id);
+                $chat->setObjId($this->object->getId());
+
+                $chat->save();
+
+                return $chat->getId();
+            case "add_message":
+                if (isset($data["chat_id"]) && isset($data["message"]) && isset($data["role"])) {
+                    $message = new Message();
+
+                    $message->setChatId((int) $data["chat_id"]);
+                    $message->setMessage($data["message"]);
+                    $message->setRole($data["role"]);
+
+                    $message->save();
+
+                    return $message->getId();
+                } else {
+                    return array("error" => "Chat ID, message or role not provided");
+                }
+        }
+
+        return false;
+    }
+
+    private function sendApiResponse($data)
+    {
+        header('Content-type: application/json');
+        echo json_encode($data);
+        exit();
     }
 }

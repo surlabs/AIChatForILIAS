@@ -51,11 +51,6 @@ class AIChat
      */
     private string $disclaimer = "";
 
-    /**
-     * @var Chat[]
-     */
-    private array $chats = array();
-
     public function __construct(?int $id = null)
     {
         if ($id !== null && $id > 0) {
@@ -113,9 +108,16 @@ class AIChat
         $this->api_key = $api_key;
     }
 
+    /**
+     * @throws AIChatException
+     */
     public function getDisclaimer(): string
     {
-        return $this->disclaimer;
+        if ($this->disclaimer != "") {
+            return $this->disclaimer;
+        }
+
+        return AIChatConfig::get("disclaimer_text");
     }
 
     public function setDisclaimer(string $disclaimer): void
@@ -123,44 +125,22 @@ class AIChat
         $this->disclaimer = $disclaimer;
     }
 
-    public function getChats(): array
-    {
-        return $this->chats;
-    }
-
-    public function setChats(array $chats): void
-    {
-        $this->chats = $chats;
-    }
-
-    public function getChat(int $id): ?Chat
-    {
-        foreach ($this->chats as $chat) {
-            if ($chat->getId() === $id) {
-                return $chat;
-            }
-        }
-
-        return null;
-    }
-
-    public function addChat(Chat $chat): void
-    {
-        $this->chats[] = $chat;
-    }
-
     /**
      * @throws AIChatException
      */
-    public function deleteChat(int $id): void
+    public function getChatsForApi(?int $user_id = null): array
     {
-        foreach ($this->chats as $key => $chat) {
-            if ($chat->getId() === $id) {
-                $chat->delete();
+        $database = new AIChatDatabase();
 
-                unset($this->chats[$key]);
-            }
+        $where = [
+            "obj_id" => $this->getId(),
+        ];
+
+        if (isset($user_id) && $user_id > 0) {
+            $where["user_id"] = $user_id;
         }
+
+        return $database->select("xaic_chats", $where);
     }
 
     /**
@@ -176,12 +156,6 @@ class AIChat
             $this->setOnline((bool) $result[0]["online"]);
             $this->setApiKey($result[0]["api_key"]);
             $this->setDisclaimer($result[0]["disclaimer"]);
-        }
-
-        $chats = $database->select("xaic_chats", ["obj_id" => $this->getId()], ["id"]);
-
-        foreach ($chats as $chat) {
-            $this->addChat(new Chat($chat["id"]));
         }
     }
 
@@ -202,12 +176,6 @@ class AIChat
             "api_key" => $this->api_key,
             "disclaimer" => $this->disclaimer
         ));
-
-        foreach ($this->getChats() as $chat) {
-            $chat->setObjId($this->getId());
-
-            $chat->save();
-        }
     }
 
     /**
@@ -219,8 +187,12 @@ class AIChat
 
         $database->delete("xaic_objects", ["id" => $this->id]);
 
-        foreach ($this->getChats() as $chat) {
-            $chat->delete();
+        $chats = $database->select("xaic_chats", ["obj_id" => $this->id]);
+
+        foreach ($chats as $chat) {
+            $chat_obj = new Chat($chat["id"]);
+
+            $chat_obj->delete();
         }
     }
 }

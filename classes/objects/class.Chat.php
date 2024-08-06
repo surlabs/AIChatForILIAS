@@ -59,6 +59,8 @@ class Chat
 
     public function __construct(?int $id = null)
     {
+        $this->created_at = new DateTime();
+
         if ($id !== null && $id > 0) {
             $this->id = $id;
 
