@@ -219,15 +219,12 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         switch ($data["action"]) {
             case "config":
                 return array(
-                    "title" => $this->object->getTitle(),
-                    "description" => $this->object->getDescription(),
-                    "online" => $this->object->getAIChat()->isOnline(),
-                    "api_key" => $this->object->getAIChat()->getApiKey(),
                     "disclaimer" => $this->object->getAIChat()->getDisclaimer() ?? false,
                     "prompt_selection" => AIChatConfig::get("prompt_selection") ?? false,
-                    "model" => AIChatConfig::get("model_selection") ?? false,
                     "characters_limit" => AIChatConfig::get("characters_limit") ?? false,
-                    "n_memory_messages" => AIChatConfig::get("n_memory_messages") ?? false
+                    "n_memory_messages" => AIChatConfig::get("n_memory_messages") ?? false,
+                    "lang" => $this->lng->getUserLanguage(),
+                    "translations" => $this->loadFrontLang()
                 );
             case "chats":
                 global $DIC;
@@ -292,6 +289,13 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
 
         return false;
+    }
+
+    private function loadFrontLang(): array
+    {
+        return array(
+            "front_new_chat_button" => $this->plugin->txt("front_new_chat_button"),
+        );
     }
 
     private function sendApiResponse($data)
