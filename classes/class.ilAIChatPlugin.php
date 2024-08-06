@@ -28,8 +28,6 @@ class ilAIChatPlugin extends ilRepositoryObjectPlugin
     const PLUGIN_ID = 'xaic';
 
     const PLUGIN_NAME = 'AIChat';
-    private static $instance;
-
     protected function uninstallCustom(): void
     {
     }
@@ -38,28 +36,6 @@ class ilAIChatPlugin extends ilRepositoryObjectPlugin
     {
         return self::PLUGIN_NAME;
     }
-
-    public static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            global $DIC;
-
-            $component_repository = $DIC["component.repository"];
-
-            $info = null;
-            $plugin_name = self::PLUGIN_NAME;
-            $info = $component_repository->getPluginByName($plugin_name);
-
-            $component_factory = $DIC["component.factory"];
-
-            $plugin_obj = $component_factory->getPlugin($info->getId());
-
-            self::$instance = $plugin_obj;
-        }
-
-        return self::$instance;
-    }
-
     public function allowCopy(): bool
     {
         return true;

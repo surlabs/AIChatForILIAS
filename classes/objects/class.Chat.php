@@ -66,7 +66,8 @@ class Chat
     public function __construct(?int $id = null)
     {
         $this->created_at = new DateTime();
-        $this->setTitle(ilAIChatPlugin::getInstance()->txt("chat_default_title"));
+
+        $this->setTitle();
 
         if ($id !== null && $id > 0) {
             $this->id = $id;
@@ -100,8 +101,13 @@ class Chat
         return $this->title;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(?string $title = null): void
     {
+        if ($title === null) {
+            global $DIC;
+            $title = $DIC->language()->txt("rep_robj_xaic_chat_default_title");
+        }
+        
         $this->title = $title;
     }
 
