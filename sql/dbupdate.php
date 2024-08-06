@@ -61,6 +61,11 @@ if (!$db->tableExists('xaic_chats')) {
             'length' => 8,
             'notnull' => true
         ],
+        'title' => [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => true
+        ],
         'created_at' => [
             'type' => 'timestamp',
             'notnull' => true

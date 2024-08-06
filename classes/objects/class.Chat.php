@@ -23,6 +23,7 @@ namespace objects;
 
 use DateTime;
 use Exception;
+use ilAIChatPlugin;
 use platform\AIChatDatabase;
 use platform\AIChatException;
 
@@ -43,6 +44,11 @@ class Chat
     private int $obj_id = 0;
 
     /**
+     * @var string
+     */
+    private string $title;
+
+    /**
      * @var DateTime
      */
     private DateTime $created_at;
@@ -60,6 +66,7 @@ class Chat
     public function __construct(?int $id = null)
     {
         $this->created_at = new DateTime();
+        $this->setTitle(ilAIChatPlugin::getInstance()->txt("chat_default_title"));
 
         if ($id !== null && $id > 0) {
             $this->id = $id;
@@ -86,6 +93,16 @@ class Chat
     public function setObjId(int $obj_id): void
     {
         $this->obj_id = $obj_id;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
     }
 
     public function getCreatedAt(): DateTime
@@ -157,6 +174,7 @@ class Chat
 
         if (isset($result[0])) {
             $this->setObjId($result[0]["obj_id"]);
+            $this->setTitle($result[0]["title"]);
             $this->setCreatedAt(new DateTime($result[0]["created_at"]));
             $this->setUserId($result[0]["user_id"]);
         }
@@ -177,6 +195,7 @@ class Chat
 
         $data = [
             "obj_id" => $this->getObjId(),
+            "title" => $this->getTitle(),
             "created_at" => $this->getCreatedAt()->format("Y-m-d H:i:s"),
             "user_id" => $this->getUserId()
         ];

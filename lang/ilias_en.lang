@@ -30,3 +30,4 @@ object_settings_api_key_info#:#API Key to use the AI Chat model if the global AP
 object_settings_disclaimer_text#:#Disclaimer Text
 object_settings_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence.
 object_settings_msg_success#:#Settings saved successfully.
+chat_default_title#:#New Chat
