@@ -316,6 +316,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
     {
         return array(
             "front_new_chat_button" => $this->plugin->txt("front_new_chat_button"),
+            "front_input_placeholder" => $this->plugin->txt("front_input_placeholder")
         );
     }
 
