@@ -203,12 +203,12 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
     public function apiCall()
     {
         if ($this->request->getMethod() == "GET") {
-            $this->sendApiResponse($this->processGetApiCall($_GET));
+            self::sendApiResponse($this->processGetApiCall($_GET));
         } else if ($this->request->getMethod() == "POST") {
             $postData = $this->request->getParsedBody();
-            $this->sendApiResponse($this->processPostApiCall($postData));
+            self::sendApiResponse($this->processPostApiCall($postData));
         } else {
-            $this->sendApiResponse(array("error" => "Method not allowed"));
+            self::sendApiResponse(array("error" => "Method not allowed"), 405);
         }
     }
 
@@ -239,7 +239,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                     return $chat->toArray();
                 } else {
-                    return array("error" => "Chat ID not provided");
+                    self::sendApiResponse(array("error" => "Chat ID not provided"), 400);
                 }
         }
 
@@ -275,18 +275,26 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                     $message->setMessage($data["message"]);
                     $message->setRole("user");
 
-                    $message->save();
+                    if (count($chat->getMessages()) == 0) {
+                        $chat->setTitleFromMessage($data["message"]);
+                    }
+
+                    $chat->addMessage($message);
 
                     $chat->setLastUpdate($message->getDate());
 
+                    $retval = array(
+                        "message" => $message->toArray(),
+                        "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
+                    );
+
+                    $message->save();
+
                     $chat->save();
 
-                    return array(
-                        "message" => $message->toArray(),
-                        "llmresponse" => $this->object->getAIChat()->getLLMResponse($message)->toArray()
-                    );
+                    return $retval;
                 } else {
-                    return array("error" => "Chat ID, message or role not provided");
+                    self::sendApiResponse(array("error" => "Chat ID or message not provided"), 400);
                 }
             case "delete_chat":
                 if (isset($data["chat_id"])) {
@@ -296,7 +304,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                     return true;
                 } else {
-                    return array("error" => "Chat ID not provided");
+                    self::sendApiResponse(array("error" => "Chat ID not provided"), 400);
                 }
         }
 
@@ -310,8 +318,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         );
     }
 
-    private function sendApiResponse($data)
+    public static function sendApiResponse($data, int $httpCode = 200): void
     {
+        http_response_code($httpCode);
         header('Content-type: application/json');
         echo json_encode($data);
         exit();

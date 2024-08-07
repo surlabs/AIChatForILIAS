@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace objects;
 
+use ai\LLM;
+use ai\OpenAI;
 use DateTime;
 use platform\AIChatConfig;
 use platform\AIChatDatabase;
@@ -51,6 +53,7 @@ class AIChat
      * @var string
      */
     private string $disclaimer = "";
+    private LLM $llm;
 
     public function __construct(?int $id = null)
     {
@@ -59,6 +62,8 @@ class AIChat
 
             $this->loadFromDB();
         }
+
+        $this->loadLLM();
     }
 
     public function getId(): int
@@ -213,15 +218,13 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getLLMResponse(Message $message): Message
+    public function getLLMResponse(Chat $chat): Message
     {
-        // TODO: Hacer toda la logica de gpt
-
-        $llm_response = "Daniel calvo (Aqui irá la respuesta de GPT)";
+        $llm_response = $this->llm->sendChat($chat);
 
         $response = new Message();
 
-        $response->setChatId($message->getChatId());
+        $response->setChatId($chat->getId());
         $response->setDate(new DateTime());
         $response->setRole("assistant");
         $response->setMessage($llm_response);
@@ -229,5 +232,27 @@ class AIChat
         $response->save();
 
         return $response;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function loadLLM()
+    {
+        $llm_model_from_config = AIChatConfig::get("llm_model");
+
+        $llm_model_parts = explode("_", $llm_model_from_config);
+
+        $model_provider = $llm_model_parts[0];
+        $model = $llm_model_parts[1];
+
+        switch ($model_provider) {
+            case "openai":
+                $this->llm = new OpenAI($model);
+                $this->llm->setApiKey($this->getApiKey());
+                break;
+            default:
+                throw new AIChatException("AIChat::loadLLM() - LLM model provider not found (Config: " . $llm_model_from_config . ") (Provider: " . $model_provider . ") (Model: " . $model . ")");
+        }
     }
 }

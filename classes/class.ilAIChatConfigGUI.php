@@ -84,16 +84,16 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $model = $this->factory->input()->field()->select(
             $this->plugin_object->txt('config_model'),
             array(
-                "gpt-4o" => "GPT-4o",
-                "gpt-4o-mini" => "GPT-4o mini",
-                "gpt-4-turbo" => "GPT-4 Turbo",
-                "gpt-4" => "GPT-4",
-                "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+                "openai_gpt-4o" => "GPT-4o",
+                "openai_gpt-4o-mini" => "GPT-4o mini",
+                "openai_gpt-4-turbo" => "GPT-4 Turbo",
+                "openai_gpt-4" => "GPT-4",
+                "openai_gpt-3.5-turbo" => "GPT-3.5 Turbo"
             ),
             $this->plugin_object->txt('config_model_info')
-        )->withValue((string) AIChatConfig::get("model_selection"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((string) AIChatConfig::get("llm_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
-                AIChatConfig::set('model_selection', $v);
+                AIChatConfig::set('llm_model', $v);
             }
         ))->withRequired(true);
 

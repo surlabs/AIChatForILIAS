@@ -24,6 +24,7 @@ namespace objects;
 use DateTime;
 use Exception;
 use ilAIChatPlugin;
+use platform\AIChatConfig;
 use platform\AIChatDatabase;
 use platform\AIChatException;
 
@@ -116,6 +117,14 @@ class Chat
         $this->title = $title;
     }
 
+    public function setTitleFromMessage(string $message)
+    {
+        if (strlen($message) > 100)
+            $message = substr($message, 0, 100) . "...";
+
+        $this->setTitle($message);
+    }
+
     public function getCreatedAt(): DateTime
     {
         return $this->created_at;
@@ -144,6 +153,11 @@ class Chat
     public function setLastUpdate(DateTime $last_update): void
     {
         $this->last_update = $last_update;
+    }
+
+    public function getMessages(): array
+    {
+        return $this->messages;
     }
 
     public function addMessage(Message $message): void
@@ -218,12 +232,27 @@ class Chat
         }
     }
 
+    /**
+     * @throws AIChatException
+     */
     public function toArray(): array
     {
         $messages = array();
 
         foreach ($this->messages as $message) {
             $messages[] = $message->toArray();
+        }
+
+        $n_memory_messages = AIChatConfig::get("n_memory_messages");
+
+        if (isset($n_memory_messages)) {
+            $n_memory_messages = intval($n_memory_messages);
+        } else {
+            $n_memory_messages = 0;
+        }
+
+        if ($n_memory_messages > 0) {
+            $messages = array_slice($messages, -$n_memory_messages);
         }
 
         return [
