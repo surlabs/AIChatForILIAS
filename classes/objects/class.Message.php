@@ -35,7 +35,7 @@ class Message
     /**
      * @var int
      */
-    private int $id;
+    private int $id = 0;
 
     /**
      * @var int
@@ -129,7 +129,7 @@ class Message
         $result = $database->select("xaic_messages", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setChatId($result[0]["chat_id"]);
+            $this->setChatId((int)$result[0]["chat_id"]);
             $this->setDate(new DateTime($result[0]["date"]));
             $this->setRole($result[0]["role"]);
             $this->setMessage($result[0]["message"]);

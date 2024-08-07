@@ -205,7 +205,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         if ($this->request->getMethod() == "GET") {
             $this->sendApiResponse($this->processGetApiCall($_GET));
         } else if ($this->request->getMethod() == "POST") {
-            $this->sendApiResponse($this->processPostApiCall($_POST));
+            $postData = $this->request->getParsedBody();
+            $this->sendApiResponse($this->processPostApiCall($postData));
         } else {
             $this->sendApiResponse(array("error" => "Method not allowed"));
         }
@@ -269,7 +270,6 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                     $message->setChatId((int) $data["chat_id"]);
                     $message->setMessage($data["message"]);
                     $message->setRole($data["role"]);
-
                     $message->save();
 
                     return $message->getId();

@@ -71,7 +71,6 @@ class Chat
 
         if ($id !== null && $id > 0) {
             $this->id = $id;
-
             $this->loadFromDB();
         }
     }
@@ -179,16 +178,16 @@ class Chat
         $result = $database->select("xaic_chats", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setObjId($result[0]["obj_id"]);
+            $this->setObjId((int)$result[0]["obj_id"]);
             $this->setTitle($result[0]["title"]);
             $this->setCreatedAt(new DateTime($result[0]["created_at"]));
-            $this->setUserId($result[0]["user_id"]);
+            $this->setUserId((int)$result[0]["user_id"]);
         }
 
         $messages = $database->select("xaic_messages", ["chat_id" => $this->getId()], ["id"]);
 
         foreach ($messages as $message) {
-            $this->addMessage(new Message($message["id"]));
+            $this->addMessage(new Message((int)$message["id"]));
         }
     }
 
