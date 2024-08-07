@@ -172,4 +172,14 @@ class Message
 
         $database->delete("xaic_messages", ["id" => $this->getId()]);
     }
+
+    public function toArray(): array
+    {
+        return [
+            "id" => $this->getId(),
+            "chat_id" => $this->getChatId(),
+            "role" => $this->getRole(),
+            "content" => $this->getMessage()
+        ];
+    }
 }

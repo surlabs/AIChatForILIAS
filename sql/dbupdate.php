@@ -75,6 +75,10 @@ if (!$db->tableExists('xaic_chats')) {
             'length' => 8,
             'notnull' => true
         ],
+        'last_update' => [
+            'type' => 'timestamp',
+            'notnull' => true
+        ],
     ];
 
     $db->createTable('xaic_chats', $fields);

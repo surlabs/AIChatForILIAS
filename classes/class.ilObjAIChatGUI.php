@@ -235,7 +235,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
                 if (isset($data["chat_id"])) {
-                    return new Chat((int) $data["chat_id"]);
+                    $chat = new Chat((int) $data["chat_id"]);
+
+                    return $chat->toArray();
                 } else {
                     return array("error" => "Chat ID not provided");
                 }
@@ -262,17 +264,27 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 $chat->save();
 
-                return $chat->getId();
+                return $chat->toArray();
             case "add_message":
-                if (isset($data["chat_id"]) && isset($data["message"]) && isset($data["role"])) {
+                if (isset($data["chat_id"]) && isset($data["message"])) {
+                    $chat = new Chat((int) $data["chat_id"]);
+
                     $message = new Message();
 
                     $message->setChatId((int) $data["chat_id"]);
                     $message->setMessage($data["message"]);
-                    $message->setRole($data["role"]);
+                    $message->setRole("user");
+
                     $message->save();
 
-                    return $message->getId();
+                    $chat->setLastUpdate($message->getDate());
+
+                    $chat->save();
+
+                    return array(
+                        "message" => $message->toArray(),
+                        "gptresponse" => $this->object->getAIChat()->getGPTResponse($message)->toArray()
+                    );
                 } else {
                     return array("error" => "Chat ID, message or role not provided");
                 }

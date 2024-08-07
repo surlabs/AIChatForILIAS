@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace objects;
 
+use DateTime;
 use platform\AIChatConfig;
 use platform\AIChatDatabase;
 use platform\AIChatException;
@@ -140,7 +141,7 @@ class AIChat
             $where["user_id"] = $user_id;
         }
 
-        $chats = $database->select("xaic_chats", $where);
+        $chats = $database->select("xaic_chats", $where, null, "ORDER BY last_update DESC");
 
         if (empty($chats) && isset($user_id) && $user_id > 0) {
             $chat = new Chat();
@@ -207,5 +208,26 @@ class AIChat
 
             $chat_obj->delete();
         }
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getGPTResponse(Message $message): Message
+    {
+        // TODO: Hacer toda la logica de gpt
+
+        $gpt_response = "Daniel calvo (Aqui irá la respuesta de GPT)";
+
+        $response = new Message();
+
+        $response->setChatId($message->getChatId());
+        $response->setDate(new DateTime());
+        $response->setRole("assistant");
+        $response->setMessage($gpt_response);
+
+        $response->save();
+
+        return $response;
     }
 }

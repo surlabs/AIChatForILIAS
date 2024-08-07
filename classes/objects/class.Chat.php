@@ -59,6 +59,11 @@ class Chat
     private int $user_id;
 
     /**
+     * @var DateTime
+     */
+    private DateTime $last_update;
+
+    /**
      * @var Message[]
      */
     private array $messages = array();
@@ -66,6 +71,7 @@ class Chat
     public function __construct(?int $id = null)
     {
         $this->created_at = new DateTime();
+        $this->last_update = new DateTime();
 
         $this->setTitle();
 
@@ -130,41 +136,19 @@ class Chat
         $this->user_id = $user_id;
     }
 
-    public function getMessages(): array
+    public function getLastUpdate(): DateTime
     {
-        return $this->messages;
+        return $this->last_update;
     }
 
-    public function setMessages(array $messages): void
+    public function setLastUpdate(DateTime $last_update): void
     {
-        $this->messages = $messages;
-    }
-
-    public function getMessage(int $id): ?Chat
-    {
-        foreach ($this->messages as $message) {
-            if ($message->getId() === $id) {
-                return $message;
-            }
-        }
-
-        return null;
+        $this->last_update = $last_update;
     }
 
     public function addMessage(Message $message): void
     {
         $this->messages[] = $message;
-    }
-
-    public function deleteMessage(int $id): void
-    {
-        foreach ($this->messages as $key => $message) {
-            if ($message->getId() === $id) {
-                $message->delete();
-
-                unset($this->messages[$key]);
-            }
-        }
     }
 
     /**
@@ -182,9 +166,10 @@ class Chat
             $this->setTitle($result[0]["title"]);
             $this->setCreatedAt(new DateTime($result[0]["created_at"]));
             $this->setUserId((int)$result[0]["user_id"]);
+            $this->setLastUpdate(new DateTime($result[0]["last_update"]));
         }
 
-        $messages = $database->select("xaic_messages", ["chat_id" => $this->getId()], ["id"]);
+        $messages = $database->select("xaic_messages", ["chat_id" => $this->getId()], ["id"], "ORDER BY date ASC");
 
         foreach ($messages as $message) {
             $this->addMessage(new Message((int)$message["id"]));
@@ -202,7 +187,8 @@ class Chat
             "obj_id" => $this->getObjId(),
             "title" => $this->getTitle(),
             "created_at" => $this->getCreatedAt()->format("Y-m-d H:i:s"),
-            "user_id" => $this->getUserId()
+            "user_id" => $this->getUserId(),
+            "last_update" => $this->getLastUpdate()->format("Y-m-d H:i:s")
         ];
 
         if ($this->getId() > 0) {
@@ -230,5 +216,24 @@ class Chat
         foreach ($this->messages as $message) {
             $message->delete();
         }
+    }
+
+    public function toArray(): array
+    {
+        $messages = array();
+
+        foreach ($this->messages as $message) {
+            $messages[] = $message->toArray();
+        }
+
+        return [
+            "id" => $this->getId(),
+            "obj_id" => $this->getObjId(),
+            "title" => $this->getTitle(),
+            "created_at" => $this->getCreatedAt()->format("Y-m-d H:i:s"),
+            "user_id" => $this->getUserId(),
+            "messages" => $messages,
+            "last_update" => $this->getLastUpdate()->format("Y-m-d H:i:s")
+        ];
     }
 }
