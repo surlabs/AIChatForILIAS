@@ -224,6 +224,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                     "prompt_selection" => AIChatConfig::get("prompt_selection") ?? false,
                     "characters_limit" => AIChatConfig::get("characters_limit") ?? false,
                     "n_memory_messages" => AIChatConfig::get("n_memory_messages") ?? false,
+                    "streaming_enabled" => AIChatConfig::get("streaming_enabled") ?? false,
                     "lang" => $this->lng->getUserLanguage(),
                     "translations" => $this->loadFrontLang()
                 );
