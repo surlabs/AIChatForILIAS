@@ -161,6 +161,9 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         );
     }
 
+    /**
+     * @throws AIChatException
+     */
     private function renderForm(string $form_action, array $sections): string
     {
         $form = $this->factory->input()->container()->form()->standard(
@@ -175,6 +178,11 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $result = $form->getData();
             if ($result) {
                 $saving_info = $this->save();
+
+                $form = $this->factory->input()->container()->form()->standard(
+                    $form_action,
+                    $this->buildForm()
+                );
             }
         }
 
