@@ -151,13 +151,23 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $use_global_api_key = $use_global_api_key->withValue(null);
         }
 
+        $streaming_enabled = $this->factory->input()->field()->checkbox(
+            $this->plugin_object->txt('config_streaming_enabled'),
+            $this->plugin_object->txt('config_streaming_enabled_info')
+        )->withValue((bool) AIChatConfig::get("streaming_enabled"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('streaming_enabled', $v);
+            }
+        ));
+
         return array(
             $prompt_selection,
             $model,
             $characters_limit,
             $n_memory_messages,
             $disclaimer_text,
-            $use_global_api_key
+            $use_global_api_key,
+            $streaming_enabled
         );
     }
 

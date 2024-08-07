@@ -57,7 +57,7 @@ class Chat
     /**
      * @var int
      */
-    private int $user_id;
+    private int $user_id = 0;
 
     /**
      * @var DateTime

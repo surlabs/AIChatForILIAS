@@ -23,6 +23,7 @@ namespace ai;
 
 use ilObjAIChatGUI;
 use objects\Chat;
+use platform\AIChatConfig;
 use platform\AIChatException;
 
 /**
@@ -55,10 +56,13 @@ class OpenAI extends LLM
 
         $apiUrl = 'https://api.openai.com/v1/chat/completions';
 
+        $steaming = boolval(AIChatConfig::get("streaming_enabled")) ?? false;
+
         $payload = json_encode([
             "messages" => $this->chatToMessagesArray($chat),
             "model" => $this->model,
-            "temperature" => 0.5
+            "temperature" => 0.5,
+            "stream" => $steaming
         ]);
 
         $curlSession = curl_init();
@@ -66,11 +70,20 @@ class OpenAI extends LLM
         curl_setopt($curlSession, CURLOPT_URL, $apiUrl);
         curl_setopt($curlSession, CURLOPT_POST, true);
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$steaming);
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey
         ]);
+
+        if ($steaming) {
+            curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) {
+                echo $chunk;
+                ob_flush();
+                flush();
+                return strlen($chunk);
+            });
+        }
 
         $response = curl_exec($curlSession);
         $httpcode = curl_getinfo($curlSession, CURLINFO_HTTP_CODE);
