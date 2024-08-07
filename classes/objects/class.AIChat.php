@@ -89,11 +89,11 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getApiKey(): string
+    public function getApiKey(bool $strict = false): string
     {
         $use_global_api_key = (bool) AIChatConfig::get("use_global_api_key");
 
-        if ($use_global_api_key) {
+        if ($use_global_api_key && !$strict) {
             return AIChatConfig::get("global_api_key");
         }
 
@@ -117,9 +117,9 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getDisclaimer(): string
+    public function getDisclaimer(bool $strict = false): string
     {
-        if ($this->disclaimer != "") {
+        if ($this->disclaimer != "" || $strict) {
             return $this->disclaimer;
         }
 

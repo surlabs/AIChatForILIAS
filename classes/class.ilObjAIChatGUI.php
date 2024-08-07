@@ -152,7 +152,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             function ($v) {
                 $this->object->setDescription($v);
             }
-        ))->withRequired(true);
+        ));
 
         $inputs_basic[] = $this->factory->input()->field()->checkbox(
             $this->plugin->txt('object_settings_online'), $this->plugin->txt('object_settings_online_info')
@@ -165,7 +165,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         if (AIChatConfig::get("use_global_api_key") != "1") {
             $inputs_advanced[] = $this->factory->input()->field()->text(
                 $this->plugin->txt('object_settings_api_key'), $this->plugin->txt('object_settings_api_key_info')
-            )->withValue($this->object->getAIChat()->getApiKey())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            )->withValue($this->object->getAIChat()->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
                 function ($v) {
                     $this->object->getAIChat()->setApiKey($v);
                 }
@@ -174,7 +174,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         $inputs_advanced[] = $this->factory->input()->field()->textarea(
             $this->plugin->txt('object_settings_disclaimer_text'), $this->plugin->txt('object_settings_disclaimer_text_info')
-        )->withValue($this->object->getAIChat()->getDisclaimer())->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue($this->object->getAIChat()->getDisclaimer(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 $this->object->getAIChat()->setDisclaimer($v);
             }
