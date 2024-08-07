@@ -1,23 +1,5 @@
 <?php
 declare(strict_types=1);
-/**
- *  This file is part of the AI Chat Repository Object plugin for ILIAS, which allows your platform's users
- *  To connect with an external LLM service
- *  This plugin is created and maintained by SURLABS.
- *
- *  The AI Chat Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
- *  For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
- *
- *  To report bugs or participate in discussions, visit the Mantis system and filter by
- *  the category "AI Chat" at https://mantis.ilias.de.
- *
- *  More information and source code are available at:
- *  https://github.com/surlabs/AIChat
- *
- *  If you need support, please contact the maintainer of this software at:
- *  info@surlabs.es
- *
- */
 
 namespace ai;
 
@@ -26,10 +8,6 @@ use objects\Chat;
 use platform\AIChatConfig;
 use platform\AIChatException;
 
-/**
- * Class OpenAI
- * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- */
 class OpenAI extends LLM
 {
     private string $model;
@@ -45,8 +23,6 @@ class OpenAI extends LLM
         $this->apiKey = $apiKey;
     }
 
-
-    /** @noinspection PhpComposerExtensionStubsInspection */
     /**
      * @throws AIChatException
      */
@@ -55,14 +31,13 @@ class OpenAI extends LLM
         global $DIC;
 
         $apiUrl = 'https://api.openai.com/v1/chat/completions';
-
-        $steaming = boolval(AIChatConfig::get("streaming_enabled")) ?? false;
+        $streaming = boolval(AIChatConfig::get("streaming_enabled")) ?? false;
 
         $payload = json_encode([
             "messages" => $this->chatToMessagesArray($chat),
             "model" => $this->model,
             "temperature" => 0.5,
-            "stream" => $steaming
+            "stream" => $streaming
         ]);
 
         $curlSession = curl_init();
@@ -70,14 +45,17 @@ class OpenAI extends LLM
         curl_setopt($curlSession, CURLOPT_URL, $apiUrl);
         curl_setopt($curlSession, CURLOPT_POST, true);
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$steaming);
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$streaming);
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey
         ]);
 
-        if ($steaming) {
-            curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) {
+        $responseContent = '';
+
+        if ($streaming) {
+            curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) use (&$responseContent) {
+                $responseContent .= $chunk;
                 echo $chunk;
                 ob_flush();
                 flush();
@@ -103,8 +81,24 @@ class OpenAI extends LLM
             }
         }
 
-        $decodedResponse = json_decode($response, true);
+        if (!$streaming) {
+            $decodedResponse = json_decode($response, true);
+            return $decodedResponse['choices'][0]['message']['content'] ?? "";
+        }
 
-        return $decodedResponse['choices'][0]['message']['content'] ?? "";
+        // Procesar la respuesta completa acumulada en $responseContent
+        $messages = explode("\n", $responseContent);
+        $completeMessage = '';
+
+        foreach ($messages as $message) {
+            if (trim($message) !== '' && strpos($message, 'data: ') === 0) {
+                $json = json_decode(substr($message, strlen('data: ')), true);
+                if ($json && isset($json['choices'][0]['delta']['content'])) {
+                    $completeMessage .= $json['choices'][0]['delta']['content'];
+                }
+            }
+        }
+
+        return $completeMessage;
     }
 }
