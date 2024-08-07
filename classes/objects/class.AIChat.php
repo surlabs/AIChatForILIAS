@@ -213,18 +213,18 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getGPTResponse(Message $message): Message
+    public function getLLMResponse(Message $message): Message
     {
         // TODO: Hacer toda la logica de gpt
 
-        $gpt_response = "Daniel calvo (Aqui irá la respuesta de GPT)";
+        $llm_response = "Daniel calvo (Aqui irá la respuesta de GPT)";
 
         $response = new Message();
 
         $response->setChatId($message->getChatId());
         $response->setDate(new DateTime());
         $response->setRole("assistant");
-        $response->setMessage($gpt_response);
+        $response->setMessage($llm_response);
 
         $response->save();
 

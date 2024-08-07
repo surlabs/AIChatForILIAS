@@ -283,7 +283,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                     return array(
                         "message" => $message->toArray(),
-                        "gptresponse" => $this->object->getAIChat()->getGPTResponse($message)->toArray()
+                        "llmresponse" => $this->object->getAIChat()->getLLMResponse($message)->toArray()
                     );
                 } else {
                     return array("error" => "Chat ID, message or role not provided");
