@@ -1,7 +1,7 @@
 # AI Chat plugin for ILIAS
 
 Welcome to the official repository for [AI Chat plugin for ILIAS](https://www.surlabs.es).
-This plugin is created and maintained by Daniel Cazalla and Jesús Copado, founders of [SURLABS](https://www.surlabs.es) and is designed to work with ILIAS 8.0 and above.
+This plugin is created and maintained by Daniel Cazalla and Jesús Copado, founders of [SURLABS](https://www.surlabs.es) and is designed to work with ILIAS 7.0 and above.
 
 ## What is AI Chat for ILIAS?
 
