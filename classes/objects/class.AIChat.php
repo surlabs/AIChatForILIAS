@@ -241,18 +241,22 @@ class AIChat
     {
         $llm_model_from_config = AIChatConfig::get("llm_model");
 
-        $llm_model_parts = explode("_", $llm_model_from_config);
+        if (!empty($llm_model_from_config)) {
+            $llm_model_parts = explode("_", $llm_model_from_config);
 
-        $model_provider = $llm_model_parts[0];
-        $model = $llm_model_parts[1];
+            $model_provider = $llm_model_parts[0];
+            $model = $llm_model_parts[1];
 
-        switch ($model_provider) {
-            case "openai":
-                $this->llm = new OpenAI($model);
-                $this->llm->setApiKey($this->getApiKey());
-                break;
-            default:
-                throw new AIChatException("AIChat::loadLLM() - LLM model provider not found (Config: " . $llm_model_from_config . ") (Provider: " . $model_provider . ") (Model: " . $model . ")");
+            switch ($model_provider) {
+                case "openai":
+                    $this->llm = new OpenAI($model);
+                    $this->llm->setApiKey($this->getApiKey());
+                    break;
+                default:
+                    throw new AIChatException("AIChat::loadLLM() - LLM model provider not found (Config: " . $llm_model_from_config . ") (Provider: " . $model_provider . ") (Model: " . $model . ")");
+            }
+        } else {
+            throw new AIChatException("AIChat::loadLLM() - LLM model not found in config");
         }
     }
 }
