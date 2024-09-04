@@ -36,7 +36,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 {
     private Factory $factory;
     private Renderer $renderer;
-    private \ILIAS\Refinery\Factory $refinery;
+    protected \ILIAS\Refinery\Factory $refinery;
 
     public function __construct($a_ref_id = 0, $a_id_type = self::REPOSITORY_NODE_ID, $a_parent_node_id = 0)
     {
@@ -45,6 +45,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
         $this->refinery = $DIC->refinery();
+        $this->request = $DIC->http()->request();
 
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
     }
