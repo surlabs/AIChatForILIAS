@@ -99,7 +99,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
         $characters_limit = $this->factory->input()->field()->numeric(
             $this->plugin_object->txt('config_characters_limit'), $this->plugin_object->txt('config_characters_limit_info')
-        )->withValue((int) AIChatConfig::get("characters_limit") ?? 0)->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((int) AIChatConfig::get("characters_limit") ?? 100)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('characters_limit', $v);
             }
@@ -107,7 +107,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
         $n_memory_messages = $this->factory->input()->field()->numeric(
             $this->plugin_object->txt('config_n_memory_messages'), $this->plugin_object->txt('config_n_memory_messages_info')
-        )->withValue((int) AIChatConfig::get("n_memory_messages") ?? 0)->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((int) AIChatConfig::get("n_memory_messages") ?? 100)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('n_memory_messages', $v);
             }
