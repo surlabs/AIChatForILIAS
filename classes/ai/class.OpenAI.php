@@ -51,6 +51,13 @@ class OpenAI extends LLM
             'Authorization: Bearer ' . $this->apiKey
         ]);
 
+        if (\ilProxySettings::_getInstance()->isActive()) {
+            $proxyHost = \ilProxySettings::_getInstance()->getHost();
+            $proxyPort = \ilProxySettings::_getInstance()->getPort();
+            $proxyURL = $proxyHost . ":" . $proxyPort;
+            curl_setopt($curlSession, CURLOPT_PROXY, $proxyURL);
+        }
+
         $responseContent = '';
 
         if ($streaming) {
