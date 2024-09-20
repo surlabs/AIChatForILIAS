@@ -88,7 +88,10 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 "openai_gpt-4o-mini" => "GPT-4o mini",
                 "openai_gpt-4-turbo" => "GPT-4 Turbo",
                 "openai_gpt-4" => "GPT-4",
-                "openai_gpt-3.5-turbo" => "GPT-3.5 Turbo"
+                "openai_gpt-3.5-turbo" => "GPT-3.5 Turbo",
+                "local_meta-llama-3.1-70b-instruct" => "meta-llama-3.1-70b-instruct",
+                "local_codellama-7b" => "codellama-7b",
+                "local_meta-llama-3.1-8b-instruct" => "meta-llama-3.1-8b-instruct"
             ),
             $this->plugin_object->txt('config_model_info')
         )->withValue((string) AIChatConfig::get("llm_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(

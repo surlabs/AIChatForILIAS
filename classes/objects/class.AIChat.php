@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace objects;
 
 use ai\LLM;
+use ai\LocalAI;
 use ai\OpenAI;
 use DateTime;
 use platform\AIChatConfig;
@@ -250,6 +251,10 @@ class AIChat
             switch ($model_provider) {
                 case "openai":
                     $this->llm = new OpenAI($model);
+                    $this->llm->setApiKey($this->getApiKey());
+                    break;
+                case "local":
+                    $this->llm = new LocalAI($model);
                     $this->llm->setApiKey($this->getApiKey());
                     break;
                 default:
