@@ -5,9 +5,9 @@
 	</picture>
 </div>
 
-# AI Chat Repository Object Plugin for ILIAS
+# AI Chat Repository Object Plugin for ILIAS 9
 
-Welcome to the official repository for AI Chat Repository Object Plugin for ILIAS 9
+Welcome to the official repository for AI Chat Repository Object Plugin for ILIAS
 This Open Source ILIAS Plugin is created and maintained by [SURLABS](https://www.surlabs.com)
 
 ## What is AI Chat for ILIAS?
