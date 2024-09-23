@@ -1,3 +1,10 @@
+<div alt style="text-align: center; transform: scale(.5);">
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/surlabs/AIChatForILIAS/ilias8/templates/images/GitBannerAIChat.png" />
+		<img alt="STACK" src="https://raw.githubusercontent.com/surlabs/AIChatForILIAS/ilias8/templates/images/GitBannerAIChat.png" />
+	</picture>
+</div>
+
 # AI Chat Repository Object Plugin for ILIAS
 
 Welcome to the official repository for AI Chat Repository Object Plugin for ILIAS
