@@ -36,7 +36,7 @@ This plugin has been developed to allow the use of different API-keys for differ
 ```bash
 git clone https://github.com/surlabs/AIChatForILIAS.git ./AIChat
 cd AIChat
-git checkout ilias7_dev
+git checkout ilias8
 ```
 3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
 ```bash
