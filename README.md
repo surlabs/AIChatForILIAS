@@ -1,3 +1,10 @@
+<div alt style="text-align: center; transform: scale(.5);">
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/surlabs/AIChatForILIAS/ilias8/templates/images/GitBannerAIChat.png" />
+		<img alt="STACK" src="https://raw.githubusercontent.com/surlabs/AIChatForILIAS/ilias8/templates/images/GitBannerAIChat.png" />
+	</picture>
+</div>
+
 # AI Chat plugin for ILIAS
 
 Welcome to the official repository for [AI Chat plugin for ILIAS](https://www.surlabs.es).
@@ -29,7 +36,7 @@ This plugin has been developed to allow the use of different API-keys for differ
 ```bash
 git clone https://github.com/surlabs/AIChatForILIAS.git ./AIChat
 cd AIChat
-git checkout ilias7_dev
+git checkout ilias8
 ```
 3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
 ```bash
