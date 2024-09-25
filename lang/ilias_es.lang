@@ -14,8 +14,6 @@ config_n_memory_messages_info#:#El número máximo de mensajes que se almacenar�
 config_disclaimer_text#:#Texto de Descargo de Responsabilidad
 config_disclaimer_text_info#:#Texto que se mostrará en el chat para informar al usuario que está hablando con una inteligencia artificial en caso de que el objeto AI Chat no tenga un texto de advertencia configurado.
 config_global_api_key#:#Clave API Global
-config_use_global_api_key#:#Usar Clave API Global
-config_use_global_api_key_info#:#Si esta opción está habilitada, se forzará el uso de la clave API global en todas las solicitudes API, de lo contrario, cada objeto AI Chat debe tener su clave API configurada.
 config_streaming_enabled#:#Transmisión Activada
 config_streaming_enabled_info#:#Si esta opción está activada, el chat estará en modo de transmisión, lo que significa que el modelo responderá mientras escribe, haciendo que la respuesta sea ligeramente más rápida.
 config_api_selection#:#API a utilizar

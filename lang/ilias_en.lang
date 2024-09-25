@@ -14,8 +14,6 @@ config_n_memory_messages_info#:#The maximum number of messages that will be stor
 config_disclaimer_text#:#Disclaimer Text
 config_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence in case the AIChat object does not have a warning text configured.
 config_global_api_key#:#Global API Key
-config_use_global_api_key#:#Use Global API Key
-config_use_global_api_key_info#:#If this option is enabled, the global API Key will be forced to be used in all API requests, otherwise each AIChat object must have its API Key configured.
 config_streaming_enabled#:#Streaming Enabled
 config_streaming_enabled_info#:#If this option is enabled, the chat will be in streaming mode, which means that the model will respond by typing, making the response slightly faster.
 config_api_selection#:#API to use

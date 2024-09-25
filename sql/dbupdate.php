@@ -121,3 +121,18 @@ if (!$db->tableExists('xaic_messages')) {
     $db->createSequence('xaic_messages');
 }
 ?>
+<#2>
+<?php
+global $DIC;
+$db = $DIC->database();
+if ($db->tableExists('xaic_config')) {
+
+    $result = $db->query("SELECT value FROM xaic_config WHERE name = 'llm_model'");
+
+    while ($row = $db->fetchAssoc($result)) {
+        $model = str_replace('openai_', '', $row['value']);
+
+        $db->manipulate("UPDATE xaic_config SET value = '$model' WHERE name = 'llm_model'");
+    }
+}
+?>

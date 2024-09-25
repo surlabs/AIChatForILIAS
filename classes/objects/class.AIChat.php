@@ -22,7 +22,7 @@ declare(strict_types=1);
 namespace objects;
 
 use ai\LLM;
-use ai\LocalAI;
+use ai\CustomAI;
 use ai\OpenAI;
 use DateTime;
 use platform\AIChatConfig;
@@ -90,28 +90,17 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getApiKey(bool $strict = false): string
+    public function getApiKey(): string
     {
-        $use_global_api_key = (bool) AIChatConfig::get("use_global_api_key");
-
-        if ($use_global_api_key && !$strict) {
-            return AIChatConfig::get("global_api_key");
+        if (!empty($this->api_key)) {
+            return $this->api_key;
         }
 
-        return $this->api_key;
+        return AIChatConfig::get("global_api_key");
     }
 
-    /**
-     * @throws AIChatException
-     */
     public function setApiKey(string $api_key): void
     {
-        $use_global_api_key = (bool) AIChatConfig::get("use_global_api_key");
-
-        if ($use_global_api_key) {
-            return;
-        }
-
         $this->api_key = $api_key;
     }
 
@@ -240,22 +229,19 @@ class AIChat
      */
     private function loadLLM()
     {
-        $llm_model_from_config = AIChatConfig::get("llm_model");
+        $provider = AIChatConfig::get("llm_provider");
+        $model = AIChatConfig::get("llm_model");
 
-        if (!empty($llm_model_from_config)) {
-            $llm_model_parts = explode("_", $llm_model_from_config);
-
-            $model_provider = $llm_model_parts[0];
-            $model = $llm_model_parts[1];
-
-            switch ($model_provider) {
+        if (!empty($provider) && !empty($model)) {
+            switch ($provider) {
                 case "openai":
                     $this->llm = new OpenAI($model);
                     $this->llm->setApiKey($this->getApiKey());
                     break;
-                case "local":
-                    $this->llm = new LocalAI($model);
+                case "custom":
+                    $this->llm = new CustomAI($model);
                     $this->llm->setApiKey($this->getApiKey());
+                    $this->llm->setUrl(AIChatConfig::get("llm_url"));
                     break;
                 default:
                     throw new AIChatException("AIChat::loadLLM() - LLM model provider not found (Config: " . $llm_model_from_config . ") (Provider: " . $model_provider . ") (Model: " . $model . ")");
