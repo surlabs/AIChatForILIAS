@@ -1,0 +1,45 @@
+obj_xaic#:#AI Chat
+objs_xaic#:#Objetos AI Chat
+xaic_new#:#Nuevo AI Chat
+objs_xaic_duplicate#:#Duplicar Objeto AI Chat
+xaic_add#:#Agregar AI Chat
+config_prompt_selection#:#Selección de Prompt
+config_prompt_selection_info#:#Este prompt se usará como el mensaje inicial de una conversación, no será visible para el usuario, pero el modelo lo tomará en cuenta.
+config_model#:#Modelo
+config_model_info#:#Modelo de lenguaje a utilizar.
+config_characters_limit#:#Límite de caracteres
+config_characters_limit_info#:#El número máximo de caracteres que puedes enviar en un solo mensaje.
+config_n_memory_messages#:#Máx. Mensajes en Memoria
+config_n_memory_messages_info#:#El número máximo de mensajes que se almacenarán en la conversación.
+config_disclaimer_text#:#Texto de Descargo de Responsabilidad
+config_disclaimer_text_info#:#Texto que se mostrará en el chat para informar al usuario que está hablando con una inteligencia artificial en caso de que el objeto AI Chat no tenga un texto de advertencia configurado.
+config_global_api_key#:#Clave API Global
+config_use_global_api_key#:#Usar Clave API Global
+config_use_global_api_key_info#:#Si esta opción está habilitada, se forzará el uso de la clave API global en todas las solicitudes API, de lo contrario, cada objeto AI Chat debe tener su clave API configurada.
+config_streaming_enabled#:#Transmisión Activada
+config_streaming_enabled_info#:#Si esta opción está activada, el chat estará en modo de transmisión, lo que significa que el modelo responderá mientras escribe, haciendo que la respuesta sea ligeramente más rápida.
+config_api_selection#:#API a utilizar
+config_api_selection_info#:#API para conectarse con el modelo.
+config_api_selection_openai#:#API de OpenAI
+config_api_selection_custom#:#API Personalizada
+config_api_endpoint#:#URL de la API
+config_api_endpoint_info#:#URL de la API a utilizar.
+config_msg_success#:#Configuración guardada exitosamente.
+object_content#:#Contenido
+object_settings#:#Configuraciones
+object_settings_basic#:#Configuraciones Básicas
+object_settings_advanced#:#Configuraciones Avanzadas
+object_settings_title#:#Título
+object_settings_description#:#Descripción
+object_settings_online#:#En línea
+object_settings_online_info#:#AI Chat estará disponible para los usuarios cuando esta opción esté habilitada.
+object_settings_api_key#:#Clave API
+object_settings_api_key_info#:#Clave API para usar el modelo AI Chat si no está habilitada la clave API global.
+object_settings_disclaimer_text#:#Texto de Descargo de Responsabilidad
+object_settings_disclaimer_text_info#:#Texto que se mostrará en el chat para informar al usuario que está hablando con una inteligencia artificial.
+object_settings_msg_success#:#Configuraciones guardadas exitosamente.
+chat_default_title#:#Nuevo Chat
+front_new_chat_button#:#Nuevo Chat
+front_input_placeholder#:#Escribe un mensaje...
+error_http#:#Error al conectar con la API.
+error_apikey#:#La clave API es inválida.

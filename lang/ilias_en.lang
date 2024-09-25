@@ -18,6 +18,12 @@ config_use_global_api_key#:#Use Global API Key
 config_use_global_api_key_info#:#If this option is enabled, the global API Key will be forced to be used in all API requests, otherwise each AIChat object must have its API Key configured.
 config_streaming_enabled#:#Streaming Enabled
 config_streaming_enabled_info#:#If this option is enabled, the chat will be in streaming mode, which means that the model will respond by typing, making the response slightly faster.
+config_api_selection#:#API to use
+config_api_selection_info#:#API for connecting with the model.
+config_api_selection_openai#:#OpenAI API
+config_api_selection_custom#:#Custom API
+config_api_endpoint#:#API url
+config_api_endpoint_info#:#URL of the API to use.
 config_msg_success#:#Configuration saved successfully.
 object_content#:#Content
 object_settings#:#Settings
@@ -35,5 +41,5 @@ object_settings_msg_success#:#Settings saved successfully.
 chat_default_title#:#New Chat
 front_new_chat_button#:#New Chat
 front_input_placeholder#:#Type a message...
-error_http_openai#:#Error connecting to OpenAI API.
+error_http#:#Error connecting to API.
 error_apikey#:#API Key is invalid.
