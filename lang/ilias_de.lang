@@ -1,0 +1,45 @@
+obj_xaic#:#AI Chat
+objs_xaic#:#AI Chat Objekte
+xaic_new#:#Neuer AI Chat
+objs_xaic_duplicate#:#AI Chat Objekt duplizieren
+xaic_add#:#AI Chat hinzufügen
+config_prompt_selection#:#Prompt-Auswahl
+config_prompt_selection_info#:#Dieses Prompt wird als erste Nachricht in einem Gespräch verwendet. Es wird dem Benutzer nicht angezeigt, aber das Modell berücksichtigt es.
+config_model#:#Modell
+config_model_info#:#Zu verwendendes Sprachmodell.
+config_characters_limit#:#Zeichenlimit
+config_characters_limit_info#:#Die maximale Anzahl von Zeichen, die in einer Nachricht gesendet werden kann.
+config_n_memory_messages#:#Maximale Speicher-Nachrichten
+config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gespräch gespeichert werden.
+config_disclaimer_text#:#Haftungsausschluss-Text
+config_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht, falls das AI-Chat-Objekt keinen eigenen Warntext konfiguriert hat.
+config_global_api_key#:#Globale API-Schlüssel
+config_use_global_api_key#:#Globale API-Schlüssel verwenden
+config_use_global_api_key_info#:#Wenn diese Option aktiviert ist, wird der globale API-Schlüssel für alle API-Anfragen erzwungen. Andernfalls muss jedes AI-Chat-Objekt seinen eigenen API-Schlüssel konfigurieren.
+config_streaming_enabled#:#Streaming aktiviert
+config_streaming_enabled_info#:#Wenn diese Option aktiviert ist, wird der Chat im Streaming-Modus sein, was bedeutet, dass das Modell antwortet, während es tippt, wodurch die Antwort etwas schneller erfolgt.
+config_api_selection#:#Zu verwendende API
+config_api_selection_info#:#API zur Verbindung mit dem Modell.
+config_api_selection_openai#:#OpenAI API
+config_api_selection_custom#:#Benutzerdefinierte API
+config_api_endpoint#:#API-URL
+config_api_endpoint_info#:#URL der zu verwendenden API.
+config_msg_success#:#Konfiguration erfolgreich gespeichert.
+object_content#:#Inhalt
+object_settings#:#Einstellungen
+object_settings_basic#:#Grundeinstellungen
+object_settings_advanced#:#Erweiterte Einstellungen
+object_settings_title#:#Titel
+object_settings_description#:#Beschreibung
+object_settings_online#:#Online
+object_settings_online_info#:#AI Chat wird den Benutzern zur Verfügung stehen, wenn diese Option aktiviert ist.
+object_settings_api_key#:#API-Schlüssel
+object_settings_api_key_info#:#API-Schlüssel für die Verwendung des AI Chat-Modells, wenn der globale API-Schlüssel nicht aktiviert ist.
+object_settings_disclaimer_text#:#Haftungsausschluss-Text
+object_settings_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht.
+object_settings_msg_success#:#Einstellungen erfolgreich gespeichert.
+chat_default_title#:#Neuer Chat
+front_new_chat_button#:#Neuer Chat
+front_input_placeholder#:#Geben Sie eine Nachricht ein...
+error_http#:#Fehler bei der Verbindung zur API.
+error_apikey#:#API-Schlüssel ist ungültig.

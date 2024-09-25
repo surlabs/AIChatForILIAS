@@ -77,14 +77,14 @@ class OpenAI extends LLM
         curl_close($curlSession);
 
         if ($errNo) {
-            ilObjAIChatGUI::sendApiResponse(array("error" => $DIC->language()->txt("rep_robj_xaic_error_http_openai") . ": " . $errMsg), 500);
+            ilObjAIChatGUI::sendApiResponse(array("error" => $DIC->language()->txt("rep_robj_xaic_error_http") . ": " . $errMsg), 500);
         }
 
         if ($httpcode != 200) {
             if ($httpcode === 401) {
                 ilObjAIChatGUI::sendApiResponse(array("error" => $DIC->language()->txt("rep_robj_xaic_error_apikey")), 401);
             } else {
-                ilObjAIChatGUI::sendApiResponse(array("error" => $DIC->language()->txt("rep_robj_xaic_error_http_openai")), $httpcode);
+                ilObjAIChatGUI::sendApiResponse(array("error" => $DIC->language()->txt("rep_robj_xaic_error_http")), $httpcode);
             }
         }
 
