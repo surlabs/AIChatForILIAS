@@ -313,7 +313,7 @@ class AIChat
             "provider" => $this->provider,
             "model" => $this->model,
             "api_key" => $this->api_key,
-            "streaming" => $this->streaming,
+            "streaming" => (int) $this->streaming,
             "url" => $this->url,
             "prompt" => $this->prompt,
             "char_limit" => $this->char_limit,
