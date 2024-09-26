@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace ai;
 
 use objects\Chat;
-use platform\AIChatConfig;
 use platform\AIChatException;
 
 /**
@@ -32,6 +31,28 @@ use platform\AIChatException;
 abstract class LLM
 {
     public abstract function sendChat(Chat $chat);
+    private ?int $max_memory_messages = null;
+    private ?string $prompt = null;
+
+    public function getMaxMemoryMessages(): ?int
+    {
+        return $this->max_memory_messages;
+    }
+
+    public function setMaxMemoryMessages(?int $max_memory_messages): void
+    {
+        $this->max_memory_messages = $max_memory_messages;
+    }
+
+    public function getPrompt(): ?string
+    {
+        return $this->prompt;
+    }
+
+    public function setPrompt(?string $prompt): void
+    {
+        $this->prompt = $prompt;
+    }
 
     /**
      * @throws AIChatException
@@ -47,7 +68,7 @@ abstract class LLM
             ];
         }
 
-        $n_memory_messages = AIChatConfig::get("n_memory_messages");
+        $n_memory_messages = $this->getMaxMemoryMessages();
 
         if (isset($n_memory_messages)) {
             $n_memory_messages = intval($n_memory_messages);
@@ -59,7 +80,7 @@ abstract class LLM
             $messages = array_slice($messages, -$n_memory_messages);
         }
 
-        $prompt = AIChatConfig::get("prompt_selection");
+        $prompt = $this->getPrompt();
 
         if (isset($prompt) && !empty(trim($prompt))) {
             array_unshift($messages, [

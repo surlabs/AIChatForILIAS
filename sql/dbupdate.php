@@ -136,3 +136,51 @@ if ($db->tableExists('xaic_config')) {
     }
 }
 ?>
+<#3>
+<?php
+global $DIC;
+$db = $DIC->database();
+if ($db->tableExists('xaic_objects')) {
+    $db->addTableColumn('xaic_objects', 'provider', [
+        'type' => 'text',
+        'length' => 250,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'model', [
+        'type' => 'text',
+        'length' => 250,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'streaming', [
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'url', [
+        'type' => 'text',
+        'length' => 250,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'prompt', [
+        'type' => 'text',
+        'length' => 4000,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'char_limit', [
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => false
+    ]);
+
+    $db->addTableColumn('xaic_objects', 'max_memory_messages', [
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => false
+    ]);
+}
+?>

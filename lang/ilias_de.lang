@@ -23,6 +23,7 @@ config_openai#:#OpenAI
 config_url#:#URL
 config_url_info#:#URL der zu verwendenden API.
 config_custom#:#Custom
+config_default#:#Standard
 config_msg_success#:#Konfiguration erfolgreich gespeichert.
 object_content#:#Inhalt
 object_settings#:#Einstellungen
