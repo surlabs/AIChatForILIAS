@@ -16,12 +16,13 @@ config_disclaimer_text_info#:#Texto que se mostrará en el chat para informar al
 config_global_api_key#:#Clave API Global
 config_streaming_enabled#:#Transmisión Activada
 config_streaming_enabled_info#:#Si esta opción está activada, el chat estará en modo de transmisión, lo que significa que el modelo responderá mientras escribe, haciendo que la respuesta sea ligeramente más rápida.
-config_api_selection#:#API a utilizar
-config_api_selection_info#:#API para conectarse con el modelo.
-config_api_selection_openai#:#API de OpenAI
-config_api_selection_custom#:#API Personalizada
-config_api_endpoint#:#URL de la API
-config_api_endpoint_info#:#URL de la API a utilizar.
+config_provider#:#Proveedor
+config_api_section#:#Configuración API
+config_general_section#:#Configuración general
+config_openai#:#AbrirAI
+config_url#:#URL
+config_url_info#:#URL de la API a utilizar
+config_custom#:#Personalizado
 config_msg_success#:#Configuración guardada exitosamente.
 object_content#:#Contenido
 object_settings#:#Configuraciones

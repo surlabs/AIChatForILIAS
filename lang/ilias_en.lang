@@ -16,12 +16,13 @@ config_disclaimer_text_info#:#Text that will be shown in the chat to inform the 
 config_global_api_key#:#Global API Key
 config_streaming_enabled#:#Streaming Enabled
 config_streaming_enabled_info#:#If this option is enabled, the chat will be in streaming mode, which means that the model will respond by typing, making the response slightly faster.
-config_api_selection#:#API to use
-config_api_selection_info#:#API for connecting with the model.
-config_api_selection_openai#:#OpenAI API
-config_api_selection_custom#:#Custom API
-config_api_endpoint#:#API url
-config_api_endpoint_info#:#URL of the API to use.
+config_provider#:#Provider
+config_api_section#:#API Configuration
+config_general_section#:#General Configuration
+config_openai#:#OpenAI
+config_url#:#URL
+config_url_info#:#URL of the API to use.
+config_custom#:#Custom
 config_msg_success#:#Configuration saved successfully.
 object_content#:#Content
 object_settings#:#Settings

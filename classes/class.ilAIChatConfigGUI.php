@@ -78,7 +78,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 "openai" => $this->buildOpenAIGroup(),
                 "custom" => $this->buildCustomGroup()
             ),
-            "Traducir: Provider"
+            $this->plugin_object->txt('config_provider')
         )->withValue(AIChatConfig::get("llm_provider") != "" ? AIChatConfig::get("llm_provider") : "openai")->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('llm_provider', $v[0]);
@@ -89,7 +89,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             array(
                 $provider
             ),
-            "Traducir: API Section"
+            $this->plugin_object->txt('config_api_section')
         );
 
         $prompt_selection = $this->factory->input()->field()->textarea(
@@ -133,7 +133,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 $n_memory_messages,
                 $disclaimer_text,
             ),
-            "Traducir: General Section"
+            $this->plugin_object->txt('config_general_section')
         );
 
         return array(
@@ -194,7 +194,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 $global_api_key,
                 $streaming_enabled
             ),
-            "Traducir: OpenAI"
+            $this->plugin_object->txt('config_openai')
         );
     }
 
@@ -204,8 +204,8 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     private function buildCustomGroup(): Group
     {
         $url = $this->factory->input()->field()->text(
-            "Traducir: URL",
-            "Traducir: URL Info"
+            $this->plugin_object->txt('config_url'),
+            $this->plugin_object->txt('config_url_info')
         )->withValue((string) AIChatConfig::get("llm_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('llm_url', $v);
@@ -235,7 +235,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 $model,
                 $global_api_key
             ),
-            "Traducir: Custom"
+            $this->plugin_object->txt('config_custom')
         );
     }
 
