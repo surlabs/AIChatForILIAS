@@ -101,8 +101,8 @@ class AIChat
      */
     public function getModel(bool $strict = false): string
     {
-        if ((empty($this->model) || $this->provider == "default") && !$strict) {
-            return AIChatConfig::get("llm_model") ?? "davinci";
+        if ((empty($this->model) || $this->getProvider(true) == "default") && !$strict) {
+            return AIChatConfig::get("llm_model") ?? "openai";
         }
 
         return $this->model;
@@ -118,7 +118,7 @@ class AIChat
      */
     public function getApiKey(bool $strict = false): string
     {
-        if ((empty($this->api_key) || $this->provider == "default") && !$strict) {
+        if ((empty($this->api_key) || $this->getProvider(true) == "default") && !$strict) {
             return AIChatConfig::get("global_api_key");
         }
 
@@ -135,8 +135,8 @@ class AIChat
      */
     public function isStreaming(bool $strict = false): bool
     {
-        if ((isset($this->streaming) || !$this->streaming || $this->provider == "default") && !$strict) {
-            if (AIChatConfig::get("llm_provider") == "openai") {
+        if ((isset($this->streaming) || !$this->streaming || $this->getProvider(true) == "default") && !$strict) {
+            if ($this->getProvider() == "openai") {
                 return (bool) AIChatConfig::get("streaming_enabled");
             } else {
                 return false;
@@ -156,7 +156,7 @@ class AIChat
      */
     public function getUrl(bool $strict = false): string
     {
-        if ((empty($this->url) || $this->provider == "default") && !$strict) {
+        if ((empty($this->url) || $this->getProvider(true) == "default") && !$strict) {
             return AIChatConfig::get("llm_url");
         }
 
