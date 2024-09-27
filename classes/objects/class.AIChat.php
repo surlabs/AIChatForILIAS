@@ -84,7 +84,7 @@ class AIChat
      */
     public function getProvider(bool $strict = false): string
     {
-        if (empty($this->provider) && !$strict) {
+        if ((empty($this->provider) || $this->provider == "default") && !$strict) {
             return AIChatConfig::get("llm_provider") != "" ? AIChatConfig::get("llm_provider") : "openai";
         }
 
@@ -101,7 +101,7 @@ class AIChat
      */
     public function getModel(bool $strict = false): string
     {
-        if (empty($this->model) && !$strict) {
+        if ((empty($this->model) || $this->provider == "default") && !$strict) {
             return AIChatConfig::get("llm_model") ?? "davinci";
         }
 
@@ -118,7 +118,7 @@ class AIChat
      */
     public function getApiKey(bool $strict = false): string
     {
-        if (empty($this->api_key) && !$strict) {
+        if ((empty($this->api_key) || $this->provider == "default") && !$strict) {
             return AIChatConfig::get("global_api_key");
         }
 
@@ -135,8 +135,12 @@ class AIChat
      */
     public function isStreaming(bool $strict = false): bool
     {
-        if (!isset($this->streaming) && !$strict) {
-            return (bool) AIChatConfig::get("streaming_enabled");
+        if ((isset($this->streaming) || !$this->streaming || $this->provider == "default") && !$strict) {
+            if (AIChatConfig::get("llm_provider") == "openai") {
+                return (bool) AIChatConfig::get("streaming_enabled");
+            } else {
+                return false;
+            }
         }
 
         return $this->streaming ?? false;
@@ -152,7 +156,7 @@ class AIChat
      */
     public function getUrl(bool $strict = false): string
     {
-        if (empty($this->url) && !$strict) {
+        if ((empty($this->url) || $this->provider == "default") && !$strict) {
             return AIChatConfig::get("llm_url");
         }
 
@@ -374,10 +378,11 @@ class AIChat
                     $this->llm->setApiKey($this->getApiKey());
                     $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
                     $this->llm->setPrompt($this->getPrompt());
+                    $this->llm->setStreaming($this->isStreaming());
                     break;
                 case "custom":
                     $this->llm = new CustomAI($model);
-                    $this->llm->setApiKey($this->getApiKey());
+//                    $this->llm->setApiKey($this->getApiKey());
                     $this->llm->setUrl($this->getURL());
                     $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
                     $this->llm->setPrompt($this->getPrompt());

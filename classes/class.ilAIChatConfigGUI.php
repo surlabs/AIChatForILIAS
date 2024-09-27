@@ -221,19 +221,19 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             }
         ))->withRequired(true);
 
-        $global_api_key = $this->factory->input()->field()->text(
-            $this->plugin_object->txt('config_global_api_key')
-        )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('global_api_key', $v);
-            }
-        ));
+//        $global_api_key = $this->factory->input()->field()->text(
+//            $this->plugin_object->txt('config_global_api_key')
+//        )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+//            function ($v) {
+//                AIChatConfig::set('global_api_key', $v);
+//            }
+//        ));
 
         return $this->factory->input()->field()->group(
             array(
                 $url,
                 $model,
-                $global_api_key
+//                $global_api_key
             ),
             $this->plugin_object->txt('config_custom')
         );

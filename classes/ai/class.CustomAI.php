@@ -11,7 +11,7 @@ class CustomAI extends LLM
 {
     private string $url;
     private string $model;
-    private string $apiKey;
+//    private string $apiKey;
 
     public function __construct(string $model)
     {
@@ -23,10 +23,15 @@ class CustomAI extends LLM
         $this->url = $url;
     }
 
-    public function setApiKey(string $apiKey): void
-    {
-        $this->apiKey = $apiKey;
-    }
+//    public function getApiKey(): string
+//    {
+//        return $this->apiKey;
+//    }
+
+//    public function setApiKey(string $apiKey): void
+//    {
+//        $this->apiKey = $apiKey;
+//    }
 
     /**
      * @throws AIChatException
@@ -38,7 +43,7 @@ class CustomAI extends LLM
         $payload = json_encode([
             "messages" => $this->chatToMessagesArray($chat),
             "model" => $this->model,
-            "temperature" => 0.5
+            "stream" => false
         ]);
 
         $curlSession = curl_init();
@@ -49,7 +54,7 @@ class CustomAI extends LLM
         curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apiKey
+//            'Authorization: Bearer ' . $this->getApiKey()
         ]);
 
         if (\ilProxySettings::_getInstance()->isActive()) {
@@ -78,6 +83,6 @@ class CustomAI extends LLM
         }
 
         $decodedResponse = json_decode($response, true);
-        return $decodedResponse['choices'][0]['message']['content'] ?? "";
+        return $decodedResponse['message']['content'] ?? "";
     }
 }

@@ -18,17 +18,22 @@ class OpenAI extends LLM
         $this->model = $model;
     }
 
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
     public function setApiKey(string $apiKey): void
     {
         $this->apiKey = $apiKey;
     }
 
-    public function setStreamingEnabled(bool $streaming): void
+    public function setStreaming(bool $streaming): void
     {
         $this->streaming = $streaming;
     }
 
-    public function isStreamingEnabled(): bool
+    public function isStreaming(): bool
     {
         return $this->streaming;
     }
@@ -46,7 +51,7 @@ class OpenAI extends LLM
             "messages" => $this->chatToMessagesArray($chat),
             "model" => $this->model,
             "temperature" => 0.5,
-            "stream" => $this->isStreamingEnabled()
+            "stream" => $this->isStreaming()
         ]);
 
         $curlSession = curl_init();
@@ -54,10 +59,10 @@ class OpenAI extends LLM
         curl_setopt($curlSession, CURLOPT_URL, $apiUrl);
         curl_setopt($curlSession, CURLOPT_POST, true);
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$this->isStreamingEnabled());
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$this->isStreaming());
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apiKey
+            'Authorization: Bearer ' . $this->getApiKey()
         ]);
 
         if (\ilProxySettings::_getInstance()->isActive()) {
@@ -69,7 +74,7 @@ class OpenAI extends LLM
 
         $responseContent = '';
 
-        if ($this->isStreamingEnabled()) {
+        if ($this->isStreaming()) {
             curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) use (&$responseContent) {
                 $responseContent .= $chunk;
                 echo $chunk;
@@ -97,7 +102,7 @@ class OpenAI extends LLM
             }
         }
 
-        if (!$this->isStreamingEnabled()) {
+        if (!$this->isStreaming()) {
             $decodedResponse = json_decode($response, true);
             return $decodedResponse['choices'][0]['message']['content'] ?? "";
         }

@@ -325,19 +325,19 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             }
         ))->withRequired(true);
 
-        $global_api_key = $this->factory->input()->field()->text(
-            $this->plugin->txt('config_global_api_key')
-        )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setApiKey($v);
-            }
-        ))->withRequired(true);
+//        $global_api_key = $this->factory->input()->field()->text(
+//            $this->plugin->txt('config_global_api_key')
+//        )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+//            function ($v) use ($aiChat) {
+//                $aiChat->setApiKey($v);
+//            }
+//        ))->withRequired(true);
 
         return $this->factory->input()->field()->group(
             array(
                 $url,
                 $model,
-                $global_api_key
+//                $global_api_key
             ),
             $this->plugin->txt('config_custom')
         );
@@ -386,7 +386,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                     "prompt_selection" => $aiChat->getPrompt() ?? false,
                     "characters_limit" => $aiChat->getCharLimit() ?? false,
                     "n_memory_messages" => $aiChat->getMaxMemoryMessages() ?? false,
-                    "streaming_enabled" => $aiChat->isStreamingEnabled() ?? false,
+                    "streaming_enabled" => $aiChat->isStreaming() ?? false,
                     "lang" => $this->lng->getUserLanguage(),
                     "translations" => $this->loadFrontLang()
                 );
