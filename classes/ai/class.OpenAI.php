@@ -5,22 +5,37 @@ namespace ai;
 
 use ilObjAIChatGUI;
 use objects\Chat;
-use platform\AIChatConfig;
 use platform\AIChatException;
 
 class OpenAI extends LLM
 {
     private string $model;
     private string $apiKey;
+    private bool $streaming = false;
 
     public function __construct(string $model)
     {
         $this->model = $model;
     }
 
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
     public function setApiKey(string $apiKey): void
     {
         $this->apiKey = $apiKey;
+    }
+
+    public function setStreaming(bool $streaming): void
+    {
+        $this->streaming = $streaming;
+    }
+
+    public function isStreaming(): bool
+    {
+        return $this->streaming;
     }
 
     /**
@@ -31,13 +46,12 @@ class OpenAI extends LLM
         global $DIC;
 
         $apiUrl = 'https://api.openai.com/v1/chat/completions';
-        $streaming = boolval(AIChatConfig::get("streaming_enabled")) ?? false;
 
         $payload = json_encode([
             "messages" => $this->chatToMessagesArray($chat),
             "model" => $this->model,
             "temperature" => 0.5,
-            "stream" => $streaming
+            "stream" => $this->isStreaming()
         ]);
 
         $curlSession = curl_init();
@@ -45,10 +59,10 @@ class OpenAI extends LLM
         curl_setopt($curlSession, CURLOPT_URL, $apiUrl);
         curl_setopt($curlSession, CURLOPT_POST, true);
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$streaming);
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, !$this->isStreaming());
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apiKey
+            'Authorization: Bearer ' . $this->getApiKey()
         ]);
 
         if (\ilProxySettings::_getInstance()->isActive()) {
@@ -60,7 +74,7 @@ class OpenAI extends LLM
 
         $responseContent = '';
 
-        if ($streaming) {
+        if ($this->isStreaming()) {
             curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) use (&$responseContent) {
                 $responseContent .= $chunk;
                 echo $chunk;
@@ -88,7 +102,7 @@ class OpenAI extends LLM
             }
         }
 
-        if (!$streaming) {
+        if (!$this->isStreaming()) {
             $decodedResponse = json_decode($response, true);
             return $decodedResponse['choices'][0]['message']['content'] ?? "";
         }

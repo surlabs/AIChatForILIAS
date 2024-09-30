@@ -14,16 +14,16 @@ config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gesp
 config_disclaimer_text#:#Haftungsausschluss-Text
 config_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht, falls das AI-Chat-Objekt keinen eigenen Warntext konfiguriert hat.
 config_global_api_key#:#Globale API-Schlüssel
-config_use_global_api_key#:#Globale API-Schlüssel verwenden
-config_use_global_api_key_info#:#Wenn diese Option aktiviert ist, wird der globale API-Schlüssel für alle API-Anfragen erzwungen. Andernfalls muss jedes AI-Chat-Objekt seinen eigenen API-Schlüssel konfigurieren.
 config_streaming_enabled#:#Streaming aktiviert
 config_streaming_enabled_info#:#Wenn diese Option aktiviert ist, wird der Chat im Streaming-Modus sein, was bedeutet, dass das Modell antwortet, während es tippt, wodurch die Antwort etwas schneller erfolgt.
-config_api_selection#:#Zu verwendende API
-config_api_selection_info#:#API zur Verbindung mit dem Modell.
-config_api_selection_openai#:#OpenAI API
-config_api_selection_custom#:#Benutzerdefinierte API
-config_api_endpoint#:#API-URL
-config_api_endpoint_info#:#URL der zu verwendenden API.
+config_provider#:#Provider
+config_api_section#:#API-Konfiguration
+config_general_section#:#Allgemeine Konfiguration
+config_openai#:#OpenAI
+config_url#:#URL
+config_url_info#:#URL der zu verwendenden API.
+config_custom#:#Custom
+config_default#:#Standard
 config_msg_success#:#Konfiguration erfolgreich gespeichert.
 object_content#:#Inhalt
 object_settings#:#Einstellungen

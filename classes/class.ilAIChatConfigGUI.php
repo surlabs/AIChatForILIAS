@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 
 use ILIAS\UI\Factory;
+use ILIAS\UI\Component\Input\Field\Group;
 use ILIAS\UI\Renderer;
 use platform\AIChatConfig;
 use platform\AIChatException;
@@ -72,31 +73,31 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
      */
     private function buildForm(): array
     {
+        $provider = $this->factory->input()->field()->switchableGroup(
+            array(
+                "openai" => $this->buildOpenAIGroup(),
+                "custom" => $this->buildCustomGroup()
+            ),
+            $this->plugin_object->txt('config_provider')
+        )->withValue(AIChatConfig::get("llm_provider") != "" ? AIChatConfig::get("llm_provider") : "openai")->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('llm_provider', $v[0]);
+            }
+        ))->withRequired(true);
+
+        $api_section = $this->factory->input()->field()->section(
+            array(
+                $provider
+            ),
+            $this->plugin_object->txt('config_api_section')
+        );
+
         $prompt_selection = $this->factory->input()->field()->textarea(
             $this->plugin_object->txt('config_prompt_selection'),
             $this->plugin_object->txt('config_prompt_selection_info')
         )->withValue((string) AIChatConfig::get("prompt_selection"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('prompt_selection', $v);
-            }
-        ))->withRequired(true);
-
-        $model = $this->factory->input()->field()->select(
-            $this->plugin_object->txt('config_model'),
-            array(
-                "openai_gpt-4o" => "GPT-4o",
-                "openai_gpt-4o-mini" => "GPT-4o mini",
-                "openai_gpt-4-turbo" => "GPT-4 Turbo",
-                "openai_gpt-4" => "GPT-4",
-                "openai_gpt-3.5-turbo" => "GPT-3.5 Turbo",
-                "local_meta-llama-3.1-70b-instruct" => "meta-llama-3.1-70b-instruct",
-                "local_codellama-7b" => "codellama-7b",
-                "local_meta-llama-3.1-8b-instruct" => "meta-llama-3.1-8b-instruct"
-            ),
-            $this->plugin_object->txt('config_model_info')
-        )->withValue((string) AIChatConfig::get("llm_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('llm_model', $v);
             }
         ))->withRequired(true);
 
@@ -125,34 +126,58 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             }
         ))->withRequired(true);
 
+        $general_section = $this->factory->input()->field()->section(
+            array(
+                $prompt_selection,
+                $characters_limit,
+                $n_memory_messages,
+                $disclaimer_text,
+            ),
+            $this->plugin_object->txt('config_general_section')
+        );
+
+        return array(
+            $api_section,
+            $general_section
+        );
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function buildOpenAIGroup(): Group
+    {
+        $models = array(
+            "gpt-4o" => "GPT-4o",
+            "gpt-4o-mini" => "GPT-4o mini",
+            "gpt-4-turbo" => "GPT-4 Turbo",
+            "gpt-4" => "GPT-4",
+            "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+        );
+
+        $model = $this->factory->input()->field()->select(
+            $this->plugin_object->txt('config_model'),
+            $models,
+            $this->plugin_object->txt('config_model_info')
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('llm_model', $v);
+            }
+        ))->withRequired(true);
+
+        if (AIChatConfig::get("llm_model") != "") {
+            if (array_key_exists(AIChatConfig::get("llm_model"), $models)) {
+                $model = $model->withValue(AIChatConfig::get("llm_model"));
+            }
+        }
+
         $global_api_key = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_global_api_key')
         )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('global_api_key', $v);
-
-                if (isset($v) && $v != null && $v != "") {
-                    AIChatConfig::set('use_global_api_key', "1");
-                }
             }
         ))->withRequired(true);
-
-        $use_global_api_key = $this->factory->input()->field()->optionalGroup(array(
-            "global_api_key" => $global_api_key
-        ), $this->plugin_object->txt('config_use_global_api_key'), $this->plugin_object->txt('config_use_global_api_key_info')
-        )->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                if ($v == null) {
-                    AIChatConfig::set('use_global_api_key', "0");
-
-                    AIChatConfig::set('global_api_key', "");
-                }
-            }
-        ));
-
-        if (AIChatConfig::get("use_global_api_key") != "1") {
-            $use_global_api_key = $use_global_api_key->withValue(null);
-        }
 
         $streaming_enabled = $this->factory->input()->field()->checkbox(
             $this->plugin_object->txt('config_streaming_enabled'),
@@ -163,14 +188,54 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             }
         ));
 
-        return array(
-            $prompt_selection,
-            $model,
-            $characters_limit,
-            $n_memory_messages,
-            $disclaimer_text,
-            $use_global_api_key,
-            $streaming_enabled
+        return $this->factory->input()->field()->group(
+            array(
+                $model,
+                $global_api_key,
+                $streaming_enabled
+            ),
+            $this->plugin_object->txt('config_openai')
+        );
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    private function buildCustomGroup(): Group
+    {
+        $url = $this->factory->input()->field()->text(
+            $this->plugin_object->txt('config_url'),
+            $this->plugin_object->txt('config_url_info')
+        )->withValue((string) AIChatConfig::get("llm_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('llm_url', $v);
+            }
+        ))->withRequired(true);
+
+        $model = $this->factory->input()->field()->text(
+            $this->plugin_object->txt('config_model'),
+            $this->plugin_object->txt('config_model_info')
+        )->withValue((string) AIChatConfig::get("llm_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('llm_model', $v);
+            }
+        ))->withRequired(true);
+
+//        $global_api_key = $this->factory->input()->field()->text(
+//            $this->plugin_object->txt('config_global_api_key')
+//        )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+//            function ($v) {
+//                AIChatConfig::set('global_api_key', $v);
+//            }
+//        ));
+
+        return $this->factory->input()->field()->group(
+            array(
+                $url,
+                $model,
+//                $global_api_key
+            ),
+            $this->plugin_object->txt('config_custom')
         );
     }
 

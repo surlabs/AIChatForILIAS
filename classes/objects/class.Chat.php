@@ -23,8 +23,6 @@ namespace objects;
 
 use DateTime;
 use Exception;
-use ilAIChatPlugin;
-use platform\AIChatConfig;
 use platform\AIChatDatabase;
 use platform\AIChatException;
 
@@ -68,6 +66,7 @@ class Chat
      * @var Message[]
      */
     private array $messages = array();
+    private ?int $max_messages = null;
 
     public function __construct(?int $id = null)
     {
@@ -165,6 +164,16 @@ class Chat
         $this->messages[] = $message;
     }
 
+    public function setMaxMessages(int $max_messages): void
+    {
+        $this->max_messages = $max_messages;
+    }
+
+    public function getMaxMessages(): ?int
+    {
+        return $this->max_messages;
+    }
+
     /**
      * @throws AIChatException
      * @throws Exception
@@ -243,7 +252,7 @@ class Chat
             $messages[] = $message->toArray();
         }
 
-        $n_memory_messages = AIChatConfig::get("n_memory_messages");
+        $n_memory_messages = $this->getMaxMessages();
 
         if (isset($n_memory_messages)) {
             $n_memory_messages = intval($n_memory_messages);
