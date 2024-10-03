@@ -135,12 +135,8 @@ class AIChat
      */
     public function isStreaming(bool $strict = false): bool
     {
-        if ((isset($this->streaming) || !$this->streaming || $this->getProvider(true) == "default") && !$strict) {
-            if ($this->getProvider() == "openai") {
-                return (bool) AIChatConfig::get("streaming_enabled");
-            } else {
-                return false;
-            }
+        if (!$strict && $this->getProvider() == "openai") {
+            return $this->streaming ?? AIChatConfig::get("streaming") == "1";
         }
 
         return $this->streaming ?? false;
