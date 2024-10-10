@@ -1,16 +1,29 @@
 obj_xaic#:#AI Chat
 objs_xaic#:#AI Chat Objects
 xaic_new#:#New AI Chat
-objs_xaic_duplicate#:#Duplicate AI Chat Object
+obj_xaic_duplicate#:#Copy AI Chat
+objs_xaic_duplicate#:#Copy AI Chat
 xaic_add#:#Add AI Chat
-config_prompt_selection#:#Prompt Selection
-config_prompt_selection_info#:#This prompt will be used as the initial message of a conversation, it will not be visible to the user, but the model will take it into account.
+xaic_read#:#Read: Users can read AI Chat
+xaic_write#:#Edit Settings: USers can edit AI Chat settings
+xaic_delete#:#Delete: Users can move or delete AI Chat
+xaic_visible#:#Visible: AI Chat is visible
+xaic_edit_permission#:#Edit permission settings
+xaic_copy#:#Copy: Users can copy AI Chat
+crs_create_xaic#:#Create AI Chat
+grp_create_xaic#:#Create AI Chat
+fold_create_xaic#:#Create AI Chat
+root_create_xaic#:#Create AI Chat
+cat_create_xaic#:#Create AI Chat
+rbac_create_xaic#:#Create AI Chat
+config_prompt_selection#:#System Prompt
+config_prompt_selection_info#:#This prompt will be used as the initial message of a conversation, it will not be visible to the user, but the model will prioritize it.
 config_model#:#Model
 config_model_info#:#Language model to use.
-config_characters_limit#:#Characters Limit
+config_characters_limit#:#Character Limit
 config_characters_limit_info#:#The maximum number of characters you can send in a single message.
-config_n_memory_messages#:#Max Memory Messages
-config_n_memory_messages_info#:#The maximum number of messages that will be stored in the conversation.
+config_n_memory_messages#:#Number of previous messages in the prompt.
+config_n_memory_messages_info#:#Text displayed in the chat to inform the user that they are interacting with artificial intelligence, in case the AI-Chat object has not configured a warning text.
 config_disclaimer_text#:#Disclaimer Text
 config_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence in case the AIChat object does not have a warning text configured.
 config_global_api_key#:#Global API Key
@@ -32,14 +45,14 @@ object_settings_advanced#:#Advanced Settings
 object_settings_title#:#Title
 object_settings_description#:#Description
 object_settings_online#:#Online
-object_settings_online_info#:#AI Chat will be available to users when this option is enabled.
+object_settings_online_info#:#Only when the AI-Chat is online can users access the chat. Otherwise, only administrators and roles with the "Edit settings" permission can access the chat.
 object_settings_api_key#:#API Key
-object_settings_api_key_info#:#API Key to use the AI Chat model if the global API Key is not enabled.
+object_settings_api_key_info#:#API key for using the AI-Chat model if the global API key is not enabled.
 object_settings_disclaimer_text#:#Disclaimer Text
-object_settings_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence.
+object_settings_disclaimer_text_info#:#Text displayed in the chat to inform the user that they are interacting with artificial intelligence.
 object_settings_msg_success#:#Settings saved successfully.
 chat_default_title#:#New Chat
 front_new_chat_button#:#New Chat
-front_input_placeholder#:#Type a message...
-error_http#:#Error connecting to API.
+front_input_placeholder#:#Enter prompt... (Note: do not enter and process personal data!)
+error_http#:#Error connecting to the OpenAI API.
 error_apikey#:#API Key is invalid.

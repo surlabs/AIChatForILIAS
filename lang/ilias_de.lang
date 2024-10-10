@@ -1,21 +1,37 @@
-obj_xaic#:#AI Chat
-objs_xaic#:#AI Chat Objekte
-xaic_new#:#Neuer AI Chat
-objs_xaic_duplicate#:#AI Chat Objekt duplizieren
-xaic_add#:#AI Chat hinzufügen
-config_prompt_selection#:#Prompt-Auswahl
-config_prompt_selection_info#:#Dieses Prompt wird als erste Nachricht in einem Gespräch verwendet. Es wird dem Benutzer nicht angezeigt, aber das Modell berücksichtigt es.
+obj_xaic#:#AI-Chat
+objs_xaic#:#AI-Chats
+xaic_new#:#Neuer AI-Chat
+obj_xaic_duplicate#:#AI-Chat kopieren
+objs_xaic_duplicate#:#AI-Chat kopieren
+xaic_add#:#AI-Chat hinzufügen
+xaic_read#:#Lesezugriff: AI-Chat lesen
+xaic_write#:#Einstellungen bearbeiten: AI-Chat bearbeiten
+xaic_delete#:#Löschen: AI-Chat löschen oder verschieben
+xaic_visible#:#Anzeigen: AI-Chat anzeigen
+xaic_edit_permission#:#Rechteeinstellungen bearbeiten
+xaic_copy#:#Kopieren: AI-Chat kopieren
+crs_create_xaic#:#AI-Chat anlegen
+grp_create_xaic#:#AI-Chat anlegen
+fold_create_xaic#:#AI-Chat anlegen
+root_create_xaic#:#AI-Chat anlegen
+cat_create_xaic#:#AI-Chat anlegen
+rbac_create_xaic#:#AI-Chat anlegen
+config_prompt_selection#:#System-Prompt
+config_prompt_selection_info#:#Dieser Prompt wird als initiale Nachricht eines Gesprächs verwendet, er wird für die Benutzer nicht sichtbar sein, das Modell wird ihn ihn jedoch prioritär berücksichtigen.
 config_model#:#Modell
 config_model_info#:#Zu verwendendes Sprachmodell.
 config_characters_limit#:#Zeichenlimit
-config_characters_limit_info#:#Die maximale Anzahl von Zeichen, die in einer Nachricht gesendet werden kann.
-config_n_memory_messages#:#Maximale Speicher-Nachrichten
-config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gespräch gespeichert werden.
+config_characters_limit_info#:#Die maximale Anzahl von Zeichen, die Sie in einer einzelnen Nachricht senden können.
+config_n_memory_messages#:#Anzahl vorheriger Nachrichten im Prompt.
+config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gespräch gespeichert und an die KI weitergegeben werden.
 config_disclaimer_text#:#Haftungsausschluss-Text
 config_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht, falls das AI-Chat-Objekt keinen eigenen Warntext konfiguriert hat.
 config_global_api_key#:#Globale API-Schlüssel
+config_use_global_api_key#:#Globalen API-Schlüssel verwenden
+config_use_global_api_key_info#:#Wenn diese Option aktiviert ist, wird der globale API-Schlüssel in allen API-Anfragen verwendet, andernfalls muss jedes AI-Chat-Objekt seinen API-Schlüssel konfiguriert haben.
 config_streaming_enabled#:#Streaming aktiviert
-config_streaming_enabled_info#:#Wenn diese Option aktiviert ist, wird der Chat im Streaming-Modus sein, was bedeutet, dass das Modell antwortet, während es tippt, wodurch die Antwort etwas schneller erfolgt.
+config_streaming_enabled_info#:#Wenn diese Option aktiviert ist, wird der Chat im Streaming-Modus sein, was bedeutet, dass das Modell antwortet, während es tippt, was die Antwort etwas schneller macht.
+config_msg_success#:#Konfiguration erfolgreich gespeichert.
 config_provider#:#Provider
 config_api_section#:#API-Konfiguration
 config_general_section#:#Allgemeine Konfiguration
@@ -32,14 +48,14 @@ object_settings_advanced#:#Erweiterte Einstellungen
 object_settings_title#:#Titel
 object_settings_description#:#Beschreibung
 object_settings_online#:#Online
-object_settings_online_info#:#AI Chat wird den Benutzern zur Verfügung stehen, wenn diese Option aktiviert ist.
+object_settings_online_info#:#Nur wenn der AI-Chat online ist, können Benutzer auf den Chat zugreifen. Andernfalls können nur Administratoren und Rollen mit dem Recht "Einstellungen bearbeiten" aus den Chat zugreifen.
 object_settings_api_key#:#API-Schlüssel
-object_settings_api_key_info#:#API-Schlüssel für die Verwendung des AI Chat-Modells, wenn der globale API-Schlüssel nicht aktiviert ist.
+object_settings_api_key_info#:#API-Schlüssel zur Verwendung des AI-Chat-Modells, falls der globale API-Schlüssel nicht aktiviert ist.
 object_settings_disclaimer_text#:#Haftungsausschluss-Text
 object_settings_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht.
 object_settings_msg_success#:#Einstellungen erfolgreich gespeichert.
 chat_default_title#:#Neuer Chat
 front_new_chat_button#:#Neuer Chat
-front_input_placeholder#:#Geben Sie eine Nachricht ein...
-error_http#:#Fehler bei der Verbindung zur API.
+front_input_placeholder#:#Prompt eingeben... (Hinweis: es dürfen keine personenbezogenen Daten eingegeben und verarbeitet werden!)
+error_http#:#Fehler beim Verbinden mit der OpenAI-API.
 error_apikey#:#API-Schlüssel ist ungültig.
