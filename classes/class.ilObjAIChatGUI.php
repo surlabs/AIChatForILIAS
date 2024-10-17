@@ -150,6 +150,40 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
          */
         $aiChat = $this->object->getAIChat();
 
+        $title_input = $this->factory->input()->field()->text(
+            $this->plugin->txt('object_settings_title')
+        )->withValue($this->object->getTitle())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->setTitle($v);
+            }
+        ));
+
+        $description_input = $this->factory->input()->field()->textarea(
+            $this->plugin->txt('object_settings_description')
+        )->withValue($this->object->getDescription())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                $this->object->setDescription($v);
+            }
+        ));
+
+        $online_input = $this->factory->input()->field()->checkbox(
+            $this->plugin->txt('object_settings_online'),
+            $this->plugin->txt('object_settings_online_info')
+        )->withValue($aiChat->isOnline())->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use ($aiChat) {
+                $aiChat->setOnline($v);
+            }
+        ));
+
+        $basic_section = $this->factory->input()->field()->section(
+            array(
+                $title_input,
+                $description_input,
+                $online_input
+            ),
+            $this->plugin->txt('object_settings_basic')
+        );
+
         $provider = $this->factory->input()->field()->switchableGroup(
             array(
                 "default" => $this->factory->input()->field()->group(array(), $this->plugin->txt('config_default')),
@@ -231,8 +265,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         );
 
         return array(
+            $basic_section,
             $api_section,
-            $general_section
+            $general_section,
         );
     }
 
