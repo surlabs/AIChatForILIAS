@@ -63,6 +63,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
     public function performCommand(string $cmd): void
     {
+        $this->setTitleAndDescription();
         $this->{$cmd}();
     }
 
