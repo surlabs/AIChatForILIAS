@@ -37,12 +37,9 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     protected \ILIAS\Refinery\Factory $refinery;
     protected ilCtrl $control;
     protected ilGlobalTemplateInterface $tpl;
+    protected ilTabsGUI $tabs;
     protected $request;
 
-    /**
-     * @throws AIChatException
-     * @throws ilException
-     */
     public function performCommand($cmd): void
     {
         global $DIC;
@@ -52,196 +49,168 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $this->control = $DIC->ctrl();
         $this->tpl = $DIC->ui()->mainTemplate();
         $this->request = $DIC->http()->request();
+        $this->tabs = $DIC->tabs();
 
         switch ($cmd) {
             case "configure":
+            case "configureGeneral":
+            case "configureOpenAI":
+            case "configureOllama":
                 AIChatConfig::load();
-                $this->control->setParameterByClass('ilAIChatConfigGUI', 'cmd', 'configure');
-                $form_action = $this->control->getLinkTargetByClass("ilAIChatConfigGUI", "configure");
-                $rendered = $this->renderForm($form_action, $this->buildForm());
+                $this->initTabs();
+                $this->control->setParameterByClass('ilAIChatConfigGUI', 'cmd', $cmd);
+                $form_action = $this->control->getLinkTargetByClass("ilAIChatConfigGUI", $cmd);
+                $rendered = $this->renderForm($form_action, $this->buildForm($cmd));
                 break;
             default:
                 throw new ilException("command not defined");
-
         }
 
         $this->tpl->setContent($rendered);
     }
 
-    /**
-     * @throws AIChatException
-     */
-    private function buildForm(): array
+    protected function initTabs(): void
     {
-        $provider = $this->factory->input()->field()->switchableGroup(
-            array(
-                "openai" => $this->buildOpenAIGroup(),
-                "custom" => $this->buildCustomGroup()
-            ),
-            $this->plugin_object->txt('config_provider')
-        )->withValue(AIChatConfig::get("llm_provider") != "" ? AIChatConfig::get("llm_provider") : "openai")->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('llm_provider', $v[0]);
-            }
-        ))->withRequired(true);
-
-        $api_section = $this->factory->input()->field()->section(
-            array(
-                $provider
-            ),
-            $this->plugin_object->txt('config_api_section')
+        $this->tabs->addTab(
+            "general",
+            $this->plugin_object->txt("config_general"),
+            $this->control->getLinkTargetByClass("ilAIChatConfigGUI", "configureGeneral")
         );
 
-        $prompt_selection = $this->factory->input()->field()->textarea(
-            $this->plugin_object->txt('config_prompt_selection'),
-            $this->plugin_object->txt('config_prompt_selection_info')
-        )->withValue((string) AIChatConfig::get("prompt_selection"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('prompt_selection', $v);
-            }
-        ))->withRequired(true);
-
-        $characters_limit = $this->factory->input()->field()->numeric(
-            $this->plugin_object->txt('config_characters_limit'), $this->plugin_object->txt('config_characters_limit_info')
-        )->withValue(AIChatConfig::get("characters_limit") != "" ? (int) AIChatConfig::get("characters_limit") : 100)->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('characters_limit', $v);
-            }
-        ))->withRequired(true);
-
-        $n_memory_messages = $this->factory->input()->field()->numeric(
-            $this->plugin_object->txt('config_n_memory_messages'), $this->plugin_object->txt('config_n_memory_messages_info')
-        )->withValue(AIChatConfig::get("config_n_memory_messages") != "" ? (int) AIChatConfig::get("config_n_memory_messages") : 100)->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('n_memory_messages', $v);
-            }
-        ))->withRequired(true);
-
-        $disclaimer_text = $this->factory->input()->field()->textarea(
-            $this->plugin_object->txt('config_disclaimer_text'),
-            $this->plugin_object->txt('config_disclaimer_text_info')
-        )->withValue((string) AIChatConfig::get("disclaimer_text"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('disclaimer_text', $v);
-            }
-        ))->withRequired(true);
-
-        $general_section = $this->factory->input()->field()->section(
-            array(
-                $prompt_selection,
-                $characters_limit,
-                $n_memory_messages,
-                $disclaimer_text,
-            ),
-            $this->plugin_object->txt('config_general_section')
+        $this->tabs->addTab(
+            "openai",
+            $this->plugin_object->txt("config_openai"),
+            $this->control->getLinkTargetByClass("ilAIChatConfigGUI", "configureOpenAI")
         );
 
-        return array(
-            $api_section,
-            $general_section
-        );
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    private function buildOpenAIGroup(): Group
-    {
-        $models = array(
-            "gpt-4o" => "GPT-4o",
-            "gpt-4o-mini" => "GPT-4o mini",
-            "gpt-4-turbo" => "GPT-4 Turbo",
-            "gpt-4" => "GPT-4",
-            "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+        $this->tabs->addTab(
+            "ollama",
+            $this->plugin_object->txt("config_ollama"),
+            $this->control->getLinkTargetByClass("ilAIChatConfigGUI", "configureOllama")
         );
 
-        $model = $this->factory->input()->field()->select(
-            $this->plugin_object->txt('config_model'),
-            $models,
-            $this->plugin_object->txt('config_model_info')
-        )->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('llm_model', $v);
-            }
-        ))->withRequired(true);
-
-        if (AIChatConfig::get("llm_model") != "") {
-            if (array_key_exists(AIChatConfig::get("llm_model"), $models)) {
-                $model = $model->withValue(AIChatConfig::get("llm_model"));
-            }
+        switch($this->control->getCmd()) {
+            case "configureGeneral":
+                $this->tabs->activateTab("general");
+                break;
+            case "configureOpenAI":
+                $this->tabs->activateTab("openai");
+                break;
+            case "configureOllama":
+                $this->tabs->activateTab("ollama");
+                break;
+            default:
+                $this->tabs->activateTab("general");
         }
-
-        $global_api_key = $this->factory->input()->field()->text(
-            $this->plugin_object->txt('config_global_api_key')
-        )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('global_api_key', $v);
-            }
-        ))->withRequired(true);
-
-        $streaming_enabled = $this->factory->input()->field()->checkbox(
-            $this->plugin_object->txt('config_streaming_enabled'),
-            $this->plugin_object->txt('config_streaming_enabled_info')
-        )->withValue((bool) AIChatConfig::get("streaming_enabled"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('streaming_enabled', $v);
-            }
-        ));
-
-        return $this->factory->input()->field()->group(
-            array(
-                $model,
-                $global_api_key,
-                $streaming_enabled
-            ),
-            $this->plugin_object->txt('config_openai')
-        );
     }
 
-    /**
-     * @throws AIChatException
-     */
-    private function buildCustomGroup(): Group
+    private function buildForm(string $cmd): array
     {
-        $url = $this->factory->input()->field()->text(
-            $this->plugin_object->txt('config_url'),
-            $this->plugin_object->txt('config_url_info')
-        )->withValue((string) AIChatConfig::get("llm_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('llm_url', $v);
-            }
-        ))->withRequired(true);
-
-        $model = $this->factory->input()->field()->text(
-            $this->plugin_object->txt('config_model'),
-            $this->plugin_object->txt('config_model_info')
-        )->withValue((string) AIChatConfig::get("llm_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('llm_model', $v);
-            }
-        ))->withRequired(true);
-
-//        $global_api_key = $this->factory->input()->field()->text(
-//            $this->plugin_object->txt('config_global_api_key')
-//        )->withValue((string) AIChatConfig::get("global_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-//            function ($v) {
-//                AIChatConfig::set('global_api_key', $v);
-//            }
-//        ));
-
-        return $this->factory->input()->field()->group(
-            array(
-                $url,
-                $model,
-//                $global_api_key
-            ),
-            $this->plugin_object->txt('config_custom')
-        );
+        switch($cmd) {
+            case "configureGeneral":
+                return $this->buildGeneralSection();
+            case "configureOpenAI":
+                return $this->buildOpenAISection();
+            case "configureOllama":
+                return $this->buildOllamaSection();
+            default:
+                return $this->buildGeneralSection();
+        }
     }
 
-    /**
-     * @throws AIChatException
-     */
+    private function buildGeneralSection(): array {
+        $model_selection = $this->factory->input()->field()->radio(
+            $this->plugin_object->txt("config_model_label"),
+            $this->plugin_object->txt("config_model_info")
+        )
+            ->withOption("gpt4-o", "GPT4o")
+            ->withOption("gpt-3.5 turbo", "GPT 3.5 Turbo")
+            ->withValue("gpt4-o")
+            ->withRequired(true);
+
+        $system_prompt = $this->factory->input()->field()->textarea(
+            $this->plugin_object->txt("config_prompt_label"),
+            $this->plugin_object->txt("config_prompt_info")
+        )->withRequired(true);
+
+        $char_limit = $this->factory->input()->field()->numeric(
+            $this->plugin_object->txt("config_char_limit_label"),
+            $this->plugin_object->txt("config_char_limit_info")
+        );
+
+        $prev_messages = $this->factory->input()->field()->numeric(
+            $this->plugin_object->txt("config_prev_msg_label"),
+            $this->plugin_object->txt("config_prev_msg_info")
+        );
+
+        $disclaimer = $this->factory->input()->field()->textarea(
+            $this->plugin_object->txt("config_disclaimer_label"),
+            $this->plugin_object->txt("config_disclaimer_info")
+        )->withRequired(true);
+
+        return [
+            "general" => $this->factory->input()->field()->section([
+                $model_selection,
+                $system_prompt,
+                $char_limit,
+                $prev_messages,
+                $disclaimer
+            ], $this->plugin_object->txt("config_general_section"))
+        ];
+    }
+
+    private function buildOpenAISection(): array {
+        $models = $this->factory->input()->field()->select(
+            $this->plugin_object->txt("config_openai_models_label"),
+            [
+                "gpt-3.5 turbo" => "GPT 3.5 Turbo",
+                "gpt-4" => "GPT 4",
+                "gpt-4.5" => "GPT 4.5"
+            ]
+        )->withRequired(true);
+
+        $api_key = $this->factory->input()->field()->password(
+            $this->plugin_object->txt("config_openai_key_label"),
+            $this->plugin_object->txt("config_openai_key_info")
+        )->withRequired(true);
+
+        $streaming = $this->factory->input()->field()->checkbox(
+            $this->plugin_object->txt("config_openai_stream_label"),
+            $this->plugin_object->txt("config_openai_stream_info")
+        );
+
+        return [
+            "openai" => $this->factory->input()->field()->section([
+                $models,
+                $api_key,
+                $streaming
+            ], $this->plugin_object->txt("config_openai_section"))
+        ];
+    }
+
+    private function buildOllamaSection(): array {
+        $endpoint = $this->factory->input()->field()->text(
+            $this->plugin_object->txt("config_ollama_endpoint_label"),
+            $this->plugin_object->txt("config_ollama_endpoint_info")
+        )->withRequired(true);
+
+        $models = $this->factory->input()->field()->multiSelect(
+            $this->plugin_object->txt("config_ollama_models_label"),
+            [
+                "gpt-3.5 turbo" => "GPT 3.5 Turbo",
+                "gpt-4" => "GPT 4",
+                "gpt-4.5" => "GPT 4.5"
+            ]
+        )->withRequired(true);
+
+        return [
+            "ollama" => $this->factory->input()->field()->section([
+                $endpoint,
+                $models
+            ], $this->plugin_object->txt("config_ollama_section"))
+        ];
+    }
+
     private function renderForm(string $form_action, array $sections): string
     {
         $form = $this->factory->input()->container()->form()->standard(
@@ -249,27 +218,22 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $sections
         );
 
-        $saving_info = "";
-
         if ($this->request->getMethod() == "POST") {
             $form = $form->withRequest($this->request);
             $result = $form->getData();
             if ($result) {
-                $saving_info = $this->save();
-
-                $form = $this->factory->input()->container()->form()->standard(
-                    $form_action,
-                    $this->buildForm()
-                );
+                return $this->save();
             }
         }
 
-        return $saving_info . $this->renderer->render($form);
+        return $this->renderer->render($form);
     }
 
     public function save(): string
     {
         AIChatConfig::save();
-        return $this->renderer->render($this->factory->messageBox()->success($this->plugin_object->txt('config_msg_success')));
+        return $this->renderer->render(
+            $this->factory->messageBox()->success($this->plugin_object->txt('config_msg_success'))
+        );
     }
 }

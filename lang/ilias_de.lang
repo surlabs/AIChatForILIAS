@@ -27,6 +27,7 @@ config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gesp
 config_disclaimer_text#:#Haftungsausschluss-Text
 config_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht, falls das AI-Chat-Objekt keinen eigenen Warntext konfiguriert hat.
 config_global_api_key#:#Globale API-Schlüssel
+config_global_api_key_info#:#Der API-Schlüssel, der für AI-Chat verwendet wird.
 config_use_global_api_key#:#Globalen API-Schlüssel verwenden
 config_use_global_api_key_info#:#Wenn diese Option aktiviert ist, wird der globale API-Schlüssel in allen API-Anfragen verwendet, andernfalls muss jedes AI-Chat-Objekt seinen API-Schlüssel konfiguriert haben.
 config_streaming_enabled#:#Streaming aktiviert
@@ -35,7 +36,11 @@ config_msg_success#:#Konfiguration erfolgreich gespeichert.
 config_provider#:#Provider
 config_api_section#:#API-Konfiguration
 config_general_section#:#Allgemeine Konfiguration
+config_openai_section#:#OpenAI-Konfiguration
+config_ollama_section#:#Ollama-Konfiguration
+config_general#:#Allgemein
 config_openai#:#OpenAI
+config_ollama#:#Ollama
 config_url#:#URL
 config_url_info#:#URL der zu verwendenden API.
 config_custom#:#Custom
@@ -59,3 +64,21 @@ front_new_chat_button#:#Neuer Chat
 front_input_placeholder#:#Prompt eingeben... (Hinweis: es dürfen keine personenbezogenen Daten eingegeben und verarbeitet werden!)
 error_http#:#Fehler beim Verbinden mit der OpenAI-API.
 error_apikey#:#API-Schlüssel ist ungültig.
+config_model_label#:#Zu verwendendes Modell
+config_model_info#:#Das für den KI-Chat zu verwendende Modell
+config_prompt_label#:#System-Prompt
+config_prompt_info#:#Der für den KI-Chat zu verwendende Prompt
+config_char_limit_label#:#Zeichenlimit
+config_char_limit_info#:#Die maximale Anzahl der im KI-Chat erlaubten Zeichen
+config_prev_msg_label#:#Vorherige Nachrichten im Chat
+config_prev_msg_info#:#Die Anzahl der vorherigen Nachrichten, die in den KI-Chat aufgenommen werden sollen
+config_disclaimer_label#:#Haftungsausschluss
+config_disclaimer_info#:#Der Haftungsausschluss, der in den KI-Chat aufgenommen werden soll
+config_openai_models_label#:#Modelle
+config_openai_key_label#:#API-Schlüssel
+config_openai_key_info#:#Ihr OpenAI API-Schlüssel
+config_openai_stream_label#:#Streaming aktivieren
+config_openai_stream_info#:#Streaming-Antworten von OpenAI aktivieren
+config_ollama_endpoint_label#:#Server-Endpunkt
+config_ollama_endpoint_info#:#Die URL des Ollama-Server-Endpunkts
+config_ollama_models_label#:#Verfügbare Modelle

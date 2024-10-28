@@ -27,12 +27,17 @@ config_n_memory_messages_info#:#Text displayed in the chat to inform the user th
 config_disclaimer_text#:#Disclaimer Text
 config_disclaimer_text_info#:#Text that will be shown in the chat to inform the user that they are talking to an artificial intelligence in case the AIChat object does not have a warning text configured.
 config_global_api_key#:#Global API Key
+config_global_api_key_info#:#The API key to use for AI Chat
 config_streaming_enabled#:#Streaming Enabled
 config_streaming_enabled_info#:#If this option is enabled, the chat will be in streaming mode, which means that the model will respond by typing, making the response slightly faster.
 config_provider#:#Provider
 config_api_section#:#API Configuration
 config_general_section#:#General Configuration
+config_openai_section#:#OpenAI Configuration
+config_ollama_section#:#Ollama Configuration
+config_general#:#General
 config_openai#:#OpenAI
+config_ollama#:#Ollama
 config_url#:#URL
 config_url_info#:#URL of the API to use.
 config_custom#:#Custom
@@ -56,3 +61,21 @@ front_new_chat_button#:#New Chat
 front_input_placeholder#:#Enter prompt... (Note: do not enter and process personal data!)
 error_http#:#Error connecting to the OpenAI API.
 error_apikey#:#API Key is invalid.
+config_model_label#:#Model to use
+config_model_info#:#The model to be used for the AI chat
+config_prompt_label#:#System Prompt
+config_prompt_info#:#The prompt to be used for the AI chat
+config_char_limit_label#:#Character Limit
+config_char_limit_info#:#The maximum number of characters allowed in the AI chat
+config_prev_msg_label#:#Previous Messages in Chat
+config_prev_msg_info#:#The number of previous messages to be included in the AI chat
+config_disclaimer_label#:#Disclaimer
+config_disclaimer_info#:#The disclaimer to be included in the AI chat
+config_openai_models_label#:#Models
+config_openai_key_label#:#API Key
+config_openai_key_info#:#Your OpenAI API key
+config_openai_stream_label#:#Enable Streaming
+config_openai_stream_info#:#Enable streaming responses from OpenAI
+config_ollama_endpoint_label#:#Server Endpoint
+config_ollama_endpoint_info#:#The Ollama server endpoint URL
+config_ollama_models_label#:#Available Models

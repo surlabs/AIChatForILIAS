@@ -14,12 +14,17 @@ config_n_memory_messages_info#:#El número máximo de mensajes que se almacenar�
 config_disclaimer_text#:#Texto de Descargo de Responsabilidad
 config_disclaimer_text_info#:#Texto que se mostrará en el chat para informar al usuario que está hablando con una inteligencia artificial en caso de que el objeto AI Chat no tenga un texto de advertencia configurado.
 config_global_api_key#:#Clave API Global
+config_global_api_key_info#:#La clave API que se utilizará para AI Chat
 config_streaming_enabled#:#Transmisión Activada
 config_streaming_enabled_info#:#Si esta opción está activada, el chat estará en modo de transmisión, lo que significa que el modelo responderá mientras escribe, haciendo que la respuesta sea ligeramente más rápida.
 config_provider#:#Proveedor
 config_api_section#:#Configuración API
 config_general_section#:#Configuración general
-config_openai#:#AbrirAI
+config_openai_section#:#Configuración OpenAI
+config_ollama_section#:#Configuración Ollama
+config_general#:#General
+config_openai#:#OpenAI
+config_ollama#:#Ollama
 config_url#:#URL
 config_url_info#:#URL de la API a utilizar
 config_custom#:#Personalizado
@@ -43,3 +48,21 @@ front_new_chat_button#:#Nuevo Chat
 front_input_placeholder#:#Escribe un mensaje...
 error_http#:#Error al conectar con la API.
 error_apikey#:#La clave API es inválida.
+config_model_label#:#Modelo a utilizar
+config_model_info#:#El modelo que se utilizará para el chat de IA
+config_prompt_label#:#Prompt del Sistema
+config_prompt_info#:#El prompt que se utilizará para el chat de IA
+config_char_limit_label#:#Límite de caracteres
+config_char_limit_info#:#El número máximo de caracteres permitidos en el chat de IA
+config_prev_msg_label#:#Mensajes anteriores en el chat
+config_prev_msg_info#:#El número de mensajes anteriores que se incluirán en el chat de IA
+config_disclaimer_label#:#Aviso legal
+config_disclaimer_info#:#El aviso legal que se incluirá en el chat de IA
+config_openai_models_label#:#Modelos
+config_openai_key_label#:#Clave API
+config_openai_key_info#:#Tu clave API de OpenAI
+config_openai_stream_label#:#Activar Streaming
+config_openai_stream_info#:#Activar respuestas en streaming de OpenAI
+config_ollama_endpoint_label#:#Endpoint del Servidor
+config_ollama_endpoint_info#:#La URL del endpoint del servidor Ollama
+config_ollama_models_label#:#Modelos Disponibles

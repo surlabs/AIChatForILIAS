@@ -185,25 +185,71 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $this->plugin->txt('object_settings_basic')
         );
 
-        $provider = $this->factory->input()->field()->switchableGroup(
-            array(
-                "default" => $this->factory->input()->field()->group(array(), $this->plugin->txt('config_default')),
-                "openai" => $this->buildOpenAIGroup(),
-                "custom" => $this->buildCustomGroup()
-            ),
-            $this->plugin->txt('config_provider')
-        )->withValue($aiChat->getProvider(true) != "" ? $aiChat->getProvider(true) : "default")->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setProvider($v[0]);
-            }
-        ));
+
+        $isOpenAI = true;
+
+        $apiControls = [];
+
+        if ($isOpenAI) {
+            // OpenAI controls
+            $models = [
+                "gpt-4" => "GPT-4",
+                "gpt-3.5-turbo" => "GPT-3.5 Turbo",
+                "gpt-4-turbo" => "GPT-4 Turbo"
+            ];
+
+            $apiControls[] = $this->factory->input()->field()->select(
+                $this->plugin->txt('config_model'),
+                $models,
+                $this->plugin->txt('config_model_info')
+            )->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setModel($v);
+                }
+            ))->withRequired(true);
+
+            $apiControls[] = $this->factory->input()->field()->text(
+                $this->plugin->txt('config_global_api_key'),
+                $this->plugin->txt('config_global_api_key_info')
+            )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setApiKey($v);
+                }
+            ))->withRequired(true);
+
+            $apiControls[] = $this->factory->input()->field()->checkbox(
+                $this->plugin->txt('config_streaming_enabled'),
+                $this->plugin->txt('config_streaming_enabled_info')
+            )->withValue($aiChat->isStreaming(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setStreaming($v);
+                }
+            ));
+        } else {
+            // Ollama controls
+            $ollamaModels = [
+                "llama2" => "Llama 2",
+                "mistral" => "Mistral",
+                "codellama" => "Code Llama",
+                "neural-chat" => "Neural Chat"
+            ];
+
+            $apiControls[] = $this->factory->input()->field()->select(
+                $this->plugin->txt('config_model'),
+                $ollamaModels,
+                $this->plugin->txt('config_model_info')
+            )->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setModel($v);
+                }
+            ))->withRequired(true);
+        }
 
         $api_section = $this->factory->input()->field()->section(
-            array(
-                $provider
-            ),
+            $apiControls,
             $this->plugin->txt('config_api_section')
         );
+
 
         $prompt_selection = $this->factory->input()->field()->textarea(
             $this->plugin->txt('config_prompt_selection'),
