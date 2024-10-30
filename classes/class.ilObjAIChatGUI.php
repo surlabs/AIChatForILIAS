@@ -99,8 +99,15 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $this->tabs->activateTab("content");
+
+        $aichat = $this->object->getAIChat();
+
+        if ($aichat->getLLM() == null) {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($this->plugin->txt("object_no_llm"))));
+            return;
+        }
+
         $tpl = $DIC['tpl'];
-        //$tpl = new ilTemplate("index.html", false, false, $this->plugin->getDirectory());
         $tpl->addCss($this->plugin->getDirectory() . "/templates/default/index.css");
         $tpl->addJavascript($this->plugin->getDirectory() . "/templates/default/index.js");
 
@@ -230,14 +237,20 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             case "ollama":
                 $ollamaModels = $aiChat->getOllamaModelsList();
 
-                    $apiControls[] = $this->factory->input()->field()->select(
+                $model = $this->factory->input()->field()->select(
                     $this->plugin->txt('config_ollama_models_label'),
                     $ollamaModels,
-                )->withValue($aiChat->getOllamaModel(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                )->withAdditionalTransformation($this->refinery->custom()->transformation(
                     function ($v) use ($aiChat) {
                         $aiChat->setOllamaModel($v);
                     }
                 ))->withRequired(true);
+
+                if (in_array($aiChat->getOllamaModel(true), $ollamaModels)) {
+                    $model = $model->withValue($aiChat->getOllamaModel(true));
+                }
+
+                $apiControls[] = $model;
 
                 break;
         }

@@ -45,7 +45,7 @@ class AIChat
     private string $openai_api_key = "";
     private bool $openai_streaming = false;
     private string $ollama_model = "";
-    private LLM $llm;
+    private ?LLM $llm = null;
 
     /**
      * @throws AIChatException
@@ -253,12 +253,12 @@ class AIChat
         return [];
     }
 
-    public function getLlm(): LLM
+    public function getLlm(): ?LLM
     {
         return $this->llm;
     }
 
-    public function setLlm(LLM $llm): void
+    public function setLlm(?LLM $llm = null): void
     {
         $this->llm = $llm;
     }
@@ -378,10 +378,15 @@ class AIChat
                     $this->llm->setStreaming($this->isOpenaiStreaming());
                     break;
                 case "ollama":
-                    $this->llm = new Ollama($this->getOllamaModel());
-                    $this->llm->setEndpoint(AIChatConfig::get("ollama_endpoint"));
-                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
-                    $this->llm->setPrompt($this->getPrompt());
+                    $models = $this->getOllamaModelsList();
+                    $model = $this->getOllamaModel();
+
+                    if (in_array($model, $models)) {
+                        $this->llm = new Ollama($model);
+                        $this->llm->setEndpoint(AIChatConfig::get("ollama_endpoint"));
+                        $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
+                        $this->llm->setPrompt($this->getPrompt());
+                    }
                     break;
                 default:
                     throw new AIChatException("AIChat::loadLLM() - LLM service to use not valid (Service: " . $service_to_use . ")");

@@ -40,3 +40,4 @@ config_ollama_endpoint_info#:#The URL of the Ollama server endpoint
 config_ollama_models_label#:#Available Models
 config_msg_success#:#Configuration saved successfully.
 config_ollama_models_error#:#Error getting available models, please check the server endpoint.
+object_no_llm#:#There is no language model selected.
