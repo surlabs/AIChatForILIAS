@@ -1,51 +1,8 @@
-obj_xaic#:#AI-Chat
-objs_xaic#:#AI-Chats
-xaic_new#:#Neuer AI-Chat
-obj_xaic_duplicate#:#AI-Chat kopieren
-objs_xaic_duplicate#:#AI-Chat kopieren
-xaic_add#:#AI-Chat hinzufügen
-xaic_read#:#Lesezugriff: AI-Chat lesen
-xaic_write#:#Einstellungen bearbeiten: AI-Chat bearbeiten
-xaic_delete#:#Löschen: AI-Chat löschen oder verschieben
-xaic_visible#:#Anzeigen: AI-Chat anzeigen
-xaic_edit_permission#:#Rechteeinstellungen bearbeiten
-xaic_copy#:#Kopieren: AI-Chat kopieren
-crs_create_xaic#:#AI-Chat anlegen
-grp_create_xaic#:#AI-Chat anlegen
-fold_create_xaic#:#AI-Chat anlegen
-root_create_xaic#:#AI-Chat anlegen
-cat_create_xaic#:#AI-Chat anlegen
-rbac_create_xaic#:#AI-Chat anlegen
-config_prompt_selection#:#System-Prompt
-config_prompt_selection_info#:#Dieser Prompt wird als initiale Nachricht eines Gesprächs verwendet, er wird für die Benutzer nicht sichtbar sein, das Modell wird ihn ihn jedoch prioritär berücksichtigen.
-config_model#:#Modell
-config_model_info#:#Zu verwendendes Sprachmodell.
-config_characters_limit#:#Zeichenlimit
-config_characters_limit_info#:#Die maximale Anzahl von Zeichen, die Sie in einer einzelnen Nachricht senden können.
-config_n_memory_messages#:#Anzahl vorheriger Nachrichten im Prompt.
-config_n_memory_messages_info#:#Die maximale Anzahl von Nachrichten, die im Gespräch gespeichert und an die KI weitergegeben werden.
-config_disclaimer_text#:#Haftungsausschluss-Text
-config_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht, falls das AI-Chat-Objekt keinen eigenen Warntext konfiguriert hat.
-config_global_api_key#:#Globale API-Schlüssel
-config_global_api_key_info#:#Der API-Schlüssel, der für AI-Chat verwendet wird.
-config_use_global_api_key#:#Globalen API-Schlüssel verwenden
-config_use_global_api_key_info#:#Wenn diese Option aktiviert ist, wird der globale API-Schlüssel in allen API-Anfragen verwendet, andernfalls muss jedes AI-Chat-Objekt seinen API-Schlüssel konfiguriert haben.
-config_streaming_enabled#:#Streaming aktiviert
-config_streaming_enabled_info#:#Wenn diese Option aktiviert ist, wird der Chat im Streaming-Modus sein, was bedeutet, dass das Modell antwortet, während es tippt, was die Antwort etwas schneller macht.
-config_msg_success#:#Konfiguration erfolgreich gespeichert.
-config_provider#:#Provider
-config_api_section#:#API-Konfiguration
-config_general_section#:#Allgemeine Konfiguration
-config_openai_section#:#OpenAI-Konfiguration
-config_ollama_section#:#Ollama-Konfiguration
-config_general#:#Allgemein
-config_openai#:#OpenAI
-config_ollama#:#Ollama
-config_url#:#URL
-config_url_info#:#URL der zu verwendenden API.
-config_custom#:#Custom
-config_default#:#Standard
-config_msg_success#:#Konfiguration erfolgreich gespeichert.
+obj_xaic#:#KI-Chat
+objs_xaic#:#KI-Chat-Objekte
+xaic_new#:#Neuer KI-Chat
+objs_xaic_duplicate#:#KI-Chat-Objekt duplizieren
+xaic_add#:#KI-Chat hinzufügen
 object_content#:#Inhalt
 object_settings#:#Einstellungen
 object_settings_basic#:#Grundeinstellungen
@@ -53,27 +10,26 @@ object_settings_advanced#:#Erweiterte Einstellungen
 object_settings_title#:#Titel
 object_settings_description#:#Beschreibung
 object_settings_online#:#Online
-object_settings_online_info#:#Nur wenn der AI-Chat online ist, können Benutzer auf den Chat zugreifen. Andernfalls können nur Administratoren und Rollen mit dem Recht "Einstellungen bearbeiten" aus den Chat zugreifen.
-object_settings_api_key#:#API-Schlüssel
-object_settings_api_key_info#:#API-Schlüssel zur Verwendung des AI-Chat-Modells, falls der globale API-Schlüssel nicht aktiviert ist.
-object_settings_disclaimer_text#:#Haftungsausschluss-Text
-object_settings_disclaimer_text_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht.
+object_settings_online_info#:#KI-Chat ist verfügbar, wenn diese Option aktiviert ist.
 object_settings_msg_success#:#Einstellungen erfolgreich gespeichert.
 chat_default_title#:#Neuer Chat
 front_new_chat_button#:#Neuer Chat
-front_input_placeholder#:#Prompt eingeben... (Hinweis: es dürfen keine personenbezogenen Daten eingegeben und verarbeitet werden!)
-error_http#:#Fehler beim Verbinden mit der OpenAI-API.
-error_apikey#:#API-Schlüssel ist ungültig.
-config_model_label#:#Zu verwendendes Modell
-config_model_info#:#Das für den KI-Chat zu verwendende Modell
+front_input_placeholder#:#Nachricht schreiben...
+error_http#:#Fehler bei der Verbindung mit der API.
+error_apikey#:#Der API-Schlüssel ist ungültig.
+config_service_label#:#Dienst zur Nutzung
+config_service_info#:#Der Dienst, der für den KI-Chat verwendet wird
+config_general#:#Allgemein
+config_openai#:#OpenAI
+config_ollama#:#Ollama
 config_prompt_label#:#System-Prompt
-config_prompt_info#:#Der für den KI-Chat zu verwendende Prompt
-config_char_limit_label#:#Zeichenlimit
-config_char_limit_info#:#Die maximale Anzahl der im KI-Chat erlaubten Zeichen
-config_prev_msg_label#:#Vorherige Nachrichten im Chat
-config_prev_msg_info#:#Die Anzahl der vorherigen Nachrichten, die in den KI-Chat aufgenommen werden sollen
-config_disclaimer_label#:#Haftungsausschluss
-config_disclaimer_info#:#Der Haftungsausschluss, der in den KI-Chat aufgenommen werden soll
+config_prompt_info#:#Dieser Prompt wird als Anfangsnachricht in einem Gespräch verwendet, er ist für den Benutzer nicht sichtbar, wird jedoch vom Modell berücksichtigt.
+config_characters_limit_label#:#Zeichenlimit
+config_characters_limit_info#:#Die maximale Anzahl von Zeichen, die Sie in einer einzigen Nachricht senden können.
+config_max_memory_messages_label#:#Maximale Anzahl an gespeicherten Nachrichten
+config_max_memory_messages_info#:#Die maximale Anzahl an Nachrichten, die im Gespräch gespeichert werden.
+config_disclaimer_label#:#Rechtlicher Hinweis
+config_disclaimer_info#:#Text, der im Chat angezeigt wird, um den Benutzer darüber zu informieren, dass er mit einer künstlichen Intelligenz spricht.
 config_openai_models_label#:#Modelle
 config_openai_key_label#:#API-Schlüssel
 config_openai_key_info#:#Ihr OpenAI API-Schlüssel
@@ -82,3 +38,5 @@ config_openai_stream_info#:#Streaming-Antworten von OpenAI aktivieren
 config_ollama_endpoint_label#:#Server-Endpunkt
 config_ollama_endpoint_info#:#Die URL des Ollama-Server-Endpunkts
 config_ollama_models_label#:#Verfügbare Modelle
+config_msg_success#:#Konfiguration erfolgreich gespeichert.
+config_ollama_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den Server-Endpunkt.

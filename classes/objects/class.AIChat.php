@@ -22,8 +22,8 @@ declare(strict_types=1);
 namespace objects;
 
 use ai\LLM;
-use ai\CustomAI;
 use ai\OpenAI;
+use ai\Ollama;
 use DateTime;
 use platform\AIChatConfig;
 use platform\AIChatDatabase;
@@ -37,17 +37,19 @@ class AIChat
 {
     private int $id = 0;
     private bool $online = false;
-    private string $provider = "";
-    private string $model = "";
-    private string $api_key = "";
-    private ?bool $streaming = null;
-    private string $url = "";
     private string $prompt = "";
-    private int $char_limit = 0;
-    private int $max_memory_messages = 0;
     private string $disclaimer = "";
+    private int $max_memory_messages = 0;
+    private int $characters_limit = 0;
+    private string $openai_model = "";
+    private string $openai_api_key = "";
+    private bool $openai_streaming = false;
+    private string $ollama_model = "";
     private LLM $llm;
 
+    /**
+     * @throws AIChatException
+     */
     public function __construct(?int $id = null)
     {
         if ($id !== null && $id > 0) {
@@ -82,98 +84,13 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getProvider(bool $strict = false): string
-    {
-        if ((empty($this->provider) || $this->provider == "default") && !$strict) {
-            return AIChatConfig::get("llm_provider") != "" ? AIChatConfig::get("llm_provider") : "openai";
-        }
-
-        return $this->provider;
-    }
-
-    public function setProvider(string $provider): void
-    {
-        $this->provider = $provider;
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    public function getModel(bool $strict = false): string
-    {
-        if ((empty($this->model) || $this->getProvider(true) == "default") && !$strict) {
-            return AIChatConfig::get("llm_model") ?? "openai";
-        }
-
-        return $this->model;
-    }
-
-    public function setModel(string $model): void
-    {
-        $this->model = $model;
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    public function getApiKey(bool $strict = false): string
-    {
-        if ((empty($this->api_key) || $this->getProvider(true) == "default") && !$strict) {
-            return AIChatConfig::get("global_api_key");
-        }
-
-        return $this->api_key;
-    }
-
-    public function setApiKey(string $api_key): void
-    {
-        $this->api_key = $api_key;
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    public function isStreaming(bool $strict = false): bool
-    {
-        if (!$strict && $this->getProvider() == "openai") {
-            return $this->streaming ?? AIChatConfig::get("streaming") == "1";
-        }
-
-        return $this->streaming ?? false;
-    }
-
-    public function setStreaming(bool $streaming): void
-    {
-        $this->streaming = $streaming;
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    public function getUrl(bool $strict = false): string
-    {
-        if ((empty($this->url) || $this->getProvider(true) == "default") && !$strict) {
-            return AIChatConfig::get("llm_url");
-        }
-
-        return $this->url;
-    }
-
-    public function setUrl(string $url): void
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * @throws AIChatException
-     */
     public function getPrompt(bool $strict = false): string
     {
-        if (empty($this->prompt) && !$strict) {
-            return AIChatConfig::get("prompt_selection");
+        if ($this->prompt != "" || $strict) {
+            return $this->prompt;
         }
 
-        return $this->prompt;
+        return AIChatConfig::get("prompt");
     }
 
     public function setPrompt(string $prompt): void
@@ -184,22 +101,18 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getCharLimit(bool $strict = false): int
+    public function getDisclaimer(bool $strict = false): string
     {
-        if ($this->char_limit == 0 && !$strict) {
-            return AIChatConfig::get("characters_limit") != "" ? (int) AIChatConfig::get("characters_limit") : 100;
+        if ($this->disclaimer != "" || $strict) {
+            return $this->disclaimer;
         }
 
-        return $this->char_limit;
+        return AIChatConfig::get("disclaimer");
     }
 
-    public function setCharLimit(?int $char_limit = null): void
+    public function setDisclaimer(string $disclaimer): void
     {
-        if ($char_limit == null) {
-            $char_limit = 0;
-        }
-
-        $this->char_limit = $char_limit;
+        $this->disclaimer = $disclaimer;
     }
 
     /**
@@ -207,37 +120,212 @@ class AIChat
      */
     public function getMaxMemoryMessages(bool $strict = false): int
     {
-        if ($this->max_memory_messages == 0 && !$strict) {
-            return AIChatConfig::get("n_memory_messages") != "" ? (int) AIChatConfig::get("n_memory_messages") : 5;
+        if ($this->max_memory_messages != 0 || $strict) {
+            return $this->max_memory_messages;
         }
 
-        return $this->max_memory_messages;
+        if (!empty(AIChatConfig::get("max_memory_messages"))) {
+            return AIChatConfig::get("max_memory_messages");
+        }
+
+        return 100;
     }
 
-    public function setMaxMemoryMessages(?int $max_memory_messages = null): void
+    public function setMaxMemoryMessages(int $max_memory_messages): void
     {
-        if ($max_memory_messages == null) {
-            $max_memory_messages = 0;
-        }
-
         $this->max_memory_messages = $max_memory_messages;
     }
 
     /**
      * @throws AIChatException
      */
-    public function getDisclaimer(bool $strict = false): string
+    public function getCharactersLimit(bool $strict = false): int
     {
-        if (empty($this->disclaimer) && !$strict) {
-            return AIChatConfig::get("disclaimer_text");
+        if ($this->characters_limit != 0 || $strict) {
+            return $this->characters_limit;
         }
 
-        return $this->disclaimer;
+        if (!empty(AIChatConfig::get("characters_limit"))) {
+            return AIChatConfig::get("characters_limit");
+        }
+
+        return 2000;
     }
 
-    public function setDisclaimer(string $disclaimer): void
+    public function setCharactersLimit(int $characters_limit): void
     {
-        $this->disclaimer = $disclaimer;
+        $this->characters_limit = $characters_limit;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getServiceToUse(bool $strict = false): string
+    {
+        if (!empty(AIChatConfig::get("service_to_use"))) {
+            return AIChatConfig::get("service_to_use");
+        }
+
+        return "openai";
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getOpenaiModel(bool $strict = false): string
+    {
+        if ($this->openai_model != "" || $strict) {
+            return $this->openai_model;
+        }
+
+        return AIChatConfig::get("openai_model");
+    }
+
+    public function setOpenaiModel(string $openai_model): void
+    {
+        $this->openai_model = $openai_model;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getOpenaiApiKey(bool $strict = false): string
+    {
+        if ($this->openai_api_key != "" || $strict) {
+            return $this->openai_api_key;
+        }
+
+        return AIChatConfig::get("openai_api_key");
+    }
+
+    public function setOpenaiApiKey(string $openai_api_key): void
+    {
+        $this->openai_api_key = $openai_api_key;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function isOpenaiStreaming(bool $strict = false): bool
+    {
+        if ($this->getServiceToUse() != "openai") {
+            return false;
+        }
+
+        if ($this->openai_streaming || $strict) {
+            return $this->openai_streaming;
+        }
+
+        return AIChatConfig::get("openai_streaming") == "1";
+    }
+
+    public function setOpenaiStreaming(bool $openai_streaming): void
+    {
+        $this->openai_streaming = $openai_streaming;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getOllamaModel(bool $strict = false): string
+    {
+        if ($this->ollama_model != "" || $strict) {
+            return $this->ollama_model;
+        }
+
+        return AIChatConfig::get("ollama_model");
+    }
+
+    public function setOllamaModel(string $ollama_model): void
+    {
+        $this->ollama_model = $ollama_model;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function getOllamaModelsList(): array
+    {
+        if (!empty(AIChatConfig::get("ollama_models"))) {
+            return AIChatConfig::get("ollama_models");
+        }
+
+        return [];
+    }
+
+    public function getLlm(): LLM
+    {
+        return $this->llm;
+    }
+
+    public function setLlm(LLM $llm): void
+    {
+        $this->llm = $llm;
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function loadFromDB(): void
+    {
+        $database = new AIChatDatabase();
+
+        $result = $database->select("xaic_objects", ["id" => $this->getId()]);
+
+        if (isset($result[0])) {
+            $this->setOnline((bool) $result[0]["online"]);
+            $this->setPrompt((string) $result[0]["prompt"]);
+            $this->setDisclaimer((string) $result[0]["disclaimer"]);
+            $this->setMaxMemoryMessages((int) $result[0]["max_memory_messages"]);
+            $this->setCharactersLimit((int) $result[0]["characters_limit"]);
+            $this->setOpenaiModel((string) $result[0]["openai_model"]);
+            $this->setOpenaiApiKey((string) $result[0]["openai_api_key"]);
+            $this->setOpenaiStreaming((bool) $result[0]["openai_streaming"]);
+            $this->setOllamaModel((string) $result[0]["ollama_model"]);
+        }
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function save(): void
+    {
+        if (!isset($this->id) || $this->id == 0) {
+            throw new AIChatException("AIChat::save() - AIChat ID is 0");
+        }
+
+        $database = new AIChatDatabase();
+
+        $database->insertOnDuplicatedKey("xaic_objects", array(
+            "id" => $this->id,
+            "online" => (int) $this->online,
+            "prompt" => $this->prompt,
+            "disclaimer" => $this->disclaimer,
+            "max_memory_messages" => $this->max_memory_messages,
+            "characters_limit" => $this->characters_limit,
+            "openai_model" => $this->openai_model,
+            "openai_api_key" => $this->openai_api_key,
+            "openai_streaming" => (int) $this->openai_streaming,
+            "ollama_model" => $this->ollama_model
+        ));
+    }
+
+    /**
+     * @throws AIChatException
+     */
+    public function delete(): void
+    {
+        $database = new AIChatDatabase();
+
+        $database->delete("xaic_objects", ["id" => $this->id]);
+
+        $chats = $database->select("xaic_chats", ["obj_id" => $this->id]);
+
+        foreach ($chats as $chat) {
+            $chat_obj = new Chat($chat["id"]);
+
+            $chat_obj->delete();
+        }
     }
 
     /**
@@ -276,70 +364,33 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function loadFromDB(): void
+    private function loadLLM()
     {
-        $database = new AIChatDatabase();
+        $service_to_use = $this->getServiceToUse();
 
-        $result = $database->select("xaic_objects", ["id" => $this->getId()]);
-
-        if (isset($result[0])) {
-            $this->setOnline((bool) $result[0]["online"]);
-            $this->setProvider((string) $result[0]["provider"]);
-            $this->setModel((string) $result[0]["model"]);
-            $this->setApiKey((string) $result[0]["api_key"]);
-            $this->setStreaming((bool) $result[0]["streaming"]);
-            $this->setUrl((string) $result[0]["url"]);
-            $this->setPrompt((string) $result[0]["prompt"]);
-            $this->setCharLimit((int) $result[0]["char_limit"]);
-            $this->setMaxMemoryMessages((int) $result[0]["max_memory_messages"]);
-            $this->setDisclaimer((string) $result[0]["disclaimer"]);
+        if (!empty($service_to_use)) {
+            switch ($service_to_use) {
+                case "openai":
+                    $this->llm = new OpenAI($this->getOpenaiModel());
+                    $this->llm->setApiKey($this->getOpenaiApiKey());
+                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
+                    $this->llm->setPrompt($this->getPrompt());
+                    $this->llm->setStreaming($this->isOpenaiStreaming());
+                    break;
+                case "ollama":
+                    $this->llm = new Ollama($this->getOllamaModel());
+                    $this->llm->setEndpoint(AIChatConfig::get("ollama_endpoint"));
+                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
+                    $this->llm->setPrompt($this->getPrompt());
+                    break;
+                default:
+                    throw new AIChatException("AIChat::loadLLM() - LLM service to use not valid (Service: " . $service_to_use . ")");
+            }
+        } else {
+            throw new AIChatException("AIChat::loadLLM() - LLM service to use not found");
         }
     }
-
-    /**
-     * @throws AIChatException
-     */
-    public function save(): void
-    {
-        if (!isset($this->id) || $this->id == 0) {
-            throw new AIChatException("AIChat::save() - AIChat ID is 0");
-        }
-
-        $database = new AIChatDatabase();
-
-        $database->insertOnDuplicatedKey("xaic_objects", array(
-            "id" => $this->id,
-            "online" => (int) $this->online,
-            "provider" => $this->provider,
-            "model" => $this->model,
-            "api_key" => $this->api_key,
-            "streaming" => (int) $this->streaming,
-            "url" => $this->url,
-            "prompt" => $this->prompt,
-            "char_limit" => $this->char_limit,
-            "max_memory_messages" => $this->max_memory_messages,
-            "disclaimer" => $this->disclaimer
-        ));
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    public function delete(): void
-    {
-        $database = new AIChatDatabase();
-
-        $database->delete("xaic_objects", ["id" => $this->id]);
-
-        $chats = $database->select("xaic_chats", ["obj_id" => $this->id]);
-
-        foreach ($chats as $chat) {
-            $chat_obj = new Chat($chat["id"]);
-
-            $chat_obj->delete();
-        }
-    }
-
+    
     /**
      * @throws AIChatException
      */
@@ -357,37 +408,5 @@ class AIChat
         $response->save();
 
         return $response;
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    private function loadLLM()
-    {
-        $provider = $this->getProvider();
-        $model = $this->getModel();
-
-        if (!empty($provider) && !empty($model)) {
-            switch ($provider) {
-                case "openai":
-                    $this->llm = new OpenAI($model);
-                    $this->llm->setApiKey($this->getApiKey());
-                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
-                    $this->llm->setPrompt($this->getPrompt());
-                    $this->llm->setStreaming($this->isStreaming());
-                    break;
-                case "custom":
-                    $this->llm = new CustomAI($model);
-//                    $this->llm->setApiKey($this->getApiKey());
-                    $this->llm->setUrl($this->getURL());
-                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
-                    $this->llm->setPrompt($this->getPrompt());
-                    break;
-                default:
-                    throw new AIChatException("AIChat::loadLLM() - LLM model provider not found (Provider: " . $provider . ") (Model: " . $model . ")");
-            }
-        } else {
-            throw new AIChatException("AIChat::loadLLM() - LLM provider or model not found in config");
-        }
     }
 }

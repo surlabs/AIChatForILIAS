@@ -186,63 +186,60 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         );
 
 
-        $isOpenAI = true;
 
         $apiControls = [];
 
-        if ($isOpenAI) {
-            // OpenAI controls
-            $models = [
-                "gpt-4" => "GPT-4",
-                "gpt-3.5-turbo" => "GPT-3.5 Turbo",
-                "gpt-4-turbo" => "GPT-4 Turbo"
-            ];
+        switch ($aiChat->getServiceToUse()) {
+            case "openai":
+                $models = [
+                    "gpt-4o" => "GPT-4o",
+                    "gpt-4o-mini" => "GPT-4o mini",
+                    "gpt-4-turbo" => "GPT-4 Turbo",
+                    "gpt-4" => "GPT-4",
+                    "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+                ];
 
-            $apiControls[] = $this->factory->input()->field()->select(
-                $this->plugin->txt('config_model'),
-                $models,
-                $this->plugin->txt('config_model_info')
-            )->withAdditionalTransformation($this->refinery->custom()->transformation(
-                function ($v) use ($aiChat) {
-                    $aiChat->setModel($v);
-                }
-            ))->withRequired(true);
+                $apiControls[] = $this->factory->input()->field()->select(
+                    $this->plugin->txt('config_openai_models_label'),
+                    $models
+                )->withValue($aiChat->getOpenaiModel(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setOpenaiModel($v);
+                    }
+                ));
 
-            $apiControls[] = $this->factory->input()->field()->text(
-                $this->plugin->txt('config_global_api_key'),
-                $this->plugin->txt('config_global_api_key_info')
-            )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-                function ($v) use ($aiChat) {
-                    $aiChat->setApiKey($v);
-                }
-            ))->withRequired(true);
+                $apiControls[] = $this->factory->input()->field()->text(
+                    $this->plugin->txt('config_openai_key_label'),
+                    $this->plugin->txt('config_openai_key_info')
+                )->withValue($aiChat->getOpenaiApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setOpenaiApiKey($v);
+                    }
+                ));
 
-            $apiControls[] = $this->factory->input()->field()->checkbox(
-                $this->plugin->txt('config_streaming_enabled'),
-                $this->plugin->txt('config_streaming_enabled_info')
-            )->withValue($aiChat->isStreaming(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-                function ($v) use ($aiChat) {
-                    $aiChat->setStreaming($v);
-                }
-            ));
-        } else {
-            // Ollama controls
-            $ollamaModels = [
-                "llama2" => "Llama 2",
-                "mistral" => "Mistral",
-                "codellama" => "Code Llama",
-                "neural-chat" => "Neural Chat"
-            ];
+                $apiControls[] = $this->factory->input()->field()->checkbox(
+                    $this->plugin->txt('config_openai_stream_label'),
+                    $this->plugin->txt('config_openai_stream_info')
+                )->withValue($aiChat->isOpenaiStreaming(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setOpenaiStreaming($v);
+                    }
+                ));
 
-            $apiControls[] = $this->factory->input()->field()->select(
-                $this->plugin->txt('config_model'),
-                $ollamaModels,
-                $this->plugin->txt('config_model_info')
-            )->withAdditionalTransformation($this->refinery->custom()->transformation(
-                function ($v) use ($aiChat) {
-                    $aiChat->setModel($v);
-                }
-            ))->withRequired(true);
+                break;
+            case "ollama":
+                $ollamaModels = $aiChat->getOllamaModelsList();
+
+                    $apiControls[] = $this->factory->input()->field()->select(
+                    $this->plugin->txt('config_ollama_models_label'),
+                    $ollamaModels,
+                )->withValue($aiChat->getOllamaModel(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setOllamaModel($v);
+                    }
+                ))->withRequired(true);
+
+                break;
         }
 
         $api_section = $this->factory->input()->field()->section(
@@ -251,9 +248,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         );
 
 
-        $prompt_selection = $this->factory->input()->field()->textarea(
-            $this->plugin->txt('config_prompt_selection'),
-            $this->plugin->txt('config_prompt_selection_info')
+        $prompt = $this->factory->input()->field()->textarea(
+            $this->plugin->txt('config_prompt_label'),
+            $this->plugin->txt('config_prompt_info')
         )->withValue($aiChat->getPrompt(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) use ($aiChat) {
                 $aiChat->setPrompt($v);
@@ -262,37 +259,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             return "$('#$id').attr('placeholder', `{$aiChat->getPrompt()}`);";
         });
 
-        $characters_limit = $this->factory->input()->field()->numeric(
-            $this->plugin->txt('config_characters_limit'), $this->plugin->txt('config_characters_limit_info')
-        )->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setCharLimit($v);
-            }
-        ))->withOnloadCode(function ($id) use ($aiChat) {
-            return "$('#$id').attr('placeholder', '{$aiChat->getCharLimit()}');";
-        });
-
-        if ($aiChat->getCharLimit(true) > 0) {
-            $characters_limit = $characters_limit->withValue($aiChat->getCharLimit(true));
-        }
-
-        $n_memory_messages = $this->factory->input()->field()->numeric(
-            $this->plugin->txt('config_n_memory_messages'), $this->plugin->txt('config_n_memory_messages_info')
-        )->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setMaxMemoryMessages($v);
-            }
-        ))->withOnloadCode(function ($id) use ($aiChat) {
-            return "$('#$id').attr('placeholder', '{$aiChat->getMaxMemoryMessages()}');";
-        });
-
-        if ($aiChat->getMaxMemoryMessages(true) > 0) {
-            $n_memory_messages = $n_memory_messages->withValue($aiChat->getMaxMemoryMessages(true));
-        }
-
-        $disclaimer_text = $this->factory->input()->field()->textarea(
-            $this->plugin->txt('config_disclaimer_text'),
-            $this->plugin->txt('config_disclaimer_text_info')
+        $disclaimer = $this->factory->input()->field()->textarea(
+            $this->plugin->txt('config_disclaimer_label'),
+            $this->plugin->txt('config_disclaimer_info')
         )->withValue($aiChat->getDisclaimer(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) use ($aiChat) {
                 $aiChat->setDisclaimer($v);
@@ -301,12 +270,40 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             return "$('#$id').attr('placeholder', `{$aiChat->getDisclaimer()}`);";
         });
 
+        $max_memory_messages = $this->factory->input()->field()->numeric(
+            $this->plugin->txt('config_max_memory_messages_label'), $this->plugin->txt('config_max_memory_messages_info')
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use ($aiChat) {
+                $aiChat->setMaxMemoryMessages((int) $v);
+            }
+        ))->withOnloadCode(function ($id) use ($aiChat) {
+            return "$('#$id').attr('placeholder', '{$aiChat->getMaxMemoryMessages()}');";
+        });
+
+        if ($aiChat->getMaxMemoryMessages(true) > 0) {
+            $max_memory_messages = $max_memory_messages->withValue($aiChat->getMaxMemoryMessages(true));
+        }
+
+        $characters_limit = $this->factory->input()->field()->numeric(
+            $this->plugin->txt('config_characters_limit_label'), $this->plugin->txt('config_characters_limit_info')
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use ($aiChat) {
+                $aiChat->setCharactersLimit((int) $v);
+            }
+        ))->withOnloadCode(function ($id) use ($aiChat) {
+            return "$('#$id').attr('placeholder', '{$aiChat->getCharactersLimit()}');";
+        });
+
+        if ($aiChat->getCharactersLimit(true) > 0) {
+            $characters_limit = $characters_limit->withValue($aiChat->getCharactersLimit(true));
+        }
+
         $general_section = $this->factory->input()->field()->section(
             array(
-                $prompt_selection,
-                $characters_limit,
-                $n_memory_messages,
-                $disclaimer_text,
+                $prompt,
+                $disclaimer,
+                $max_memory_messages,
+                $characters_limit
             ),
             $this->plugin->txt('config_general_section')
         );
@@ -315,113 +312,6 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $basic_section,
             $api_section,
             $general_section,
-        );
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    private function buildOpenAIGroup(): Group
-    {
-        /**
-         * @var $aiChat AIChat
-         */
-        $aiChat = $this->object->getAIChat();
-
-        $models = array(
-            "gpt-4o" => "GPT-4o",
-            "gpt-4o-mini" => "GPT-4o mini",
-            "gpt-4-turbo" => "GPT-4 Turbo",
-            "gpt-4" => "GPT-4",
-            "gpt-3.5-turbo" => "GPT-3.5 Turbo"
-        );
-
-        $model = $this->factory->input()->field()->select(
-            $this->plugin->txt('config_model'),
-            $models,
-            $this->plugin->txt('config_model_info')
-        )->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setModel($v);
-            }
-        ))->withRequired(true);
-
-        if ($aiChat->getModel(true) != "") {
-            if (array_key_exists($aiChat->getModel(true), $models)) {
-                $model = $model->withValue($aiChat->getModel(true));
-            }
-        }
-
-        $global_api_key = $this->factory->input()->field()->text(
-            $this->plugin->txt('config_global_api_key')
-        )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setApiKey($v);
-            }
-        ))->withRequired(true);
-
-        $streaming_enabled = $this->factory->input()->field()->checkbox(
-            $this->plugin->txt('config_streaming_enabled'),
-            $this->plugin->txt('config_streaming_enabled_info')
-        )->withValue($aiChat->isStreaming(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setStreaming($v);
-            }
-        ));
-
-        return $this->factory->input()->field()->group(
-            array(
-                $model,
-                $global_api_key,
-                $streaming_enabled
-            ),
-            $this->plugin->txt('config_openai')
-        );
-    }
-
-    /**
-     * @throws AIChatException
-     */
-    private function buildCustomGroup(): Group
-    {
-        /**
-         * @var $aiChat AIChat
-         */
-        $aiChat = $this->object->getAIChat();
-
-        $url = $this->factory->input()->field()->text(
-            $this->plugin->txt('config_url'),
-            $this->plugin->txt('config_url_info')
-        )->withValue($aiChat->getUrl(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setUrl($v);
-            }
-        ))->withRequired(true);
-
-        $model = $this->factory->input()->field()->text(
-            $this->plugin->txt('config_model'),
-            $this->plugin->txt('config_model_info')
-        )->withValue($aiChat->getModel(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setModel($v);
-            }
-        ))->withRequired(true);
-
-//        $global_api_key = $this->factory->input()->field()->text(
-//            $this->plugin->txt('config_global_api_key')
-//        )->withValue($aiChat->getApiKey(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-//            function ($v) use ($aiChat) {
-//                $aiChat->setApiKey($v);
-//            }
-//        ))->withRequired(true);
-
-        return $this->factory->input()->field()->group(
-            array(
-                $url,
-                $model,
-//                $global_api_key
-            ),
-            $this->plugin->txt('config_custom')
         );
     }
 
@@ -465,10 +355,10 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 return array(
                     "disclaimer" => $aiChat->getDisclaimer() ?? false,
-                    "prompt_selection" => $aiChat->getPrompt() ?? false,
-                    "characters_limit" => $aiChat->getCharLimit() ?? false,
-                    "n_memory_messages" => $aiChat->getMaxMemoryMessages() ?? false,
-                    "streaming_enabled" => $aiChat->isStreaming() ?? false,
+                    "prompt" => $aiChat->getPrompt() ?? false,
+                    "characters_limit" => $aiChat->getCharactersLimit() ?? false,
+                    "max_memory_messages" => $aiChat->getMaxMemoryMessages() ?? false,
+                    "openai_streaming" => $aiChat->isOpenaiStreaming() ?? false,
                     "lang" => $this->lng->getUserLanguage(),
                     "translations" => $this->loadFrontLang()
                 );

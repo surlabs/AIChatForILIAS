@@ -119,43 +119,61 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     }
 
     private function buildGeneralSection(): array {
-        $model_selection = $this->factory->input()->field()->radio(
-            $this->plugin_object->txt("config_model_label"),
-            $this->plugin_object->txt("config_model_info")
-        )
-            ->withOption("gpt4-o", "GPT4o")
-            ->withOption("gpt-3.5 turbo", "GPT 3.5 Turbo")
-            ->withValue("gpt4-o")
-            ->withRequired(true);
+        $service_to_use = $this->factory->input()->field()->radio(
+            $this->plugin_object->txt("config_service_label"),
+            $this->plugin_object->txt("config_service_info")
+        )->withOption("openai", "OpenAI")
+        ->withOption("ollama", "Ollama")
+        ->withValue(AIChatConfig::get("service_to_use"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('service_to_use', $v);
+            }
+        ))->withRequired(true);
 
-        $system_prompt = $this->factory->input()->field()->textarea(
+        $prompt = $this->factory->input()->field()->textarea(
             $this->plugin_object->txt("config_prompt_label"),
             $this->plugin_object->txt("config_prompt_info")
-        )->withRequired(true);
+        )->withValue(AIChatConfig::get("prompt"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('prompt', $v);
+            }
+        ))->withRequired(true);
 
-        $char_limit = $this->factory->input()->field()->numeric(
-            $this->plugin_object->txt("config_char_limit_label"),
-            $this->plugin_object->txt("config_char_limit_info")
-        );
+        $characters_limit = $this->factory->input()->field()->numeric(
+            $this->plugin_object->txt("config_characters_limit_label"),
+            $this->plugin_object->txt("config_characters_limit_info")
+        )->withValue(AIChatConfig::get("characters_limit"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('characters_limit', $v);
+            }
+        ));
 
-        $prev_messages = $this->factory->input()->field()->numeric(
-            $this->plugin_object->txt("config_prev_msg_label"),
-            $this->plugin_object->txt("config_prev_msg_info")
-        );
+        $max_memory_messages = $this->factory->input()->field()->numeric(
+            $this->plugin_object->txt("config_max_memory_messages_label"),
+            $this->plugin_object->txt("config_max_memory_messages_info")
+        )->withValue(AIChatConfig::get("max_memory_messages"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('max_memory_messages', $v);
+            }
+        ));
 
         $disclaimer = $this->factory->input()->field()->textarea(
             $this->plugin_object->txt("config_disclaimer_label"),
             $this->plugin_object->txt("config_disclaimer_info")
-        )->withRequired(true);
+        )->withValue(AIChatConfig::get("disclaimer"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('disclaimer', $v);
+            }
+        ))->withRequired(true);
 
         return [
             "general" => $this->factory->input()->field()->section([
-                $model_selection,
-                $system_prompt,
-                $char_limit,
-                $prev_messages,
+                $service_to_use,
+                $prompt,
+                $characters_limit,
+                $max_memory_messages,
                 $disclaimer
-            ], $this->plugin_object->txt("config_general_section"))
+            ], $this->plugin_object->txt("config_general"))
         ];
     }
 
@@ -163,51 +181,96 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $models = $this->factory->input()->field()->select(
             $this->plugin_object->txt("config_openai_models_label"),
             [
-                "gpt-3.5 turbo" => "GPT 3.5 Turbo",
-                "gpt-4" => "GPT 4",
-                "gpt-4.5" => "GPT 4.5"
+                "gpt-4o" => "GPT-4o",
+                "gpt-4o-mini" => "GPT-4o mini",
+                "gpt-4-turbo" => "GPT-4 Turbo",
+                "gpt-4" => "GPT-4",
+                "gpt-3.5-turbo" => "GPT-3.5 Turbo"
             ]
-        )->withRequired(true);
+        )->withValue(AIChatConfig::get("openai_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('openai_model', $v);
+            }
+        ))->withRequired(true);
 
-        $api_key = $this->factory->input()->field()->password(
+        $api_key = $this->factory->input()->field()->text(
             $this->plugin_object->txt("config_openai_key_label"),
             $this->plugin_object->txt("config_openai_key_info")
-        )->withRequired(true);
+        )->withValue(AIChatConfig::get("openai_api_key"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('openai_api_key', $v);
+            }
+        ))->withRequired(true);
 
         $streaming = $this->factory->input()->field()->checkbox(
             $this->plugin_object->txt("config_openai_stream_label"),
             $this->plugin_object->txt("config_openai_stream_info")
-        );
+        )->withValue(AIChatConfig::get("openai_streaming") == "1")->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('openai_streaming', $v);
+            }
+
+        ));
 
         return [
             "openai" => $this->factory->input()->field()->section([
                 $models,
                 $api_key,
                 $streaming
-            ], $this->plugin_object->txt("config_openai_section"))
+            ], $this->plugin_object->txt("config_openai"))
         ];
     }
 
+    /**
+     * @throws AIChatException
+     */
     private function buildOllamaSection(): array {
-        $endpoint = $this->factory->input()->field()->text(
+        $inputs = [];
+
+        $llama_endpoint = AIChatConfig::get("ollama_endpoint");
+
+        $inputs[] = $this->factory->input()->field()->text(
             $this->plugin_object->txt("config_ollama_endpoint_label"),
             $this->plugin_object->txt("config_ollama_endpoint_info")
-        )->withRequired(true);
+        )->withValue($llama_endpoint)->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                AIChatConfig::set('ollama_endpoint', $v);
+            }
+        ))->withRequired(true);
 
-        $models = $this->factory->input()->field()->multiSelect(
-            $this->plugin_object->txt("config_ollama_models_label"),
-            [
-                "gpt-3.5 turbo" => "GPT 3.5 Turbo",
-                "gpt-4" => "GPT 4",
-                "gpt-4.5" => "GPT 4.5"
-            ]
-        )->withRequired(true);
+        if (!empty($llama_endpoint)) {
+            $models = $this->getOLlamaModels($llama_endpoint);
+
+            $values = AIChatConfig::get("ollama_models");
+
+            if (empty($values)) {
+                $values = [];
+            } else {
+                $values = array_keys($values);
+            }
+
+            if (!empty($models)) {
+                $inputs[] = $this->factory->input()->field()->multiSelect(
+                    $this->plugin_object->txt("config_ollama_models_label"),
+                    $models
+                )->withValue($values)->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($models) {
+                        $models_to_save = [];
+
+                        foreach ($v as $model) {
+                            $models_to_save[$model] = $models[$model];
+                        }
+
+                        AIChatConfig::set('ollama_models', $models_to_save);
+                    }
+                ))->withRequired(true);
+            } else {
+                $this->tpl->setOnScreenMessage("failure", $this->plugin_object->txt("config_ollama_models_error"));
+            }
+        }
 
         return [
-            "ollama" => $this->factory->input()->field()->section([
-                $endpoint,
-                $models
-            ], $this->plugin_object->txt("config_ollama_section"))
+            "ollama" => $this->factory->input()->field()->section($inputs, $this->plugin_object->txt("config_ollama"))
         ];
     }
 
@@ -222,18 +285,45 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $form = $form->withRequest($this->request);
             $result = $form->getData();
             if ($result) {
-                return $this->save();
+                $this->save();
             }
         }
 
         return $this->renderer->render($form);
     }
 
-    public function save(): string
+    public function save(): void
     {
         AIChatConfig::save();
-        return $this->renderer->render(
-            $this->factory->messageBox()->success($this->plugin_object->txt('config_msg_success'))
-        );
+
+        $this->tpl->setOnScreenMessage("success", $this->plugin_object->txt('config_msg_success'));
+    }
+
+    private function getOLlamaModels(string $llama_endpoint): array
+    {
+        $llama_endpoint = rtrim($llama_endpoint, '/') . '/api/tags';
+
+        $curlSession = curl_init();
+        curl_setopt($curlSession, CURLOPT_URL, $llama_endpoint);
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($curlSession);
+
+        $models = [];
+
+        if (!curl_errno($curlSession)) {
+            $response = json_decode($response, true);
+
+
+            if (isset($response["models"])) {
+                foreach ($response["models"] as $model) {
+                    $models[$model['model']] = $model['name'];
+                }
+            }
+        }
+
+        curl_close($curlSession);
+
+        return $models;
     }
 }
