@@ -7,31 +7,20 @@ use ilObjAIChatGUI;
 use objects\Chat;
 use platform\AIChatException;
 
-class CustomAI extends LLM
+class Ollama extends LLM
 {
-    private string $url;
+    private string $endpoint;
     private string $model;
-//    private string $apiKey;
 
     public function __construct(string $model)
     {
         $this->model = $model;
     }
 
-    public function setUrl(string $url): void
+    public function setEndpoint(string $endpoint): void
     {
-        $this->url = $url;
+        $this->endpoint = $endpoint;
     }
-
-//    public function getApiKey(): string
-//    {
-//        return $this->apiKey;
-//    }
-
-//    public function setApiKey(string $apiKey): void
-//    {
-//        $this->apiKey = $apiKey;
-//    }
 
     /**
      * @throws AIChatException
@@ -48,13 +37,12 @@ class CustomAI extends LLM
 
         $curlSession = curl_init();
 
-        curl_setopt($curlSession, CURLOPT_URL, $this->url);
+        curl_setopt($curlSession, CURLOPT_URL, rtrim($this->endpoint, '/') . '/api/chat');
         curl_setopt($curlSession, CURLOPT_POST, true);
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlSession, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-//            'Authorization: Bearer ' . $this->getApiKey()
         ]);
 
         if (\ilProxySettings::_getInstance()->isActive()) {

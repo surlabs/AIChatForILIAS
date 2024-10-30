@@ -68,16 +68,16 @@ abstract class LLM
             ];
         }
 
-        $n_memory_messages = $this->getMaxMemoryMessages();
+        $max_memory_messages = $this->getMaxMemoryMessages();
 
-        if (isset($n_memory_messages)) {
-            $n_memory_messages = intval($n_memory_messages);
+        if (isset($max_memory_messages)) {
+            $max_memory_messages = intval($max_memory_messages);
         } else {
-            $n_memory_messages = 0;
+            $max_memory_messages = 0;
         }
 
-        if ($n_memory_messages > 0) {
-            $messages = array_slice($messages, -$n_memory_messages);
+        if ($max_memory_messages > 0) {
+            $messages = array_slice($messages, -$max_memory_messages);
         }
 
         $prompt = $this->getPrompt();
