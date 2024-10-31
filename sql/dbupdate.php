@@ -62,7 +62,7 @@ if (!$db->tableExists('xaic_chats')) {
             'notnull' => true
         ],
         'title' => [
-            'type' => 'text',
+            'type' => 'blob',
             'length' => 250,
             'notnull' => true
         ],
@@ -109,7 +109,7 @@ if (!$db->tableExists('xaic_messages')) {
             'notnull' => true
         ],
         'message' => [
-            'type' => 'text',
+            'type' => 'blob',
             'length' => 4000,
             'notnull' => true
         ]
