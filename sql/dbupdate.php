@@ -342,5 +342,17 @@ if ($db->tableExists('xaic_objects')) {
     foreach ($objects_updated as $object) {
         $db->insert('xaic_objects', $object);
     }
+
+    $db->modifyTableColumn('xaic_chats', 'title', [
+        'type' => 'blob',
+        'length' => 250,
+        'notnull' => true
+    ]);
+
+    $db->modifyTableColumn('xaic_messages', 'message', [
+        'type' => 'blob',
+        'length' => 4000,
+        'notnull' => true
+    ]);
 }
 ?>
