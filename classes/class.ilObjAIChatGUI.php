@@ -160,19 +160,26 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         $title_input = $this->factory->input()->field()->text(
             $this->plugin->txt('object_settings_title')
-        )->withValue($this->object->getTitle())->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                $this->object->setTitle($v);
-            }
-        ));
+        )->withValue($this->object->getTitle())
+            ->withAdditionalTransformation(
+                $this->refinery->string()->hasMaxLength(255)
+            )->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) {
+                    $this->object->setTitle($v);
+                }
+            ));
 
         $description_input = $this->factory->input()->field()->textarea(
             $this->plugin->txt('object_settings_description')
-        )->withValue($this->object->getDescription())->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                $this->object->setDescription($v);
-            }
-        ));
+        )->withValue($this->object->getDescription())
+            ->withAdditionalTransformation(
+                $this->refinery->string()->hasMaxLength(4000)
+            )
+            ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) {
+                    $this->object->setDescription($v);
+                }
+            ));
 
         $online_input = $this->factory->input()->field()->checkbox(
             $this->plugin->txt('object_settings_online'),
@@ -262,29 +269,41 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
 
         $prompt = $this->factory->input()->field()->textarea(
-            $this->plugin->txt('config_prompt_label'),
-            $this->plugin->txt('config_prompt_info')
-        )->withValue($aiChat->getPrompt(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setPrompt($v);
-            }
-        ))->withOnloadCode(function ($id) use ($aiChat) {
-            return "$('#$id').attr('placeholder', `{$aiChat->getPrompt()}`);";
-        });
+            $this->plugin->txt('config_prompt_selection'),
+            $this->plugin->txt('config_prompt_selection_info')
+        )->withValue($aiChat->getPrompt(true))
+            ->withAdditionalTransformation(
+                $this->refinery->string()->hasMaxLength(4000)
+            )
+            ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setPrompt($v);
+                }
+            ))->withOnloadCode(function ($id) use ($aiChat) {
+                return "$('#$id').attr('placeholder', `{$aiChat->getPrompt()}`);";
+            });
 
         $disclaimer = $this->factory->input()->field()->textarea(
-            $this->plugin->txt('config_disclaimer_label'),
-            $this->plugin->txt('config_disclaimer_info')
-        )->withValue($aiChat->getDisclaimer(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) use ($aiChat) {
-                $aiChat->setDisclaimer($v);
-            }
-        ))->withOnloadCode(function ($id) use ($aiChat) {
-            return "$('#$id').attr('placeholder', `{$aiChat->getDisclaimer()}`);";
-        });
+            $this->plugin->txt('config_disclaimer_text'),
+            $this->plugin->txt('config_disclaimer_text_info')
+        )->withValue($aiChat->getDisclaimer(true))
+            ->withAdditionalTransformation(
+                $this->refinery->string()->hasMaxLength(4000)
+            )
+            ->withAdditionalTransformation($this->refinery->custom()->transformation(
+                function ($v) use ($aiChat) {
+                    $aiChat->setDisclaimer($v);
+                }
+            ))->withOnloadCode(function ($id) use ($aiChat) {
+                return "$('#$id').attr('placeholder', `{$aiChat->getDisclaimer()}`);";
+            });
 
         $max_memory_messages = $this->factory->input()->field()->numeric(
-            $this->plugin->txt('config_max_memory_messages_label'), $this->plugin->txt('config_max_memory_messages_info')
+            $this->plugin->txt('config_n_memory_messages'), $this->plugin->txt('config_n_memory_messages_info')
+        )->withAdditionalTransformation(
+            $this->refinery->int()->isGreaterThanOrEqual(0)
+        )->withAdditionalTransformation(
+            $this->refinery->int()->isLessThanOrEqual(100)
         )->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) use ($aiChat) {
                 $aiChat->setMaxMemoryMessages((int) $v);
@@ -298,7 +317,11 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
 
         $characters_limit = $this->factory->input()->field()->numeric(
-            $this->plugin->txt('config_characters_limit_label'), $this->plugin->txt('config_characters_limit_info')
+            $this->plugin->txt('config_characters_limit'), $this->plugin->txt('config_characters_limit_info')
+        )->withAdditionalTransformation(
+            $this->refinery->int()->isGreaterThanOrEqual(0)
+        )->withAdditionalTransformation(
+            $this->refinery->int()->isLessThanOrEqual(4000)
         )->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) use ($aiChat) {
                 $aiChat->setCharactersLimit((int) $v);
