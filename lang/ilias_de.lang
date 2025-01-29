@@ -41,3 +41,12 @@ config_ollama_models_label#:#Verfügbare Modelle
 config_msg_success#:#Konfiguration erfolgreich gespeichert.
 config_ollama_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den Server-Endpunkt.
 object_no_llm#:#Es wurde kein Sprachmodell ausgewählt.
+config_api_section#:#Api-Konfiguration
+config_general_section#:#Allgemeine Konfiguration
+config_prompt_selection#:#Wählen Sie einen Prompt
+config_disclaimer_text#:#Haftungsausschluss-Text
+config_n_memory_messages#:#Anzahl der gespeicherten Nachrichten
+config_characters_limit#:#Zeichenlimit
+config_prompt_selection_info#:#Prompt-Informationen
+config_disclaimer_text_info#:#Haftungsausschluss-Text
+config_n_memory_messages_info#:#Anzahl der gespeicherten Nachrichten

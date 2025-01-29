@@ -41,3 +41,12 @@ config_ollama_models_label#:#Modelos Disponibles
 config_msg_success#:#Configuración guardada exitosamente.
 config_ollama_models_error#:#Error al obtener los modelos disponibles, por favor verifica la URL del endpoint del servidor.
 object_no_llm#:#No hay modelo de lenguaje seleccionado.
+config_api_section#:#Configuración de la API
+config_general_section#:#Configuración general
+config_prompt_selection#:#Selecciona un prompt
+config_disclaimer_text#:#Texto de Aviso Legal
+config_n_memory_messages#:#Número de mensajes en memoria
+config_characters_limit#:#Límite de caracteres
+config_prompt_selection_info#:#Información de prompt
+config_disclaimer_text_info#:#Texto de exensión de responsabilidad
+config_n_memory_messages_info#:#Número de mensajes en memoria

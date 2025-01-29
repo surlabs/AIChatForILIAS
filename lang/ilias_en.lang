@@ -41,3 +41,12 @@ config_ollama_models_label#:#Available Models
 config_msg_success#:#Configuration saved successfully.
 config_ollama_models_error#:#Error getting available models, please check the server endpoint.
 object_no_llm#:#There is no language model selected.
+config_api_section#:#Api configuration
+config_general_section#:#General configuration
+config_prompt_selection#:#Select a prompt
+config_disclaimer_text#:#Disclaimer Text
+config_n_memory_messages#:#Number of memory messages
+config_characters_limit#:#Character limit
+config_prompt_selection_info#:#Prompt information
+config_disclaimer_text_info#:#Disclaimer text
+config_n_memory_messages_info#:#Number of memory messages
