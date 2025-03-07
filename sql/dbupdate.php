@@ -356,3 +356,61 @@ if ($db->tableExists('xaic_objects')) {
     ]);
 }
 ?>
+<#5>
+<?php
+global $DIC;
+
+$db = $DIC->database();
+
+$service_to_use = '';
+
+if ($db->tableExists('xaic_config')) {
+    $result = $db->query("SELECT value FROM xaic_config WHERE name = 'service_to_use'");
+
+    while ($row = $db->fetchAssoc($result)) {
+        $service_to_use = $row['value'];
+    }
+
+    $db->manipulate("DELETE FROM xaic_config WHERE name = 'service_to_use'");
+
+    $result_available_services = $db->query("SELECT value FROM xaic_config WHERE name = 'available_services'");
+
+    $services = [];
+
+    while ($row = $db->fetchAssoc($result_available_services)) {
+        $services = json_decode($row['value'], true);
+    }
+
+    if (empty($services)) {
+        $services = [
+            'openai' => false,
+            'ollama' => false
+        ];
+
+        if (!empty($service_to_use)) {
+            $services[$service_to_use] = true;
+        }
+
+        $db->insert('xaic_config', [
+            'name' => ["text", 'available_services'],
+            'value' => ["text", json_encode($services)]
+        ]);
+    } else {
+        if (!empty($service_to_use)) {
+            $services[$service_to_use] = true;
+        }
+
+        $db->manipulate("UPDATE xaic_config SET value = '" . json_encode($services) . "' WHERE name = 'available_services'");
+    }
+}
+
+if ($db->tableExists('xaic_objects') && !$db->tableColumnExists('xaic_objects', 'service_to_use')) {
+    $db->addTableColumn('xaic_objects', 'service_to_use', [
+        'type' => 'text',
+        'length' => 250,
+        'notnull' => false
+    ]);
+
+    $db->manipulate("UPDATE xaic_objects SET service_to_use = '$service_to_use'");
+}
+?>
