@@ -21,8 +21,7 @@ config_general#:#General
 config_openai#:#OpenAI
 config_ollama#:#Ollama
 config_service_label#:#Service to Use
-config_service_info#:#The service that will be used for the chat, remember to save the configuration so you can configure the service below.
-config_available_services#:#Available Services
+config_service_info#:#The service that will be used for the AI chat
 config_prompt_label#:#System Prompt
 config_prompt_info#:#This prompt will be used as the initial message in a conversation, it will not be visible to the user, but the model will take it into account.
 config_characters_limit_label#:#Character Limit
