@@ -25,6 +25,7 @@ use ILIAS\UI\Renderer;
 use objects\AIChat;
 use objects\Chat;
 use objects\Message;
+use platform\AIChatConfig;
 use platform\AIChatException;
 
 /**
@@ -95,7 +96,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      * @throws ilTemplateException
      * @throws ilCtrlException
      */
-    private function content()
+    private function content(): void
     {
         global $DIC;
         $this->tabs->activateTab("content");
@@ -120,19 +121,22 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      * @throws AIChatException
      * @throws ilCtrlException
      */
-    private function settings()
+    private function settings(): void
     {
         $this->tabs->activateTab("settings");
 
         $form_action = $this->ctrl->getLinkTargetByClass("ilObjAIChatGUI", "settings");
-        $this->tpl->setContent($this->renderSettingsForm($form_action, $this->buildSettingsForm()));
+        $this->tpl->setContent($this->renderSettingsForm($form_action));
     }
 
-    private function renderSettingsForm(string $form_action, array $sections): string
+    /**
+     * @throws AIChatException
+     */
+    private function renderSettingsForm(string $form_action): string
     {
         $form = $this->factory->input()->container()->form()->standard(
             $form_action,
-            $sections
+            $this->buildSettingsForm()
         );
 
         $saving_info = "";
@@ -142,6 +146,11 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $result = $form->getData();
             if ($result) {
                 $saving_info = $this->saveSettings();
+
+                $form = $this->factory->input()->container()->form()->standard(
+                    $form_action,
+                    $this->buildSettingsForm()
+                );
             }
         }
 
@@ -199,9 +208,34 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $this->plugin->txt('object_settings_basic')
         );
 
-
-
         $apiControls = [];
+
+        $available_services = AIChatConfig::get("available_services");
+
+        $service_to_use = $this->factory->input()->field()->radio(
+            $this->plugin->txt("config_service_label"),
+            $this->plugin->txt("config_service_info")
+        );
+
+        if (isset($available_services["openai"]) && $available_services["openai"]) {
+            $service_to_use = $service_to_use->withOption("openai", "OpenAI");
+        }
+
+        if (isset($available_services["ollama"]) && $available_services["ollama"]) {
+            $service_to_use = $service_to_use->withOption("ollama", "Ollama");
+        }
+
+        $current_service = $aiChat->getServiceToUse(true);
+
+        if (in_array($current_service, array_keys($available_services))) {
+            $service_to_use = $service_to_use->withValue($current_service);
+        }
+
+        $apiControls[] = $service_to_use->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use ($aiChat) {
+                $aiChat->setServiceToUse($v);
+            }
+        ));
 
         switch ($aiChat->getServiceToUse()) {
             case "openai":
