@@ -18,7 +18,8 @@ front_input_placeholder#:#Nachricht schreiben...
 error_http#:#Fehler bei der Verbindung mit der API.
 error_apikey#:#Der API-Schlüssel ist ungültig.
 config_service_label#:#Dienst zur Nutzung
-config_service_info#:#Der Dienst, der für den KI-Chat verwendet wird
+config_service_info#:#Der Dienst, der für den Chat verwendet werden soll. Denken Sie daran, die Konfiguration zu speichern, damit Sie den Dienst weiter unten konfigurieren können.
+config_available_services#:#Verfügbare Dienste
 config_general#:#Allgemein
 config_openai#:#OpenAI
 config_ollama#:#Ollama

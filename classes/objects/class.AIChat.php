@@ -45,6 +45,7 @@ class AIChat
     private string $openai_api_key = "";
     private bool $openai_streaming = false;
     private string $ollama_model = "";
+    private string $service_to_use = "";
     private ?LLM $llm = null;
 
     /**
@@ -160,18 +161,6 @@ class AIChat
     /**
      * @throws AIChatException
      */
-    public function getServiceToUse(bool $strict = false): string
-    {
-        if (!empty(AIChatConfig::get("service_to_use"))) {
-            return AIChatConfig::get("service_to_use");
-        }
-
-        return "openai";
-    }
-
-    /**
-     * @throws AIChatException
-     */
     public function getOpenaiModel(bool $strict = false): string
     {
         if ($this->openai_model != "" || $strict) {
@@ -253,6 +242,28 @@ class AIChat
         return [];
     }
 
+    public function getServiceToUse(bool $strict = false): string
+    {
+        $available_services = AIChatConfig::get("available_services");
+
+        if (($this->service_to_use != "" && isset($available_services[$this->service_to_use]) && $available_services[$this->service_to_use]) || $strict) {
+            return $this->service_to_use;
+        }
+
+        foreach ($available_services as $service => $available) {
+            if ($available) {
+                return $service;
+            }
+        }
+
+        return "";
+    }
+
+    public function setServiceToUse(string $service_to_use): void
+    {
+        $this->service_to_use = $service_to_use;
+    }
+
     public function getLlm(): ?LLM
     {
         return $this->llm;
@@ -282,6 +293,7 @@ class AIChat
             $this->setOpenaiApiKey((string) $result[0]["openai_api_key"]);
             $this->setOpenaiStreaming((bool) $result[0]["openai_streaming"]);
             $this->setOllamaModel((string) $result[0]["ollama_model"]);
+            $this->setServiceToUse($result[0]["service_to_use"]);
         }
     }
 
@@ -306,8 +318,9 @@ class AIChat
             "openai_model" => $this->openai_model,
             "openai_api_key" => $this->openai_api_key,
             "openai_streaming" => (int) $this->openai_streaming,
-            "ollama_model" => $this->ollama_model
-        ));
+            "ollama_model" => $this->ollama_model,
+            "service_to_use" => $this->service_to_use,
+));
     }
 
     /**

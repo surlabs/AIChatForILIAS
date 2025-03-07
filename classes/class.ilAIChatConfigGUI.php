@@ -104,11 +104,12 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         }
     }
 
+    /**
+     * @throws AIChatException
+     */
     private function buildForm(string $cmd): array
     {
         switch($cmd) {
-            case "configureGeneral":
-                return $this->buildGeneralSection();
             case "configureOpenAI":
                 return $this->buildOpenAISection();
             case "configureOllama":
@@ -118,17 +119,29 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         }
     }
 
+    /**
+     * @throws AIChatException
+     */
     private function buildGeneralSection(): array {
-        $service_to_use = $this->factory->input()->field()->radio(
-            $this->plugin_object->txt("config_service_label"),
-            $this->plugin_object->txt("config_service_info")
-        )->withOption("openai", "OpenAI")
-        ->withOption("ollama", "Ollama")
-        ->withValue(AIChatConfig::get("service_to_use"))->withAdditionalTransformation($this->refinery->custom()->transformation(
-            function ($v) {
-                AIChatConfig::set('service_to_use', $v);
+        $available_services = AIChatConfig::get("available_services");
+
+        $openai_service = $this->factory->input()->field()->checkbox(
+            "OpenAI",
+        )->withValue($available_services["openai"] == "1")->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use (&$available_services) {
+                $available_services["openai"] = $v;
+                AIChatConfig::set('available_services', $available_services);
             }
-        ))->withRequired(true);
+        ));
+
+        $ollama_service = $this->factory->input()->field()->checkbox(
+            "OLlama",
+        )->withValue($available_services["ollama"] == "1")->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) use (&$available_services) {
+                $available_services["ollama"] = $v;
+                AIChatConfig::set('available_services', $available_services);
+            }
+        ));
 
         $prompt = $this->factory->input()->field()->textarea(
             $this->plugin_object->txt("config_prompt_label"),
@@ -167,8 +180,11 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         ))->withRequired(true);
 
         return [
+            "available_services" => $this->factory->input()->field()->section([
+                $openai_service,
+                $ollama_service
+            ], $this->plugin_object->txt("config_available_services")),
             "general" => $this->factory->input()->field()->section([
-                $service_to_use,
                 $prompt,
                 $characters_limit,
                 $max_memory_messages,
@@ -306,6 +322,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $curlSession = curl_init();
         curl_setopt($curlSession, CURLOPT_URL, $llama_endpoint);
         curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlSession, CURLOPT_TIMEOUT, 10);
 
         $response = curl_exec($curlSession);
 
