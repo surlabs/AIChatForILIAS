@@ -413,3 +413,4 @@ if ($db->tableExists('xaic_objects') && !$db->tableColumnExists('xaic_objects', 
 
     $db->manipulate("UPDATE xaic_objects SET service_to_use = '$service_to_use'");
 }
+?>
