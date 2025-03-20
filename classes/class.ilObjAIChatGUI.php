@@ -225,6 +225,10 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             $service_to_use = $service_to_use->withOption("ollama", "Ollama");
         }
 
+        if (isset($available_services["gwdg"]) && $available_services["gwdg"]) {
+            $service_to_use = $service_to_use->withOption("gwdg", "GWDG");
+        }
+
         $current_service = $aiChat->getServiceToUse(true);
 
         if (in_array($current_service, array_keys($available_services))) {
@@ -292,6 +296,34 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 }
 
                 $apiControls[] = $model;
+
+                break;
+            case "gwdg":
+                $gwdgModels = $aiChat->getGWDGModelsList();
+
+                $model = $this->factory->input()->field()->select(
+                    $this->plugin->txt('config_gwdg_models_label'),
+                    $gwdgModels,
+                )->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setGWDGModel($v);
+                    }
+                ))->withRequired(true);
+
+                if (in_array($aiChat->getGWDGModel(true), $gwdgModels) || array_key_exists($aiChat->getGWDGModel(true), $gwdgModels)) {
+                    $model = $model->withValue($aiChat->getGWDGModel(true));
+                }
+
+                $apiControls[] = $model;
+
+                $apiControls[] = $this->factory->input()->field()->checkbox(
+                    $this->plugin->txt('config_gwdg_stream_label'),
+                    $this->plugin->txt('config_gwdg_stream_info')
+                )->withValue($aiChat->isGWDGStreaming(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                    function ($v) use ($aiChat) {
+                        $aiChat->setGWDGStreaming($v);
+                    }
+                ));
 
                 break;
         }
@@ -423,12 +455,22 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                  */
                 $aiChat = $this->object->getAIChat();
 
+                $openai_streaming = false;
+
+                if ($aiChat->getServiceToUse() == "openai") {
+                    $openai_streaming = $aiChat->isOpenaiStreaming() ?? false;
+                }
+
+                if ($aiChat->getServiceToUse() == "gwdg") {
+                    $openai_streaming = $aiChat->isGWDGStreaming() ?? false;
+                }
+
                 return array(
                     "disclaimer" => $aiChat->getDisclaimer() ?? false,
                     "prompt" => $aiChat->getPrompt() ?? false,
                     "characters_limit" => $aiChat->getCharactersLimit() ?? false,
                     "max_memory_messages" => $aiChat->getMaxMemoryMessages() ?? false,
-                    "openai_streaming" => $aiChat->isOpenaiStreaming() ?? false,
+                    "openai_streaming" => $openai_streaming ?? false,
                     "lang" => $this->lng->getUserLanguage(),
                     "translations" => $this->loadFrontLang()
                 );

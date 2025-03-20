@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace objects;
 
+use ai\GWDG;
 use ai\LLM;
 use ai\OpenAI;
 use ai\Ollama;
@@ -46,6 +47,8 @@ class AIChat
     private bool $openai_streaming = false;
     private string $ollama_model = "";
     private string $service_to_use = "";
+    private string $gwdg_model = "";
+    private bool $gwdg_streaming = false;
     private ?LLM $llm = null;
 
     /**
@@ -264,6 +267,47 @@ class AIChat
         $this->service_to_use = $service_to_use;
     }
 
+    public function getGwdgModel(bool $strict = false): string
+    {
+        if ($this->gwdg_model != "" || $strict) {
+            return $this->gwdg_model;
+        }
+
+        return AIChatConfig::get("gwdg_model");
+    }
+
+    public function setGwdgModel(string $gwdg_model): void
+    {
+        $this->gwdg_model = $gwdg_model;
+    }
+
+    public function isGwdgStreaming(bool $strict = false): bool
+    {
+        if ($this->getServiceToUse() != "gwdg") {
+            return false;
+        }
+
+        if ($this->gwdg_streaming || $strict) {
+            return $this->gwdg_streaming;
+        }
+
+        return AIChatConfig::get("gwdg_streaming") == "1";
+    }
+
+    public function setGwdgStreaming(bool $gwdg_streaming): void
+    {
+        $this->gwdg_streaming = $gwdg_streaming;
+    }
+
+    public function getGwdgModelsList(): array
+    {
+        if (!empty(AIChatConfig::get("gwdg_models"))) {
+            return AIChatConfig::get("gwdg_models");
+        }
+
+        return [];
+    }
+
     public function getLlm(): ?LLM
     {
         return $this->llm;
@@ -294,6 +338,8 @@ class AIChat
             $this->setOpenaiStreaming((bool) $result[0]["openai_streaming"]);
             $this->setOllamaModel((string) $result[0]["ollama_model"]);
             $this->setServiceToUse($result[0]["service_to_use"]);
+            $this->setGwdgModel((string) $result[0]["gwdg_model"]);
+            $this->setGwdgStreaming((bool) $result[0]["gwdg_streaming"]);
         }
     }
 
@@ -320,6 +366,8 @@ class AIChat
             "openai_streaming" => (int) $this->openai_streaming,
             "ollama_model" => $this->ollama_model,
             "service_to_use" => $this->service_to_use,
+            "gwdg_model" => $this->gwdg_model,
+            "gwdg_streaming" => (int) $this->gwdg_streaming,
 ));
     }
 
@@ -399,6 +447,18 @@ class AIChat
                         $this->llm->setEndpoint(AIChatConfig::get("ollama_endpoint"));
                         $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
                         $this->llm->setPrompt($this->getPrompt());
+                    }
+                    break;
+                case "gwdg":
+                    $models = $this->getGwdgModelsList();
+                    $model = $this->getGwdgModel();
+
+                    if (in_array($model, $models) || array_key_exists($model, $models)) {
+                        $this->llm = new GWDG($model);
+                        $this->llm->setApiKey(AIChatConfig::get("gwdg_api_key"));
+                        $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
+                        $this->llm->setPrompt($this->getPrompt());
+                        $this->llm->setStreaming($this->isGwdgStreaming());
                     }
                     break;
                 default:

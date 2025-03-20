@@ -141,47 +141,61 @@ if ($db->tableExists('xaic_config')) {
 global $DIC;
 $db = $DIC->database();
 if ($db->tableExists('xaic_objects')) {
-    $db->addTableColumn('xaic_objects', 'provider', [
-        'type' => 'text',
-        'length' => 250,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'provider')) {
+        $db->addTableColumn('xaic_objects', 'provider', [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'model', [
-        'type' => 'text',
-        'length' => 250,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'model')) {
+        $db->addTableColumn('xaic_objects', 'model', [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'streaming', [
-        'type' => 'integer',
-        'length' => 4,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'streaming')) {
+        $db->addTableColumn('xaic_objects', 'streaming', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'url', [
-        'type' => 'text',
-        'length' => 250,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'url')) {
+        $db->addTableColumn('xaic_objects', 'url', [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'prompt', [
-        'type' => 'text',
-        'length' => 4000,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'prompt')) {
+        $db->addTableColumn('xaic_objects', 'prompt', [
+            'type' => 'text',
+            'length' => 4000,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'char_limit', [
-        'type' => 'integer',
-        'length' => 4,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'char_limit')) {
+        $db->addTableColumn('xaic_objects', 'char_limit', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
+    }
 
-    $db->addTableColumn('xaic_objects', 'max_memory_messages', [
-        'type' => 'integer',
-        'length' => 4,
-        'notnull' => false
-    ]);
+    if (!$db->tableColumnExists('xaic_objects', 'max_memory_messages')) {
+        $db->addTableColumn('xaic_objects', 'max_memory_messages', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
+    }
 }
 ?>
 <#4>
@@ -412,5 +426,29 @@ if ($db->tableExists('xaic_objects') && !$db->tableColumnExists('xaic_objects', 
     ]);
 
     $db->manipulate("UPDATE xaic_objects SET service_to_use = '$service_to_use'");
+}
+?>
+<#6>
+<?php
+global $DIC;
+
+$db = $DIC->database();
+
+if ($db->tableExists('xaic_objects')) {
+    if (!$db->tableColumnExists('xaic_objects', 'gwdg_model')) {
+        $db->addTableColumn('xaic_objects', 'gwdg_model', [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => false
+        ]);
+    }
+
+    if (!$db->tableColumnExists('xaic_objects', 'gwdg_streaming')) {
+        $db->addTableColumn('xaic_objects', 'gwdg_streaming', [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]);
+    }
 }
 ?>

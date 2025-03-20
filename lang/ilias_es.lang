@@ -51,3 +51,9 @@ config_characters_limit#:#Límite de caracteres
 config_prompt_selection_info#:#Información de prompt
 config_disclaimer_text_info#:#Texto de exensión de responsabilidad
 config_n_memory_messages_info#:#Número de mensajes en memoria
+config_gwdg_key_label#:#Clave API
+config_gwdg_key_info#:#Tu clave API de GWDG
+config_gwdg_stream_label#:#Activar Streaming
+config_gwdg_stream_info#:#Activar respuestas en streaming de GWDG
+config_gwdg_models_label#:#Modelos
+config_gwdg_models_error#:#Error al obtener los modelos disponibles, por favor verifica la clave API.

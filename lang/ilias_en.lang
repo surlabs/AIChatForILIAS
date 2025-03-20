@@ -51,3 +51,9 @@ config_characters_limit#:#Character limit
 config_prompt_selection_info#:#Prompt information
 config_disclaimer_text_info#:#Disclaimer text
 config_n_memory_messages_info#:#Number of memory messages
+config_gwdg_key_label#:#API Key
+config_gwdg_key_info#:#Your GWDG API key
+config_gwdg_stream_label#:#Enable Streaming
+config_gwdg_stream_info#:#Enable streaming responses from GWDG
+config_gwdg_models_label#:#Models
+config_gwdg_models_error#:#Error getting available models, please check the api key.

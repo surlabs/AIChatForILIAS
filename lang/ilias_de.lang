@@ -51,3 +51,9 @@ config_characters_limit#:#Zeichenlimit
 config_prompt_selection_info#:#Prompt-Informationen
 config_disclaimer_text_info#:#Haftungsausschluss-Text
 config_n_memory_messages_info#:#Anzahl der gespeicherten Nachrichten
+config_gwdg_key_label#:#API-Schlüssel
+config_gwdg_key_info#:#Ihr GWDG-API-Schlüssel
+config_gwdg_stream_label#:#Streaming aktivieren
+config_gwdg_stream_info#:#Streaming-Antworten von GWDG aktivieren
+config_gwdg_models_label#:#Modelle
+config_gwdg_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den API-Schlüssel.
