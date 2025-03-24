@@ -406,6 +406,13 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlSession, CURLOPT_TIMEOUT, 10);
 
+        if (\ilProxySettings::_getInstance()->isActive()) {
+            $proxyHost = \ilProxySettings::_getInstance()->getHost();
+            $proxyPort = \ilProxySettings::_getInstance()->getPort();
+            $proxyURL = $proxyHost . ":" . $proxyPort;
+            curl_setopt($curlSession, CURLOPT_PROXY, $proxyURL);
+        }
+
         $response = curl_exec($curlSession);
 
         $models = [];
@@ -436,6 +443,13 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             'Content-Type: application/json',
             'Authorization: Bearer ' . $api_key
         ]);
+
+        if (\ilProxySettings::_getInstance()->isActive()) {
+            $proxyHost = \ilProxySettings::_getInstance()->getHost();
+            $proxyPort = \ilProxySettings::_getInstance()->getPort();
+            $proxyURL = $proxyHost . ":" . $proxyPort;
+            curl_setopt($curlSession, CURLOPT_PROXY, $proxyURL);
+        }
 
         $response = curl_exec($curlSession);
 
