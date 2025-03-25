@@ -25,6 +25,7 @@ This plugin currently supports the following LLMs:
 - [Meta](https://www.llama.com/) (Local) LLaMa 3.1 70b Instruct
 - [Meta](https://www.llama.com/) (Local) Codellama 70b 
 - [Meta](https://www.llama.com/) (Local) LLaMa 3.1 8b Instruct
+- [GWDG](https://docs.hpc.gwdg.de/services/saia/index.html#api-request). GWDG Cloud
 
 ## Can I use different API-keys for different Objects?
 
