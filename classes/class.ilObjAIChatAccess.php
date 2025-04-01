@@ -26,20 +26,27 @@ use platform\AIChatException;
  * Class ilObjAIChatAccess
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class ilObjAIChatAccess extends ilObjectPluginAccess
+class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandling
 {
-    public static function hasWriteAccess($ref_id = null, $user_id = null): bool
-    {
-        return self::hasAccess('write', $ref_id, $user_id);
-    }
 
-    protected static function hasAccess(string $permission, $ref_id = null, $user_id = null): bool
+    public function _checkAccess(string $cmd, string $permission, int $ref_id, int $obj_id, ?int $user_id = null): bool
     {
-        global $DIC;
-        $ref_id = (int)$ref_id ?: (int)$_GET['ref_id'];
-        $user_id = $user_id ?: $DIC->user()->getId();
+        global $ilUser, $ilAccess;
 
-        return $DIC->access()->checkAccessOfUser($user_id, $permission, '', $ref_id);
+        if ($user_id === 0) {
+            $user_id = $ilUser->getId();
+        }
+
+        switch ($permission) {
+            case "read":
+                if (!self::checkOnline($obj_id) &&
+                    !$ilAccess->checkAccessOfUser($user_id, "write", "", $ref_id)) {
+                    return false;
+                }
+                break;
+        }
+
+        return true;
     }
 
     /**
@@ -52,5 +59,41 @@ class ilObjAIChatAccess extends ilObjectPluginAccess
     {
         $liveVoting = new AIChat((int) $a_obj_id);
         return !$liveVoting->isOnline();
+    }
+
+    public static function checkOnline(int $a_id) : bool
+    {
+        $liveVoting = new AIChat((int) $a_id);
+        return !$liveVoting->isOnline();
+    }
+
+    public static function getConditionOperators() : array
+    {
+        include_once './Services/Conditions/classes/class.ilConditionHandler.php';
+        return array(
+            ilConditionHandler::OPERATOR_FAILED,
+            ilConditionHandler::OPERATOR_PASSED
+        );
+    }
+
+    /**
+     * check condition for a specific user and object
+     */
+    public static function checkCondition(
+        int $a_trigger_obj_id,
+        string $a_operator,
+        string $a_value,
+        int $a_usr_id
+    ) : bool {
+        $ref_ids = ilObject::_getAllReferences($a_trigger_obj_id);
+        $ref_id = array_shift($ref_ids);
+        $object = new ilObjToDoList($ref_id);
+        switch ($a_operator) {
+            case ilConditionHandler::OPERATOR_PASSED:
+                return $object->getLPStatusForUser($a_usr_id) === ilLPStatus::LP_STATUS_COMPLETED_NUM;
+            case ilConditionHandler::OPERATOR_FAILED:
+                return $object->getLPStatusForUser($a_usr_id) === ilLPStatus::LP_STATUS_FAILED_NUM;
+        }
+        return false;
     }
 }
