@@ -10,6 +10,7 @@ object_settings_advanced#:#Configuraciones Avanzadas
 object_settings_title#:#Título
 object_settings_description#:#Descripción
 object_settings_online#:#En línea
+object_settings_offline#:#Fuera de línea
 object_settings_online_info#:#AI Chat estará disponible para los usuarios cuando esta opción esté habilitada.
 object_settings_msg_success#:#Configuraciones guardadas exitosamente.
 chat_default_title#:#Nuevo Chat

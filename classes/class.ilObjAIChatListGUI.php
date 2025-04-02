@@ -51,22 +51,6 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
         $this->setType(ilAIChatPlugin::PLUGIN_ID);
     }
 
-    public function getProperties() : array
-    {
-        global $lng, $ilUser;
-
-        $props = array();
-
-        if (!ilObjAIChatAccess::checkOnline($this->obj_id)) {
-            $props[] = array("alert" => true,
-                "property" => $this->txt("status"),
-                "value" => $this->txt("offline")
-            );
-        }
-
-        return $props;
-    }
-
     public function getCustomProperties($a_prop): array
     {
         if (!isset($this->obj_id)) {
@@ -80,7 +64,7 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
                 'alert' => true,
                 'newline' => true,
                 'property' => 'Status',
-                'value' => 'Offline'
+                'value' => $this->txt('object_settings_offline')
             );
         }
 
@@ -100,7 +84,7 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
                 'alert' => true,
                 'newline' => true,
                 'property' => 'Status',
-                'value' => 'Offline'
+                'value' => $this->txt('object_settings_offline')
             );
         }
 

@@ -39,7 +39,7 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
 
         switch ($permission) {
             case "read":
-                if (!self::checkOnline($obj_id) &&
+                if (!self::_isOffline($obj_id) &&
                     !$ilAccess->checkAccessOfUser($user_id, "write", "", $ref_id)) {
                     return false;
                 }
@@ -58,12 +58,6 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
     public static function _isOffline($a_obj_id): bool
     {
         $liveVoting = new AIChat((int) $a_obj_id);
-        return !$liveVoting->isOnline();
-    }
-
-    public static function checkOnline(int $a_id) : bool
-    {
-        $liveVoting = new AIChat((int) $a_id);
         return !$liveVoting->isOnline();
     }
 
