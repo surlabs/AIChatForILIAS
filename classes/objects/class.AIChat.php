@@ -464,8 +464,6 @@ class AIChat
                 default:
                     throw new AIChatException("AIChat::loadLLM() - LLM service to use not valid (Service: " . $service_to_use . ")");
             }
-        } else {
-            throw new AIChatException("AIChat::loadLLM() - LLM service to use not found");
         }
     }
     
