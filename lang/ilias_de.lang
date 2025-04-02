@@ -10,6 +10,7 @@ object_settings_advanced#:#Erweiterte Einstellungen
 object_settings_title#:#Titel
 object_settings_description#:#Beschreibung
 object_settings_online#:#Online
+object_settings_status#:#Status
 object_settings_offline#:#Offline
 object_settings_online_info#:#KI-Chat ist verfügbar, wenn diese Option aktiviert ist.
 object_settings_msg_success#:#Einstellungen erfolgreich gespeichert.
