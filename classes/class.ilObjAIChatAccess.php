@@ -55,16 +55,10 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
      * @param int $a_obj_id
      * @return bool
      */
-    public static function _isOffline($a_obj_id): bool
-    {
-        $liveVoting = new AIChat((int) $a_obj_id);
-        return !$liveVoting->isOnline();
-    }
-
     public static function checkOnline(int $a_id) : bool
     {
         $liveVoting = new AIChat((int) $a_id);
-        return !$liveVoting->isOnline();
+        return $liveVoting->isOnline();
     }
 
     public static function getConditionOperators() : array
