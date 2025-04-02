@@ -63,7 +63,7 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
             $props[] = array(
                 'alert' => true,
                 'newline' => true,
-                'property' => 'Status',
+                'property' => $this->txt('object_settings_status'),
                 'value' => $this->txt('object_settings_offline')
             );
         }
@@ -83,7 +83,7 @@ class ilObjAIChatListGUI extends ilObjectPluginListGUI
             $props[] = array(
                 'alert' => true,
                 'newline' => true,
-                'property' => 'Status',
+                'property' => $this->txt('object_settings_status'),
                 'value' => $this->txt('object_settings_offline')
             );
         }
