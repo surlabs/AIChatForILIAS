@@ -233,7 +233,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         $current_service = $aiChat->getServiceToUse(true);
 
-        if (in_array($current_service, array_keys($available_services))) {
+
+        if (isset($available_services[$current_service]) && $available_services[$current_service]) {
             $service_to_use = $service_to_use->withValue($current_service);
         }
 
