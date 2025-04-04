@@ -12,6 +12,18 @@ class OpenAI extends LLM
     private string $model;
     private string $apiKey;
     private bool $streaming = false;
+    public const MODEL_TYPES = [
+        "gpt-4.5-preview" => "GPT-4.5 Preview",
+        "gpt-4o" => "GPT-4o",
+        "gpt-4o-mini" => "GPT-4o mini",
+        "gpt-4-turbo" => "GPT-4 Turbo",
+        "gpt-4.5-preview-2025-02-27" => "GPT-4.5 Preview 2025-02-27",
+        "gpt-4-0125-preview" => "GPT-4 0125 Preview",
+        "gpt-4-turbo-preview" => "GPT-4 Turbo Preview",
+        "gpt-3.5-turbo-1106" => "GPT-3.5 Turbo 1106",
+        "gpt-4" => "GPT-4",
+        "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+    ];
 
     public function __construct(string $model)
     {

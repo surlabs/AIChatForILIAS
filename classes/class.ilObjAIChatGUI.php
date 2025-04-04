@@ -27,6 +27,7 @@ use objects\Chat;
 use objects\Message;
 use platform\AIChatConfig;
 use platform\AIChatException;
+use ai\OpenAI;
 
 /**
  * Class ilObjAIChatGUI
@@ -232,7 +233,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         $current_service = $aiChat->getServiceToUse(true);
 
-        if (in_array($current_service, array_keys($available_services))) {
+
+        if (isset($available_services[$current_service]) && $available_services[$current_service]) {
             $service_to_use = $service_to_use->withValue($current_service);
         }
 
@@ -244,13 +246,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
         switch ($aiChat->getServiceToUse()) {
             case "openai":
-                $models = [
-                    "gpt-4o" => "GPT-4o",
-                    "gpt-4o-mini" => "GPT-4o mini",
-                    "gpt-4-turbo" => "GPT-4 Turbo",
-                    "gpt-4" => "GPT-4",
-                    "gpt-3.5-turbo" => "GPT-3.5 Turbo"
-                ];
+                $models = OpenAI::MODEL_TYPES;
 
                 $apiControls[] = $this->factory->input()->field()->select(
                     $this->plugin->txt('config_openai_models_label'),

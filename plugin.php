@@ -14,14 +14,14 @@
  *  https://github.com/surlabs/AIChat
  *
  *  If you need support, please contact the maintainer of this software at:
- *  info@surlabs.es
+ *  info@surlabs.com
  *
  */
 
 
 $id = 'xaic';
 
-$version = '9.1.1';
+$version = '9.1.4';
 
 $ilias_min_version = '9.0';
 $ilias_max_version = '9.999';
