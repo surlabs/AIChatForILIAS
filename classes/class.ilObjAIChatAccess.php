@@ -40,7 +40,7 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
         switch ($permission) {
             case "read":
                 if (!self::_isOffline($obj_id) &&
-                    !$ilAccess->checkAccessOfUser($user_id, "write", "", $ref_id)) {
+                    !$ilAccess->checkAccessOfUser($user_id, "read", "", $ref_id)) {
                     return false;
                 }
                 break;
