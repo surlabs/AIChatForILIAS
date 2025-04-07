@@ -44,6 +44,7 @@ config_ollama_models_label#:#Available Models
 config_msg_success#:#Configuration saved successfully.
 config_ollama_models_error#:#Error getting available models, please check the server endpoint.
 object_no_llm#:#There is no language model selected.
+object_offline_info#:#AI Chat is offline.
 config_api_section#:#Api configuration
 config_general_section#:#General configuration
 config_prompt_selection#:#Select a prompt

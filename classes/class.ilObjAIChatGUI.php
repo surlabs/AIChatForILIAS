@@ -103,6 +103,12 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         global $DIC;
         $this->tabs->activateTab("content");
 
+        if(ilObjAIChatAccess::_isOffline($this->obj_id)){
+            $this->tpl->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($this->plugin->txt("object_offline_info"))));
+            return;
+        }
+
+
         $aichat = $this->object->getAIChat();
 
         if ($aichat->getLLM() == null) {
@@ -125,6 +131,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      */
     private function settings(): void
     {
+        $this->checkPermission("write");
+
         $this->tabs->activateTab("settings");
 
         $form_action = $this->ctrl->getLinkTargetByClass("ilObjAIChatGUI", "settings");

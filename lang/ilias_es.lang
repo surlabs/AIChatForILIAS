@@ -44,6 +44,7 @@ config_ollama_models_label#:#Modelos Disponibles
 config_msg_success#:#Configuración guardada exitosamente.
 config_ollama_models_error#:#Error al obtener los modelos disponibles, por favor verifica la URL del endpoint del servidor.
 object_no_llm#:#No hay modelo de lenguaje seleccionado.
+object_offline_info#:#AI Chat está fuera de línea.
 config_api_section#:#Configuración de la API
 config_general_section#:#Configuración general
 config_prompt_selection#:#Selecciona un prompt

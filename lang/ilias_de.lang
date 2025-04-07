@@ -44,6 +44,7 @@ config_ollama_models_label#:#Verfügbare Modelle
 config_msg_success#:#Konfiguration erfolgreich gespeichert.
 config_ollama_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den Server-Endpunkt.
 object_no_llm#:#Es wurde kein Sprachmodell ausgewählt.
+object_offline_info#:#KI-Chat ist offline.
 config_api_section#:#Api-Konfiguration
 config_general_section#:#Allgemeine Konfiguration
 config_prompt_selection#:#Wählen Sie einen Prompt
