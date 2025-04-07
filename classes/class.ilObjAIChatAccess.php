@@ -26,7 +26,7 @@ use platform\AIChatException;
  * Class ilObjAIChatAccess
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandling
+class ilObjAIChatAccess extends ilObjectPluginAccess
 {
 
     public function _checkAccess(string $cmd, string $permission, int $ref_id, int $obj_id, ?int $user_id = null): bool
@@ -57,8 +57,8 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
      */
     public static function _isOffline($a_obj_id): bool
     {
-        $liveVoting = new AIChat((int) $a_obj_id);
-        return !$liveVoting->isOnline();
+        $aichat = new AIChat((int) $a_obj_id);
+        return !$aichat->isOnline();
     }
 
     public static function getConditionOperators() : array
@@ -70,24 +70,4 @@ class ilObjAIChatAccess extends ilObjectPluginAccess implements ilConditionHandl
         );
     }
 
-    /**
-     * check condition for a specific user and object
-     */
-    public static function checkCondition(
-        int $a_trigger_obj_id,
-        string $a_operator,
-        string $a_value,
-        int $a_usr_id
-    ) : bool {
-        $ref_ids = ilObject::_getAllReferences($a_trigger_obj_id);
-        $ref_id = array_shift($ref_ids);
-        $object = new ilObjToDoList($ref_id);
-        switch ($a_operator) {
-            case ilConditionHandler::OPERATOR_PASSED:
-                return $object->getLPStatusForUser($a_usr_id) === ilLPStatus::LP_STATUS_COMPLETED_NUM;
-            case ilConditionHandler::OPERATOR_FAILED:
-                return $object->getLPStatusForUser($a_usr_id) === ilLPStatus::LP_STATUS_FAILED_NUM;
-        }
-        return false;
-    }
 }
