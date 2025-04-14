@@ -452,3 +452,19 @@ if ($db->tableExists('xaic_objects')) {
     }
 }
 ?>
+<#7>
+<?php
+global $DIC;
+
+$db = $DIC->database();
+
+if ($db->tableExists("xaic_config")) {
+    $result = $db->query("SELECT value FROM xaic_config WHERE name = 'openai_model'");
+
+    while ($row = $db->fetchAssoc($result)) {
+        $model = $row['value'];
+        $db->manipulate("UPDATE xaic_config SET name = 'openai_models' WHERE name = 'openai_model'");
+        $db->manipulate("UPDATE xaic_config SET value = '" . json_encode([$model => $model]) . "' WHERE name = 'openai_models'");
+    }
+}
+?>
