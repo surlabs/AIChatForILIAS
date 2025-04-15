@@ -36,11 +36,13 @@ config_disclaimer_info#:#Texto que se mostrará en el chat para informar al usua
 config_openai_models_label#:#Modelos
 config_openai_key_label#:#Clave API
 config_openai_key_info#:#Tu clave API de OpenAI
+config_openai_key_info_optional#:#Tu clave API de OpenAI, (opcional) solo si deseas usar tu propia clave API.
 config_openai_stream_label#:#Activar Streaming
 config_openai_stream_info#:#Activar respuestas en streaming de OpenAI
+config_openai_stream_info_optional#:#Activar respuestas en streaming de OpenAI, si no estan habilitadas por el administrador de la plataforma
 config_ollama_endpoint_label#:#Endpoint del Servidor
 config_ollama_endpoint_info#:#La URL del endpoint del servidor Ollama
-config_ollama_models_label#:#Modelos Disponibles
+config_ollama_models_label#:#Modelos
 config_msg_success#:#Configuración guardada exitosamente.
 config_ollama_models_error#:#Error al obtener los modelos disponibles, por favor verifica la URL del endpoint del servidor.
 object_no_llm#:#No hay modelo de lenguaje seleccionado.
@@ -58,6 +60,7 @@ config_gwdg_key_label#:#Clave API
 config_gwdg_key_info#:#Tu clave API de GWDG
 config_gwdg_stream_label#:#Activar Streaming
 config_gwdg_stream_info#:#Activar respuestas en streaming de GWDG
+config_gwdg_stream_info_optional#:#Activar respuestas en streaming de GWDG, si no estan habilitadas por el administrador de la plataforma
 config_gwdg_models_label#:#Modelos
 config_gwdg_models_error#:#Error al obtener los modelos disponibles, por favor verifica la clave API.
 step_1#:#Paso 1
@@ -68,3 +71,4 @@ step_2_ollama#:#Por favor, introduce la URL del endpoint del servidor de Ollama 
 step_2_gwdg#:#Por favor, introduce tu clave API de GWDG, selecciona si deseas habilitar el streaming y guarda la configuración para obtener los modelos disponibles.
 step_3#:#Paso 3
 step_3_info#:#Por favor, selecciona los modelos que deseas usar. Puedes seleccionar múltiples modelos; en cada chat de IA, el propietario podrá seleccionar el modelo que desee usar de entre los modelos disponibles seleccionados a continuación. Luego guarda la configuración.
+no_available_services#:#No hay servicios disponibles, por favor contacta con tu administrador.

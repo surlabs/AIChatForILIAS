@@ -216,6 +216,15 @@ class AIChat
         $this->openai_streaming = $openai_streaming;
     }
 
+    public function getOpenAIModelsList()
+    {
+        if (!empty(AIChatConfig::get("openai_models"))) {
+            return AIChatConfig::get("openai_models");
+        }
+
+        return [];
+    }
+
     /**
      * @throws AIChatException
      */

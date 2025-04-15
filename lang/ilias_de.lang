@@ -36,11 +36,13 @@ config_disclaimer_info#:#Text, der im Chat angezeigt wird, um den Benutzer darü
 config_openai_models_label#:#Modelle
 config_openai_key_label#:#API-Schlüssel
 config_openai_key_info#:#Ihr OpenAI API-Schlüssel
+config_openai_key_info_optional#:#Ihr OpenAI API-Schlüssel (optional), nur wenn Sie Ihren eigenen API-Schlüssel verwenden möchten.
 config_openai_stream_label#:#Streaming aktivieren
 config_openai_stream_info#:#Streaming-Antworten von OpenAI aktivieren
+config_openai_stream_info_optional#:#Streaming-Antworten von OpenAI aktivieren, wenn sie nicht vom Plattformadministrator aktiviert sind.
 config_ollama_endpoint_label#:#Server-Endpunkt
 config_ollama_endpoint_info#:#Die URL des Ollama-Server-Endpunkts
-config_ollama_models_label#:#Verfügbare Modelle
+config_ollama_models_label#:#Modelle
 config_msg_success#:#Konfiguration erfolgreich gespeichert.
 config_ollama_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den Server-Endpunkt.
 object_no_llm#:#Es wurde kein Sprachmodell ausgewählt.
@@ -58,6 +60,7 @@ config_gwdg_key_label#:#API-Schlüssel
 config_gwdg_key_info#:#Ihr GWDG-API-Schlüssel
 config_gwdg_stream_label#:#Streaming aktivieren
 config_gwdg_stream_info#:#Streaming-Antworten von GWDG aktivieren
+config_gwdg_stream_info_optional#:#Streaming-Antworten von GWDG aktivieren, wenn sie nicht vom Plattformadministrator aktiviert sind.
 config_gwdg_models_label#:#Modelle
 config_gwdg_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den API-Schlüssel.
 step_1#:#Schritt 1
@@ -68,3 +71,4 @@ step_2_ollama#:#Bitte gib die URL des Ollama-Server-Endpunkts ein und speichere 
 step_2_gwdg#:#Bitte gib deinen GWDG-API-Schlüssel ein, wähle aus, ob Streaming aktiviert werden soll, und speichere die Konfiguration, um die verfügbaren Modelle zu erhalten.
 step_3#:#Schritt 3
 step_3_info#:#Bitte wähle die Modelle aus, die du verwenden möchtest. Du kannst mehrere Modelle auswählen. In jedem KI-Chat kann der Besitzer das gewünschte Modell aus den unten ausgewählten verfügbaren Modellen auswählen. Speichere dann die Konfiguration.
+no_available_services#:#Keine verfügbaren Dienste, bitte kontaktiere deinen Administrator.
