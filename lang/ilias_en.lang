@@ -60,3 +60,11 @@ config_gwdg_stream_label#:#Enable Streaming
 config_gwdg_stream_info#:#Enable streaming responses from GWDG
 config_gwdg_models_label#:#Models
 config_gwdg_models_error#:#Error getting available models, please check the api key.
+step_1#:#Step 1
+step_1_info#:#Select the service(s) you wish to use. You can select multiple services, in each AI Chat the owner will be able to select the service he/she wishes to use from the available services selected below.
+step_2#:#Step 2
+step_2_openai#:#Please enter your OpenAI API key, select if you want to enable streaming and select the models you want to use, you can select multiple models, in each AI Chat the owner will be able to select the model he/she wishes to use from the available models selected below. Then save the configuration.
+step_2_ollama#:#Please enter the URL of the Ollama server endpoint and save the configuration to get the available models.
+step_2_gwdg#:#Please enter your GWDG API key, select if you want to enable streaming and save the configuration to get the available models.
+step_3#:#Step 3
+step_3_info#:#Please select the models you want to use, you can select multiple models, in each AI Chat the owner will be able to select the model he/she wishes to use from the available models selected below. Then save the configuration.

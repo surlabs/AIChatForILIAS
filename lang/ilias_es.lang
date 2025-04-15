@@ -60,3 +60,11 @@ config_gwdg_stream_label#:#Activar Streaming
 config_gwdg_stream_info#:#Activar respuestas en streaming de GWDG
 config_gwdg_models_label#:#Modelos
 config_gwdg_models_error#:#Error al obtener los modelos disponibles, por favor verifica la clave API.
+step_1#:#Paso 1
+step_1_info#:#Selecciona el/los servicio(s) que deseas usar. Puedes seleccionar múltiples servicios; en cada chat de IA, el propietario podrá seleccionar el servicio que desee usar de entre los servicios disponibles seleccionados a continuación.
+step_2#:#Paso 2
+step_2_openai#:#Por favor, introduce tu clave API de OpenAI, selecciona si deseas habilitar el streaming y selecciona los modelos que deseas usar. Puedes seleccionar múltiples modelos; en cada chat de IA, el propietario podrá seleccionar el modelo que desee usar de entre los modelos disponibles seleccionados a continuación. Luego guarda la configuración.
+step_2_ollama#:#Por favor, introduce la URL del endpoint del servidor de Ollama y guarda la configuración para obtener los modelos disponibles.
+step_2_gwdg#:#Por favor, introduce tu clave API de GWDG, selecciona si deseas habilitar el streaming y guarda la configuración para obtener los modelos disponibles.
+step_3#:#Paso 3
+step_3_info#:#Por favor, selecciona los modelos que deseas usar. Puedes seleccionar múltiples modelos; en cada chat de IA, el propietario podrá seleccionar el modelo que desee usar de entre los modelos disponibles seleccionados a continuación. Luego guarda la configuración.

@@ -1,0 +1,22 @@
+.hint-box {
+    border-left: 3px solid rgb(44 146 251);
+    border-radius: 6px;
+    background-color: rgb(246 251 252);
+    margin-bottom: 15px !important;
+    margin-top: 15px !important;
+    padding: 0 !important;
+}
+
+.hint-header {
+    padding: 10px;
+    background-color: rgb(240 239 255 / 40%);
+    font-weight: bold;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.hint-content {
+    padding: 10px;
+    margin-left: 5px;
+    font-size: 13px;
+}

@@ -60,3 +60,11 @@ config_gwdg_stream_label#:#Streaming aktivieren
 config_gwdg_stream_info#:#Streaming-Antworten von GWDG aktivieren
 config_gwdg_models_label#:#Modelle
 config_gwdg_models_error#:#Fehler beim Abrufen der verfügbaren Modelle, bitte überprüfen Sie den API-Schlüssel.
+step_1#:#Schritt 1
+step_1_info#:#Wähle die Dienste aus, die du verwenden möchtest. Du kannst mehrere Dienste auswählen. In jedem KI-Chat kann der Besitzer den gewünschten Dienst aus den unten ausgewählten verfügbaren Diensten auswählen.
+step_2#:#Schritt 2
+step_2_openai#:#Bitte gib deinen OpenAI-API-Schlüssel ein, wähle aus, ob Streaming aktiviert werden soll, und wähle die Modelle aus, die du verwenden möchtest. Du kannst mehrere Modelle auswählen. In jedem KI-Chat kann der Besitzer das gewünschte Modell aus den unten ausgewählten verfügbaren Modellen auswählen. Speichere dann die Konfiguration.
+step_2_ollama#:#Bitte gib die URL des Ollama-Server-Endpunkts ein und speichere die Konfiguration, um die verfügbaren Modelle zu erhalten.
+step_2_gwdg#:#Bitte gib deinen GWDG-API-Schlüssel ein, wähle aus, ob Streaming aktiviert werden soll, und speichere die Konfiguration, um die verfügbaren Modelle zu erhalten.
+step_3#:#Schritt 3
+step_3_info#:#Bitte wähle die Modelle aus, die du verwenden möchtest. Du kannst mehrere Modelle auswählen. In jedem KI-Chat kann der Besitzer das gewünschte Modell aus den unten ausgewählten verfügbaren Modellen auswählen. Speichere dann die Konfiguration.
