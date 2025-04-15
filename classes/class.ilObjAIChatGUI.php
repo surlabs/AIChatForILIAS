@@ -489,14 +489,20 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 $services["gwdg"] = $this->buildGWDGSection();
             }
 
-            return $this->factory->input()->field()->section([
-                $this->factory->input()->field()->switchableGroup($services, "")->withValue($aiChat->getServiceToUse(true))
+            $section = $this->factory->input()->field()->section([
+                $this->factory->input()->field()->switchableGroup($services, "")
                     ->withAdditionalTransformation($this->refinery->custom()->transformation(
                         function ($v) use ($aiChat) {
                             $aiChat->setServiceToUse($v[0]);
                         }
                     ))->withRequired(true),
             ], $this->plugin->txt('config_api_section'));
+
+            if (!empty($aiChat->getServiceToUse(true))) {
+                $section = $section->withValue($aiChat->getServiceToUse(true));
+            }
+
+            return $section;
         } else {
             return $this->factory->input()->field()->section(
                 [$this->factory->input()->field()->group([
