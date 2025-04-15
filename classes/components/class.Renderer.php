@@ -50,49 +50,6 @@ class Renderer extends RendererILIAS
         };
     }
 
-    /**
-     * @throws ilTemplateException
-     */
-    protected function wrapInFormContext(
-        FormInput $component,
-        string $input_html,
-        string $id_pointing_to_input = '',
-        string $dependant_group_html = '',
-        bool $bind_label_with_for = true
-    ): string {
-        $tpl = new ilTemplate("src/UI/templates/default/Input/tpl.context_form.html", true, true);
-
-        $tpl->setVariable("INPUT", $input_html);
-
-        if ($id_pointing_to_input && $bind_label_with_for) {
-            $tpl->setCurrentBlock('for');
-            $tpl->setVariable("ID", $id_pointing_to_input);
-            $tpl->parseCurrentBlock();
-        }
-
-        $label = $component->getLabel();
-        $tpl->setVariable("LABEL", $label);
-
-        $byline = $component->getByline();
-        if ($byline) {
-            $tpl->setVariable("BYLINE", $byline);
-        }
-
-        $required = $component->isRequired();
-        if ($required) {
-            $tpl->touchBlock("required");
-        }
-
-        $error = $component->getError();
-        if ($error) {
-            $tpl->setVariable("ERROR", $error);
-            $tpl->setVariable("ERROR_FOR_ID", $id_pointing_to_input);
-        }
-
-        $tpl->setVariable("DEPENDANT_GROUP", $dependant_group_html);
-        return $tpl->get();
-    }
-
     protected function maybeDisable(FormInput $component, ilTemplate|Template $tpl): void
     {
         if ($component->isDisabled()) {
@@ -140,6 +97,6 @@ class Renderer extends RendererILIAS
         $tpl->setVariable("LABEL", $component->getLabel());
         $tpl->setVariable("BYLINE", $component->getByline());
 
-        return $this->wrapInFormContext($tpl->get());
+        return $tpl->get();
     }
 }
