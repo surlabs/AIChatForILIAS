@@ -1,7 +1,7 @@
 .hint-box {
-    border-left: 3px solid rgb(44 146 251);
+    border-left: 3px solid rgb(76 101 134);
+    background-color: rgb(76 101 134 / 10%);
     border-radius: 6px;
-    background-color: rgb(246 251 252);
     margin-bottom: 15px !important;
     margin-top: 15px !important;
     padding: 0 !important;
@@ -9,7 +9,7 @@
 
 .hint-header {
     padding: 10px;
-    background-color: rgb(240 239 255 / 40%);
+    background-color: #4c65863b;
     font-weight: bold;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
