@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 
 use Customizing\global\plugins\Services\Repository\RepositoryObject\AIChat\classes\components\Hint;
+use Customizing\global\plugins\Services\Repository\RepositoryObject\AIChat\classes\components\Html;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\Section;
 use ILIAS\UI\Factory;
@@ -94,7 +95,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $available_services = AIChatConfig::get("available_services");
 
         if (empty($available_services) || !in_array(true, $available_services)) {
-            $services["no-save"] = new Hint($this->plugin_object->txt("step_1"), $this->plugin_object->txt("step_1_info"));
+            $services["hint"] = new Hint($this->plugin_object->txt("step_1"), $this->plugin_object->txt("step_1_info"));
         }
 
         $services["openai"] = $this->factory->input()->field()->optionalGroup(
@@ -138,7 +139,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $openai = [];
 
         if (empty(AIChatConfig::get("openai_api_key"))) {
-            $openai["no-save"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_openai"));
+            $openai["hint"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_openai"));
         }
 
         $openai["api_key"] =  $this->factory->input()->field()->text(
@@ -172,6 +173,9 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             )->withValue((bool) ($openai_models[$model] ?? false));
         }
 
+
+
+        $openai["no-save"] = new Html('<span style="font-size: 1rem; font-weight: 600; padding-bottom: 5px; padding-top: 5px">' . $this->plugin_object->txt("config_openai_models_label") . '</span>');
         $openai["models"] = $this->factory->input()->field()->group(
             $models
         );
@@ -187,7 +191,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $ollama = [];
 
         if (empty(AIChatConfig::get("ollama_endpoint"))) {
-            $ollama["no-save"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_ollama"));
+            $ollama["hint"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_ollama"));
         }
 
         $ollama["endpoint"] = $this->factory->input()->field()->text(
@@ -204,7 +208,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $ollama_models = AIChatConfig::get("ollama_models");
 
             if (empty($ollama_models)) {
-                $ollama["no-save"] = new Hint($this->plugin_object->txt("step_3"), $this->plugin_object->txt("step_3_info"));
+                $ollama["hint"] = new Hint($this->plugin_object->txt("step_3"), $this->plugin_object->txt("step_3_info"));
 
                 $ollama_models = [];
             }
@@ -215,6 +219,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 )->withValue((bool)($ollama_models[$model] ?? false));
             }
 
+            $ollama["no-save"] = new Html('<span style="font-size: 1rem; font-weight: 600; padding-bottom: 5px; padding-top: 5px">' . $this->plugin_object->txt("config_openai_models_label") . '</span>');
             $ollama["models"] = $this->factory->input()->field()->group(
                 $models
             );
@@ -231,7 +236,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         $gwdg = [];
 
         if (empty(AIChatConfig::get("gwdg_api_key"))) {
-            $gwdg["no-save"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_gwdg"));
+            $gwdg["hint"] = new Hint($this->plugin_object->txt("step_2"), $this->plugin_object->txt("step_2_gwdg"));
         }
 
         $gwdg["api_key"] =  $this->factory->input()->field()->text(
@@ -257,7 +262,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $gwdg_models = AIChatConfig::get("gwdg_models");
 
             if (empty($gwdg_models)) {
-                $gwdg["no-save"] = new Hint($this->plugin_object->txt("step_3"), $this->plugin_object->txt("step_3_info"));
+                $gwdg["hint"] = new Hint($this->plugin_object->txt("step_3"), $this->plugin_object->txt("step_3_info"));
 
                 $gwdg_models = [];
             }
@@ -268,6 +273,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                 )->withValue((bool)($gwdg_models[$model] ?? false));
             }
 
+            $gwdg["no-save"] = new Html('<span style="font-size: 1rem; font-weight: 600; padding-bottom: 5px; padding-top: 5px">' . $this->plugin_object->txt("config_openai_models_label") . '</span>');
             $gwdg["models"] = $this->factory->input()->field()->group(
                 $models
             );
@@ -339,7 +345,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             $available_services = [];
 
             foreach ($data["services"] as $service => $values) {
-                if ($service == "no-save") {
+                if ($service == "hint" || $service == "no-save") {
                     continue;
                 }
 
@@ -357,7 +363,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
         if (!empty($data["general"])) {
             foreach ($data["general"] as $key => $value) {
-                if ($key == "no-save") {
+                if ($key == "hint" || $key == "no-save") {
                     continue;
                 }
 
@@ -374,7 +380,7 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     private function saveService(string $service, array $values): void
     {
         foreach ($values as $key => $value) {
-            if ($key == "no-save") {
+            if ($key == "hint" || $key == "no-save") {
                 continue;
             }
 

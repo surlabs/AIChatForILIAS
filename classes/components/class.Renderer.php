@@ -46,6 +46,7 @@ class Renderer extends RendererILIAS
 
         return match (true) {
             $component instanceof Hint => $this->renderHint($component),
+            $component instanceof Html => $this->renderHtml($component),
             default => parent::render($component, $default_renderer),
         };
     }
@@ -98,5 +99,10 @@ class Renderer extends RendererILIAS
         $tpl->setVariable("BYLINE", $component->getByline());
 
         return $tpl->get();
+    }
+
+    private function renderHtml(Html $component): string
+    {
+        return '<div class="form-group row">' . $component->getHtml() . '</div>';
     }
 }
