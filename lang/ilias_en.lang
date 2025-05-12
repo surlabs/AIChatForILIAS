@@ -1,15 +1,8 @@
 obj_xaic#:#AI Chat
 objs_xaic#:#AI Chat Objects
 xaic_new#:#New AI Chat
-xaic_add#:#Add AI Chat
-xaic_delete#:#Delete AIChat
-xaic_edit#:#Edit
-xaic_edit_permission#:#Edit Permissions
-xaic_read#:#Read (used only in non-anonymous-mode)
-xaic_copy#:#Copy AIChat
-xaic_visible#:#AIChats visible
-xaic_write#:#Present and edit AIChat
 objs_xaic_duplicate#:#Duplicate AI Chat Object
+xaic_add#:#Add AI Chat
 object_content#:#Content
 object_settings#:#Settings
 object_settings_basic#:#Basic Settings

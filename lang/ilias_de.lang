@@ -1,15 +1,8 @@
 obj_xaic#:#KI-Chat
 objs_xaic#:#KI-Chat-Objekte
 xaic_new#:#Neuer KI-Chat
-xaic_add#:#Add KI-Chat
-xaic_delete#:#Löschen KI-Chat
-xaic_edit#:#Bearbeiten
-xaic_edit_permission#:#Bearbeiten von Berechtigungen
-xaic_read#: #Lesen (nur im nicht-anonymen Modus verwendet)
-xaic_copy#:#AIChat kopieren
-xaic_visible#:#AIChats sichtbar
-xaic_write#:#KI-Chat präsentieren und bearbeiten
 objs_xaic_duplicate#:#KI-Chat-Objekt duplizieren
+xaic_add#:#KI-Chat hinzufügen
 object_content#:#Inhalt
 object_settings#:#Einstellungen
 object_settings_basic#:#Grundeinstellungen
