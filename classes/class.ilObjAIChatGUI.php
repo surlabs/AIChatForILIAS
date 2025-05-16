@@ -459,6 +459,26 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 /**
                  * @var $aiChat AIChat
                  */
+                if (isset($data["src"]) && $data["src"] == "UIHook") {
+                    // HAacer este mismo metodo adaptado con la clase config
+                    $database = $DIC->database();
+                    $query = $database->queryF("SELECT value FROM xaiuh_config WHERE name = %s",
+                        ['text'],
+                        ['openai_streaming']
+                    );
+                    $streaming = $database->fetchAssoc($query);
+
+                    return array(
+                        "disclaimer" => AIChatConfig::get('disclaimer') ?? false,
+                        "prompt" => AIChatConfig::get("prompt") ?? false,
+                        "characters_limit" => (int)AIChatConfig::get("characters_limit"),
+                        "n_memory_messages" => (int)AIChatConfig::get("max_memory_messages"),
+                        "streaming_enabled" => $streaming['value'] == 1 ? true : false,
+                        "lang" => $this->lng->getUserLanguage(),
+                        "translations" => $this->loadFrontLang()
+                    );
+                    break;
+                }
                 $aiChat = $this->object->getAIChat();
 
                 $openai_streaming = false;
@@ -487,8 +507,20 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
-                if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
+                    if (isset($data["chat_ui_id"])) {
+
+                        $user_id = $DIC->user()->getId();
+
+                        $chat = new UIChat((int) $data["chat_id"]);
+
+                        $messages = $chat->loadMessages($user_id);
+//                        self::sendApiResponse(["error" => json_encode("llego otra vez")], 500);
+
+                        return ["messages" => $messages];
+                    }
+
+                    $chat = new Chat((int) $data["chat_id"]);
 
                     $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
@@ -527,8 +559,34 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 return $chat->toArray();
             case "add_message":
-                if (isset($data["chat_id"]) && isset($data["message"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                if ((isset($data["chat_id"]) || isset($data["chat_ui_id"])) && isset($data["message"])) {
+                    if (isset($data["chat_ui_id"])) {
+                        $user_id = $DIC->user()->getId();
+                        $message_text_from_user = (string) $data["message"];
+                        $chat_ui_id = (int) $data["chat_ui_id"];
+
+                        $ui_user_msg = new UIChat();
+                        $ui_user_msg->setUserId($user_id);
+                        $ui_user_msg->setDate(new DateTime());
+                        $ui_user_msg->setRole('user');
+                        $ui_user_msg->setText($message_text_from_user);
+
+                        $ui_user_msg->save();
+                        $uiHookConfig = new \objects\AIChatUIHookConfig();
+
+                        $llmResponse = $uiHookConfig->getLLMResponse($ui_user_msg)->toArray();
+
+                        $ui_user_msg->saveResponse($llmResponse);
+
+                        $retval = array(
+                            "message" => $ui_user_msg->toArray(),
+                            "llmresponse" => $llmResponse
+                        );
+
+                        return $retval;
+                    } else {
+                        $chat = new Chat((int) $data["chat_id"],  $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                    }
 
                     $message = new Message();
 
@@ -568,7 +626,13 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                     break;
                 }
             case "delete_chat":
-                if (isset($data["chat_id"])) {
+                if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
+                    if (isset($data["chat_ui_id"])) {
+                        $uiChat = new UIChat();
+                        $uiChat->delete();
+
+                        return true;
+                    }
                     $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
 
                     if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {

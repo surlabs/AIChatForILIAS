@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace ai;
 
 use objects\Chat;
+use UIChat;
 use platform\AIChatException;
 
 /**
@@ -57,8 +58,36 @@ abstract class LLM
     /**
      * @throws AIChatException
      */
-    protected function chatToMessagesArray(Chat $chat): array
+    protected function chatToMessagesArray(Chat|\UIChat $chat): array
     {
+        if ($chat instanceof UIChat) {
+            global $DIC;
+            $user_id = $DIC->user()->getId();
+
+            $raw_messages = $chat->loadMessages($user_id);
+
+            $messages = array_map(function ($msg) {
+                return [
+                    "role" => $msg['role'],
+                    "content" => $msg['content']
+                ];
+            }, $raw_messages);
+
+            $max_memory_messages = $chat->getMaxMessages();
+
+            if (isset($max_memory_messages)) {
+                $max_memory_messages = intval($max_memory_messages);
+            } else {
+                $max_memory_messages = 0;
+            }
+
+            if ($max_memory_messages > 0) {
+                $messages = array_slice($messages, -$max_memory_messages);
+            }
+
+            return $messages;
+        }
+
         $messages = [];
 
         foreach ($chat->getMessages() as $message) {
