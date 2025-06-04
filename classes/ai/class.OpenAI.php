@@ -65,6 +65,7 @@ class OpenAI extends LLM
             "temperature" => 0.5,
             "stream" => $this->isStreaming()
         ]);
+
         $curlSession = curl_init();
 
         curl_setopt($curlSession, CURLOPT_URL, $apiUrl);
@@ -91,7 +92,6 @@ class OpenAI extends LLM
                 echo $chunk;
                 ob_flush();
                 flush();
-
                 return strlen($chunk);
             });
         }
