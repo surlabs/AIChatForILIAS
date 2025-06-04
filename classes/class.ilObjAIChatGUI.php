@@ -117,7 +117,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
 
         $tpl = $DIC['tpl'];
-        $tpl->addCss($this->plugin->getDirectory() . "/templates/default/index.css");
+        $tpl->addCss($this->plugin->getDirectory() . "/templates/default/config.css");
         $tpl->addJavascript($this->plugin->getDirectory() . "/templates/default/index.js");
 
         $apiUrl = $this->ctrl->getLinkTargetByClass("ilObjAIChatGUI", "apiCall");
@@ -460,25 +460,10 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                  * @var $aiChat AIChat
                  */
                 if (isset($data["src"]) && $data["src"] == "UIHook") {
-                    // HAacer este mismo metodo adaptado con la clase config
-                    $database = $DIC->database();
-                    $query = $database->queryF("SELECT value FROM xaiuh_config WHERE name = %s",
-                        ['text'],
-                        ['openai_streaming']
-                    );
-                    $streaming = $database->fetchAssoc($query);
-
-                    return array(
-                        "disclaimer" => AIChatConfig::get('disclaimer') ?? false,
-                        "prompt" => AIChatConfig::get("prompt") ?? false,
-                        "characters_limit" => (int)AIChatConfig::get("characters_limit"),
-                        "n_memory_messages" => (int)AIChatConfig::get("max_memory_messages"),
-                        "streaming_enabled" => $streaming['value'] == 1 ? true : false,
-                        "lang" => $this->lng->getUserLanguage(),
-                        "translations" => $this->loadFrontLang()
-                    );
-                    break;
+                    $config = new UIHookChat();
+                     return $config->configToFront();
                 }
+
                 $aiChat = $this->object->getAIChat();
 
                 $openai_streaming = false;
@@ -509,20 +494,12 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             case "chat":
                 if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
                     if (isset($data["chat_ui_id"])) {
-
-                        $user_id = $DIC->user()->getId();
-
                         $chat = new UIChat((int) $data["chat_id"]);
-
-                        $messages = $chat->loadMessages($user_id);
-//                        self::sendApiResponse(["error" => json_encode("llego otra vez")], 500);
-
-                        return ["messages" => $messages];
+                        $chat->setMaxMessages(AIChatConfig::get("max_memory_messages"));
+                    } else {
+                        $chat = new Chat((int) $data["chat_id"]);
+                        $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
                     }
-
-                    $chat = new Chat((int) $data["chat_id"]);
-
-                    $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
                     return $chat->toArray();
                 } else {
@@ -561,66 +538,63 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             case "add_message":
                 if ((isset($data["chat_id"]) || isset($data["chat_ui_id"])) && isset($data["message"])) {
                     if (isset($data["chat_ui_id"])) {
-                        $user_id = $DIC->user()->getId();
-                        $message_text_from_user = (string) $data["message"];
-                        $chat_ui_id = (int) $data["chat_ui_id"];
+                        $chat = new UIChat((int) $data["chat_ui_id"]);
+                        $message = new UImessage();
 
-                        $ui_user_msg = new UIChat();
-                        $ui_user_msg->setUserId($user_id);
-                        $ui_user_msg->setDate(new DateTime());
-                        $ui_user_msg->setRole('user');
-                        $ui_user_msg->setText($message_text_from_user);
+                        $message->setChatId((int) $data["chat_ui_id"]);
+                        $message->setMessage($data["message"]);
+                        $message->setRole("user");
 
-                        $ui_user_msg->save();
-                        $uiHookConfig = new \objects\AIChatUIHookConfig();
+                        $chat->setMaxMessages(AIChatConfig::get("max_memory_messages"));
+                        $chat->addMessage($message);
 
-                        $llmResponse = $uiHookConfig->getLLMResponse($ui_user_msg)->toArray();
-
-                        $ui_user_msg->saveResponse($llmResponse);
+                        $llm = new UIHookChat();
 
                         $retval = array(
-                            "message" => $ui_user_msg->toArray(),
-                            "llmresponse" => $llmResponse
+                            "message" => $message->toArray(),
+                            "llmresponse" => $llm->getLLMResponse($chat)->toArray()
                         );
+
+                        $message->save();
+                        $chat->save();
 
                         return $retval;
                     } else {
                         $chat = new Chat((int) $data["chat_id"],  $DIC->user()->getId() == ANONYMOUS_USER_ID);
+
+                        $message = new Message();
+
+                        $message->setChatId((int) $data["chat_id"]);
+                        $message->setMessage($data["message"]);
+                        $message->setRole("user");
+
+                        if (count($chat->getMessages()) == 0) {
+                            $chat->setTitleFromMessage($data["message"]);
+                        }
+
+                        $chat->addMessage($message);
+
+                        $chat->setLastUpdate($message->getDate());
+
+                        $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
+
+                        $retval = array(
+                            "message" => $message->toArray(),
+                            "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
+                        );
+
+                        if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
+                            $message->save();
+
+                            $chat->save();
+                        } else {
+                            $message->saveToSession();
+
+                            $chat->saveToSession();
+                        }
+
+                        return $retval;
                     }
-
-                    $message = new Message();
-
-                    $message->setChatId((int) $data["chat_id"]);
-                    $message->setMessage($data["message"]);
-                    $message->setRole("user");
-
-                    if (count($chat->getMessages()) == 0) {
-                        $chat->setTitleFromMessage($data["message"]);
-                    }
-
-                    $chat->addMessage($message);
-
-                    $chat->setLastUpdate($message->getDate());
-
-                    $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
-
-                    $retval = array(
-                        "message" => $message->toArray(),
-                        "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
-                    );
-
-                    if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
-                        $message->save();
-
-                        $chat->save();
-                    } else {
-                        $message->saveToSession();
-
-                        $chat->saveToSession();
-                    }
-
-
-                    return $retval;
                 } else {
                     self::sendApiResponse(array("error" => "Chat ID or message not provided"), 400);
                     break;
@@ -628,7 +602,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
             case "delete_chat":
                 if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
                     if (isset($data["chat_ui_id"])) {
-                        $uiChat = new UIChat();
+                        $uiChat = new UIChat((int) $data["chat_ui_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
                         $uiChat->delete();
 
                         return true;

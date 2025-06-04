@@ -5,7 +5,6 @@ namespace ai;
 
 use ilObjAIChatGUI;
 use objects\Chat;
-use UIChat;
 use platform\AIChatException;
 
 class OpenAI extends LLM
@@ -54,7 +53,7 @@ class OpenAI extends LLM
     /**
      * @throws AIChatException
      */
-    public function sendChat(Chat|UIChat $chat)
+    public function sendChat(Chat $chat)
     {
         global $DIC;
 
