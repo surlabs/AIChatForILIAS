@@ -461,7 +461,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                  */
                 if (isset($data["src"]) && $data["src"] == "UIHook") {
                     $config = new UIHookChat();
-                     return $config->configToFront();
+                    $config->setUserLanguaje($this->lng->getUserLanguage());
+
+                     return $config->configToFront($this->loadFrontLang());
                 }
 
                 $aiChat = $this->object->getAIChat();
