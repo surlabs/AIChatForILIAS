@@ -493,7 +493,6 @@ class AIChat
     public function getLLMResponse(Chat $chat): Message
     {
         global $DIC;
-
         $llm_response = $this->llm->sendChat($chat);
 
         $response = new Message();

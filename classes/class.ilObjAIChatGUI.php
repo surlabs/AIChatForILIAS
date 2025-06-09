@@ -459,6 +459,13 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 /**
                  * @var $aiChat AIChat
                  */
+                if (isset($data["src"]) && $data["src"] == "UIHook") {
+                    $config = new UIHookChat();
+                    $config->setUserLanguaje($this->lng->getUserLanguage());
+
+                     return $config->configToFront($this->loadFrontLang());
+                }
+
                 $aiChat = $this->object->getAIChat();
 
                 $openai_streaming = false;
@@ -487,10 +494,14 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
-                if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
-
-                    $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
+                if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
+                    if (isset($data["chat_ui_id"])) {
+                        $chat = new UIChat((int) $data["chat_id"]);
+                        $chat->setMaxMessages(AIChatConfig::get("max_memory_messages"));
+                    } else {
+                        $chat = new Chat((int) $data["chat_id"]);
+                        $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
+                    }
 
                     return $chat->toArray();
                 } else {
@@ -527,48 +538,77 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                 return $chat->toArray();
             case "add_message":
-                if (isset($data["chat_id"]) && isset($data["message"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                if ((isset($data["chat_id"]) || isset($data["chat_ui_id"])) && isset($data["message"])) {
+                    if (isset($data["chat_ui_id"])) {
+                        $chat = new UIChat((int) $data["chat_ui_id"]);
+                        $message = new UImessage();
 
-                    $message = new Message();
+                        $message->setChatId((int) $data["chat_ui_id"]);
+                        $message->setMessage($data["message"]);
+                        $message->setRole("user");
 
-                    $message->setChatId((int) $data["chat_id"]);
-                    $message->setMessage($data["message"]);
-                    $message->setRole("user");
+                        $chat->setMaxMessages(AIChatConfig::get("max_memory_messages"));
+                        $chat->addMessage($message);
 
-                    if (count($chat->getMessages()) == 0) {
-                        $chat->setTitleFromMessage($data["message"]);
-                    }
+                        $llm = new UIHookChat();
 
-                    $chat->addMessage($message);
+                        $retval = array(
+                            "message" => $message->toArray(),
+                            "llmresponse" => $llm->getLLMResponse($chat)->toArray()
+                        );
 
-                    $chat->setLastUpdate($message->getDate());
-
-                    $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
-
-                    $retval = array(
-                        "message" => $message->toArray(),
-                        "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
-                    );
-
-                    if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
                         $message->save();
-
                         $chat->save();
+
+                        return $retval;
                     } else {
-                        $message->saveToSession();
+                        $chat = new Chat((int) $data["chat_id"],  $DIC->user()->getId() == ANONYMOUS_USER_ID);
 
-                        $chat->saveToSession();
+                        $message = new Message();
+
+                        $message->setChatId((int) $data["chat_id"]);
+                        $message->setMessage($data["message"]);
+                        $message->setRole("user");
+
+                        if (count($chat->getMessages()) == 0) {
+                            $chat->setTitleFromMessage($data["message"]);
+                        }
+
+                        $chat->addMessage($message);
+
+                        $chat->setLastUpdate($message->getDate());
+
+                        $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
+
+                        $retval = array(
+                            "message" => $message->toArray(),
+                            "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
+                        );
+
+                        if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
+                            $message->save();
+
+                            $chat->save();
+                        } else {
+                            $message->saveToSession();
+
+                            $chat->saveToSession();
+                        }
+
+                        return $retval;
                     }
-
-
-                    return $retval;
                 } else {
                     self::sendApiResponse(array("error" => "Chat ID or message not provided"), 400);
                     break;
                 }
             case "delete_chat":
-                if (isset($data["chat_id"])) {
+                if (isset($data["chat_id"]) || isset($data["chat_ui_id"])) {
+                    if (isset($data["chat_ui_id"])) {
+                        $uiChat = new UIChat((int) $data["chat_ui_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                        $uiChat->delete();
+
+                        return true;
+                    }
                     $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
 
                     if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
