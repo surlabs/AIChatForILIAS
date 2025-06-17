@@ -17,15 +17,24 @@ This plugin enhances ILIAS platforms by enabling seamless integration with both 
 ## Which LLMs are currently supported?
 
 This plugin currently supports the following LLMs:
-- [OpenAI](https://openai.com) GPT-4o
-- [OpenAI](https://openai.com) GPT-4o mini
-- [OpenAI](https://openai.com) GPT-4 Turbo
-- [OpenAI](https://openai.com) GPT-4
-- [OpenAI](https://openai.com) GPT-3.5 Turbo
-- [Meta](https://www.llama.com/) (Local) LLaMa 3.1 70b Instruct
-- [Meta](https://www.llama.com/) (Local) Codellama 70b 
-- [Meta](https://www.llama.com/) (Local) LLaMa 3.1 8b Instruct
-- [GWDG](https://docs.hpc.gwdg.de/services/saia/index.html#api-request). GWDG Cloud
+
+- [OpenAI](https://openai.com)
+  - GPT-4o  
+  - GPT-4o mini  
+  - GPT-4 Turbo  
+  - GPT-4  
+  - GPT-4.5 Preview  
+  - GPT-4.5 Preview 2025-02-27  
+  - GPT-4 Turbo Preview  
+  - GPT-4 0125 Preview  
+  - GPT-3.5 Turbo  
+  - GPT-3.5 Turbo 1106  
+
+- [Ollama](https://ollama.com/) (Local)
+  - Compatible with any model that can be loaded in the Ollama runtime (e.g., LLaMa 3, CodeLLaMa, Mistral, Gemma, etc.)
+
+- [GWDG](https://docs.hpc.gwdg.de/services/saia)
+  - GWDG Cloud
 
 ## Can I use different API-keys for different Objects?
 
