@@ -1,5 +1,5 @@
 > [!WARNING]  
-> This version has limited support and does not have the latest features. To enjoy the latest features, please use the version for ILIAS 9 (link to the branch). If you want an update on this version, please contact info@surlabs.com
+> This version has limited support and does not have the latest features. To enjoy the latest features, please use the version for [ILIAS 9](https://github.com/surlabs/AIChatForILIAS/tree/ilias9). If you want an update on this version, please contact info@surlabs.com
 
 <div alt style="text-align: center; transform: scale(.5);">
 	<picture>
