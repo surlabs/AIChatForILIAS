@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This version has limited support and does not have the latest features. To enjoy the latest features, please use the version for ILIAS 9 (link to the branch). If you want an update on this version, please contact info@surlabs.com
+
 <div alt style="text-align: center; transform: scale(.5);">
 	<picture>
 		<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/surlabs/AIChatForILIAS/ilias8/templates/images/GitBannerAIChat.png" />
@@ -16,15 +19,15 @@ This plugin enhances ILIAS platforms by enabling seamless integration with both 
 
 ## Which LLMs are currently supported?
 
-This plugin currently supports the following LLMs:
-- [OpenAI](https://openai.com) GPT-4o
-- [OpenAI](https://openai.com) GPT-4o mini
-- [OpenAI](https://openai.com) GPT-4 Turbo
-- [OpenAI](https://openai.com) GPT-4
-- [OpenAI](https://openai.com) GPT-3.5 Turbo
-- [Meta](https://www.llama.com/) (Local) LLaMa 3.1 70b Instruct
-- [Meta](https://www.llama.com/) (Local) Codellama 70b 
-- [Meta](https://www.llama.com/) (Local) LLaMa 3.1 8b Instruct
+- [OpenAI](https://openai.com)
+  - GPT-4o  
+  - GPT-4o mini  
+  - GPT-4 Turbo  
+  - GPT-4  
+  - GPT-3.5 Turbo
+
+- [Ollama](https://ollama.com/) (Local)
+  - Compatible with any model that can be loaded in the Ollama runtime (e.g., LLaMa 3, CodeLLaMa, Mistral, Gemma, etc.)
 
 ## Can I use different API-keys for different Objects?
 
