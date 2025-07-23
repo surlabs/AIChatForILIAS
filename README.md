@@ -1,6 +1,6 @@
 ![AIChat](https://github.com/user-attachments/assets/634be0e5-58c3-4b58-a0e9-f4f97b8811d6)
 
-# AI Chat Repository Object Plugin for ILIAS 9
+# AI Chat Repository Object Plugin for ILIAS 10
 
 Welcome to the official repository for AI Chat Repository Object Plugin for ILIAS
 This Open Source ILIAS Plugin is created and maintained by [SURLABS](https://www.surlabs.com)
@@ -38,7 +38,7 @@ This plugin has been developed to allow the use of different API-keys for differ
 ## Installation & Update
 
 ### Software Requirements
-- AI Chat requires [PHP](https://php.net) versions 8.2 to work properly on your ILIAS 9 platform
+- AI Chat requires [PHP](https://php.net) versions 8.2 to work properly on your ILIAS 10 platform
 - In case you want to connect with GPT on the cloud, AIChat requires at least one [OpenAI](https://openai.com) GPT API key to work on your ILIAS platform.
 
 ### Installation steps
