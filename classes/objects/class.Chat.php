@@ -23,7 +23,6 @@ namespace objects;
 
 use DateTime;
 use Exception;
-use ilSession;
 use platform\AIChatDatabase;
 use platform\AIChatException;
 
@@ -69,10 +68,7 @@ class Chat
     private array $messages = array();
     private ?int $max_messages = null;
 
-    /**
-     * @throws AIChatException
-     */
-    public function __construct(?int $id = null, bool $anon = false)
+    public function __construct(?int $id = null)
     {
         $this->created_at = new DateTime();
         $this->last_update = new DateTime();
@@ -81,12 +77,7 @@ class Chat
 
         if ($id !== null && $id > 0) {
             $this->id = $id;
-            if (!$anon) {
-                $this->loadFromDB();
-            } else {
-                $this->loadFromSession();
-            }
-
+            $this->loadFromDB();
         }
     }
 
@@ -209,37 +200,6 @@ class Chat
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AIChatException
-     */
-    public function loadFromSession(): void
-    {
-        $chats = ilSession::get("xaic_chats") ?? [];
-
-        foreach ($chats as $chat) {
-            if ($chat["id"] == $this->getId()) {
-                $this->setObjId($chat["obj_id"]);
-                $this->setTitle($chat["title"]);
-                $this->setCreatedAt(new DateTime($chat["created_at"]));
-                $this->setUserId($chat["user_id"]);
-                $this->setLastUpdate(new DateTime($chat["last_update"]));
-            }
-        }
-
-        $messages = ilSession::get("xaic_messages") ?? [];
-
-        usort($messages, function ($a, $b) {
-            return strtotime($a["date"]) - strtotime($b["date"]);
-        });
-
-        foreach ($messages as $message) {
-            if ($message["chat_id"] == $this->getId()) {
-                $this->addMessage(new Message((int)$message["id"], true));
-            }
-        }
-    }
-
-    /**
      * @throws AIChatException
      */
     public function save(): void
@@ -267,43 +227,6 @@ class Chat
         }
     }
 
-    public function saveToSession(): void
-    {
-        $chats = ilSession::get("xaic_chats") ?? [];
-
-        if ($this->getId() == 0) {
-            $next_id = (ilSession::get("xaic_chats_next_id") ?? 0) + 1;
-
-            $this->setId($next_id);
-
-            ilSession::set("xaic_chats_next_id", $next_id);
-        }
-
-        $chat = [
-            "id" => $this->getId(),
-            "obj_id" => $this->getObjId(),
-            "title" => $this->getTitle(),
-            "user_id" => $this->getUserId(),
-            "last_update" => $this->getLastUpdate()->format("Y-m-d H:i:s")
-        ];
-
-        $found = false;
-        foreach ($chats as $key => $cht) {
-            if ($cht["id"] == $this->getId()) {
-                $chat["created_at"] = $cht["created_at"];
-                $chats[$key] = $chat;
-                $found = true;
-            }
-        }
-
-        if (!$found) {
-            $chat["created_at"] = $this->getCreatedAt()->format("Y-m-d H:i:s");
-            $chats[] = $chat;
-        }
-
-        ilSession::set("xaic_chats", $chats);
-    }
-
     /**
      * @throws AIChatException
      */
@@ -316,19 +239,6 @@ class Chat
         foreach ($this->messages as $message) {
             $message->delete();
         }
-    }
-
-    public function deleteFromSession(): void
-    {
-        $chats = ilSession::get("xaic_chats") ?? [];
-
-        foreach ($chats as $key => $chat) {
-            if ($chat["id"] == $this->getId()) {
-                unset($chats[$key]);
-            }
-        }
-
-        ilSession::set("xaic_chats", $chats);
     }
 
     /**

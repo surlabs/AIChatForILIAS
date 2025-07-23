@@ -117,8 +117,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         }
 
         $tpl = $DIC['tpl'];
-        $tpl->addCss($this->plugin->getDirectory() . "/templates/default/index.css");
-        $tpl->addJavascript($this->plugin->getDirectory() . "/templates/default/index.js");
+        $tpl->addCss("Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/templates/default/index.css");
+        $tpl->addJavascript("/Customizing/global/plugins/Services/Repository/RepositoryObject/AIChat/templates/default/index.js");
 
         $apiUrl = $this->ctrl->getLinkTargetByClass("ilObjAIChatGUI", "apiCall");
 
@@ -453,7 +453,6 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      */
     private function processGetApiCall($data)
     {
-        global $DIC;
         switch ($data["action"]) {
             case "config":
                 /**
@@ -488,7 +487,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
                 if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                    $chat = new Chat((int) $data["chat_id"]);
 
                     $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
@@ -506,10 +505,10 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
      */
     private function processPostApiCall($data)
     {
-        global $DIC;
-
         switch ($data["action"]) {
             case "new_chat":
+                global $DIC;
+
                 $chat = new Chat();
 
                 $user_id = $DIC->user()->getId();
@@ -518,17 +517,12 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 $chat->setObjId($this->object->getId());
                 $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
-                if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
-                    $chat->save();
-                } else {
-                    $chat->saveToSession();
-                }
-
+                $chat->save();
 
                 return $chat->toArray();
             case "add_message":
                 if (isset($data["chat_id"]) && isset($data["message"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                    $chat = new Chat((int) $data["chat_id"]);
 
                     $message = new Message();
 
@@ -551,16 +545,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                         "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
                     );
 
-                    if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
-                        $message->save();
+                    $message->save();
 
-                        $chat->save();
-                    } else {
-                        $message->saveToSession();
-
-                        $chat->saveToSession();
-                    }
-
+                    $chat->save();
 
                     return $retval;
                 } else {
@@ -569,13 +556,9 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 }
             case "delete_chat":
                 if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"], $DIC->user()->getId() == ANONYMOUS_USER_ID);
+                    $chat = new Chat((int) $data["chat_id"]);
 
-                    if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
-                        $chat->delete();
-                    } else {
-                        $chat->deleteFromSession();
-                    }
+                    $chat->delete();
 
                     return true;
                 } else {

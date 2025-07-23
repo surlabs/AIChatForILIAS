@@ -26,7 +26,6 @@ use ai\LLM;
 use ai\OpenAI;
 use ai\Ollama;
 use DateTime;
-use ilSession;
 use platform\AIChatConfig;
 use platform\AIChatDatabase;
 use platform\AIChatException;
@@ -395,31 +394,17 @@ class AIChat
      */
     public function getChatsForApi(?int $user_id = null): array
     {
-        $chats = [];
+        $database = new AIChatDatabase();
 
-        if ($user_id != ANONYMOUS_USER_ID) {
-            $database = new AIChatDatabase();
+        $where = [
+            "obj_id" => $this->getId(),
+        ];
 
-            $where = [
-                "obj_id" => $this->getId(),
-            ];
-
-            if (isset($user_id) && $user_id > 0) {
-                $where["user_id"] = $user_id;
-            }
-
-            $chats = $database->select("xaic_chats", $where, null, "ORDER BY last_update DESC");
-        } else {
-            $chats_array = ilSession::get("xaic_chats") ?? [];
-
-            if (!empty($chats_array)) {
-                foreach ($chats_array as $chat) {
-                    if ($chat["obj_id"] == $this->getId()) {
-                        $chats[] = $chat;
-                    }
-                }
-            }
+        if (isset($user_id) && $user_id > 0) {
+            $where["user_id"] = $user_id;
         }
+
+        $chats = $database->select("xaic_chats", $where, null, "ORDER BY last_update DESC");
 
         if (empty($chats) && isset($user_id) && $user_id > 0) {
             $chat = new Chat();
@@ -429,12 +414,7 @@ class AIChat
             $chat->setObjId($this->getId());
             $chat->setUserId($user_id);
 
-            if ($user_id != ANONYMOUS_USER_ID) {
-                $chat->save();
-            } else {
-                $chat->saveToSession();
-            }
-
+            $chat->save();
 
             return $this->getChatsForApi($user_id);
         }
@@ -492,8 +472,6 @@ class AIChat
      */
     public function getLLMResponse(Chat $chat): Message
     {
-        global $DIC;
-
         $llm_response = $this->llm->sendChat($chat);
 
         $response = new Message();
@@ -503,11 +481,7 @@ class AIChat
         $response->setRole("assistant");
         $response->setMessage($llm_response);
 
-        if ($DIC->user()->getId() != ANONYMOUS_USER_ID) {
-            $response->save();
-        } else {
-            $response->saveToSession();
-        }
+        $response->save();
 
         return $response;
     }
