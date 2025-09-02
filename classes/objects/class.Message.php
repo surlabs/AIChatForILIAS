@@ -19,7 +19,7 @@ declare(strict_types=1);
  *
  */
 
-namespace objects;
+namespace AIChat\classes\objects;
 
 use DateTime;
 use Exception;

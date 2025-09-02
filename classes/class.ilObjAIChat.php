@@ -20,7 +20,7 @@ declare(strict_types=1);
  */
 
 use platform\AIChatException;
-use objects\AIChat;
+use AIChat\classes\objects\AIChat;
 
 /**
  * Class ilObjAIChat

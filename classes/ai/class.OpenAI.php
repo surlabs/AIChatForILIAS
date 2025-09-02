@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ai;
+namespace AIChat\classes\ai;
 
 use ilObjAIChatGUI;
-use objects\Chat;
+use AIChat\classes\objects\Chat;
 use platform\AIChatException;
 
 class OpenAI extends LLM
@@ -13,16 +13,15 @@ class OpenAI extends LLM
     private string $apiKey;
     private bool $streaming = false;
     public const MODEL_TYPES = [
-        "gpt-4.5-preview" => "GPT-4.5 Preview",
-        "gpt-4o" => "GPT-4o",
-        "gpt-4o-mini" => "GPT-4o mini",
-        "gpt-4-turbo" => "GPT-4 Turbo",
-        "gpt-4.5-preview-2025-02-27" => "GPT-4.5 Preview 2025-02-27",
-        "gpt-4-0125-preview" => "GPT-4 0125 Preview",
-        "gpt-4-turbo-preview" => "GPT-4 Turbo Preview",
-        "gpt-3.5-turbo-1106" => "GPT-3.5 Turbo 1106",
-        "gpt-4" => "GPT-4",
-        "gpt-3.5-turbo" => "GPT-3.5 Turbo"
+        "gpt-5-2025-08-07" => "gpt-5-2025-08-07",
+        "gpt-5-mini-2025-08-07" => "gpt-5 mini",
+        "gpt-5-nano-2025-08-07" => "gpt-5 nano",
+        "gpt-4-turbo-2024-04-09" => "gpt-4 turbo",
+        "gpt-4.1-mini-2025-04-14" => "gpt-4.1-mini",
+        "gpt-4.1-nano-2025-04-14" => "gpt-4.1-nano",
+        "gpt-4-0613" => "gpt-4",
+        "gpt-4o-2024-08-06" => "gpt-4o",
+        "gpt-3.5-turbo-0125" => "gpt-3.5 turbo"
     ];
 
     public function __construct(string $model)

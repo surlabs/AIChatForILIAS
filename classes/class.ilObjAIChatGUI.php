@@ -22,12 +22,12 @@ declare(strict_types=1);
 use ILIAS\UI\Component\Input\Group;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use objects\AIChat;
-use objects\Chat;
-use objects\Message;
+use AIChat\classes\objects\AIChat;
+use AIChat\classes\objects\Message;
 use platform\AIChatConfig;
 use platform\AIChatException;
-use ai\OpenAI;
+use AIChat\classes\ai\OpenAI;
+use AIChat\classes\objects\Chat;
 
 /**
  * Class ilObjAIChatGUI
@@ -484,7 +484,8 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 global $DIC;
 
                 $user_id = $DIC->user()->getId();
-
+                // dump($this->object->getAIChat());exit();
+                // dump($this->object->getAIChat()->getChatsForApi($user_id));exit();
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
                 if (isset($data["chat_id"])) {

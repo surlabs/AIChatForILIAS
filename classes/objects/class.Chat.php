@@ -19,7 +19,7 @@ declare(strict_types=1);
  *
  */
 
-namespace objects;
+namespace AIChat\classes\objects;
 
 use DateTime;
 use Exception;
@@ -245,7 +245,7 @@ class Chat
     public function save(): void
     {
         $database = new AIChatDatabase();
-
+        //dump("save");exit();
         $data = [
             "obj_id" => $this->getObjId(),
             "title" => $this->getTitle(),

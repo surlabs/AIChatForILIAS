@@ -19,17 +19,19 @@ declare(strict_types=1);
  *
  */
 
-namespace objects;
+namespace AIChat\classes\objects;
 
-use ai\GWDG;
-use ai\LLM;
-use ai\OpenAI;
-use ai\Ollama;
+use AIChat\classes\ai\GWDG;
+use AIChat\classes\ai\LLM;
+use AIChat\classes\ai\OpenAI;
+use AIChat\classes\ai\Ollama;
 use DateTime;
 use ilSession;
 use platform\AIChatConfig;
 use platform\AIChatDatabase;
 use platform\AIChatException;
+use platform\SurContextException;
+use AIChat\classes\objects\Chat;
 
 /**
  * Class AIChat
@@ -168,7 +170,11 @@ class AIChat
     public function getOpenaiModel(bool $strict = false): string
     {
         if ($this->openai_model != "" || $strict) {
-            return $this->openai_model;
+            $openaiModel = $this->openai_model;
+            if (!array_key_exists($openaiModel, OpenAI::MODEL_TYPES)) {
+                $openaiModel = array_key_first(OpenAI::MODEL_TYPES);
+            }
+            return $openaiModel;
         }
 
         return AIChatConfig::get("openai_model");
@@ -407,7 +413,7 @@ class AIChat
             if (isset($user_id) && $user_id > 0) {
                 $where["user_id"] = $user_id;
             }
-
+            // dump($this->getId(), "hey", $database->select("xaic_chats", $where, null, "ORDER BY last_update DESC"));
             $chats = $database->select("xaic_chats", $where, null, "ORDER BY last_update DESC");
         } else {
             $chats_array = ilSession::get("xaic_chats") ?? [];
@@ -422,6 +428,7 @@ class AIChat
         }
 
         if (empty($chats) && isset($user_id) && $user_id > 0) {
+
             $chat = new Chat();
 
             $chat->setMaxMessages($this->getMaxMemoryMessages());
@@ -430,7 +437,14 @@ class AIChat
             $chat->setUserId($user_id);
 
             if ($user_id != ANONYMOUS_USER_ID) {
-                $chat->save();
+                // dump("hay", $chat);exit();
+                try {
+                    $chat->save();
+                } catch (AIChatException $e) {
+                    // dump("AIChatException", $e);exit();
+                } catch (SurContextException $e) {
+                    // dump("SurContextException", $e);exit();
+                }
             } else {
                 $chat->saveToSession();
             }

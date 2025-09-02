@@ -19,7 +19,7 @@ declare(strict_types=1);
  *
  */
 
-use objects\AIChat;
+use AIChat\classes\objects\AIChat;
 use platform\AIChatException;
 
 /**

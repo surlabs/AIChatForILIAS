@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace ai;
+namespace AIChat\classes\ai;
 
 use ilObjAIChatGUI;
-use objects\Chat;
+use AIChat\classes\objects\Chat;
 use platform\AIChatException;
 
 class GWDG extends LLM

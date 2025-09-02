@@ -24,7 +24,7 @@ use ILIAS\UI\Component\Input\Field\Group;
 use ILIAS\UI\Renderer;
 use platform\AIChatConfig;
 use platform\AIChatException;
-use ai\OpenAI;
+use AIChat\classes\ai\OpenAI;
 
 /**
  * Class ilAIChatConfigGUI
@@ -219,14 +219,15 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
     private function buildOpenAISection(): array {
 
+        $openaiModel = AIChatConfig::get("openai_model");
+        if (!array_key_exists($openaiModel, OpenAI::MODEL_TYPES)) {
+            $openaiModel = array_key_first(OpenAI::MODEL_TYPES);
+        }
 
         $models = $this->factory->input()->field()->select(
             $this->plugin_object->txt("config_openai_models_label"),
             OpenAI::MODEL_TYPES
-
-
-
-        )->withValue(AIChatConfig::get("openai_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue($openaiModel)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('openai_model', $v);
             }
