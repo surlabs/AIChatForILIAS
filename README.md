@@ -53,8 +53,6 @@ git checkout ilias10
 3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or update the plugin, ensure you run on the ILIAS root folder
 ```bash
 composer du
-npm install
-php cli/setup.php update
 ```
 ***
 **Please ensure you don't ignore plugins on composer.json**
