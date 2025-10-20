@@ -13,15 +13,12 @@ class OpenAI extends LLM
     private string $apiKey;
     private bool $streaming = false;
     public const MODEL_TYPES = [
-        "gpt-5-2025-08-07" => "gpt-5-2025-08-07",
-        "gpt-5-mini-2025-08-07" => "gpt-5 mini",
-        "gpt-5-nano-2025-08-07" => "gpt-5 nano",
-        "gpt-4-turbo-2024-04-09" => "gpt-4 turbo",
-        "gpt-4.1-mini-2025-04-14" => "gpt-4.1-mini",
-        "gpt-4.1-nano-2025-04-14" => "gpt-4.1-nano",
-        "gpt-4-0613" => "gpt-4",
-        "gpt-4o-2024-08-06" => "gpt-4o",
-        "gpt-3.5-turbo-0125" => "gpt-3.5 turbo"
+		"gpt-4" => "GPT 4",
+        "gpt-4-turbo" => "GPT 4 turbo",
+        "gpt-4.1-mini" => "GPT 4.1 mini",
+        "gpt-4.1-nano" => "GPT 4.1 nano",
+        "gpt-4o" => "GPT 4o",
+        "gpt-3.5-turbo" => "GPT 3.5 turbo"
     ];
 
     public function __construct(string $model)
