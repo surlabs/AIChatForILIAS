@@ -24,6 +24,8 @@ object_settings_msg_success#:#Configuraciones guardadas exitosamente.
 chat_default_title#:#Nuevo Chat
 front_new_chat_button#:#Nuevo Chat
 front_input_placeholder#:#Escribe un mensaje...
+front_chats_button#:#Chats
+front_loading_config#:#Cargando configuracion...
 error_http#:#Error al conectar con la API.
 error_apikey#:#La clave API es inválida.
 config_general#:#General

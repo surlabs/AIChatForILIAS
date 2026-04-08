@@ -219,13 +219,9 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
     private function buildOpenAISection(): array {
 
-
         $models = $this->factory->input()->field()->select(
             $this->plugin_object->txt("config_openai_models_label"),
             OpenAI::MODEL_TYPES
-
-
-
         )->withValue(AIChatConfig::get("openai_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('openai_model', $v);
@@ -248,7 +244,6 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             function ($v) {
                 AIChatConfig::set('openai_streaming', $v);
             }
-
         ));
 
         return [

@@ -14594,7 +14594,12 @@ Error generating stack: ` + o.message + `
             max_memory_messages: 500,
             openai_streaming: !1,
             disclaimer: "",
-            translations: {front_new_chat_button: "New chat", front_input_placeholder: "Type a message..."}
+            translations: {
+                front_new_chat_button: "New chat",
+                front_input_placeholder: "Type a message...",
+                front_chats_button: "Chats",
+                front_loading_config: "Loading configuration..."
+            }
         }, pv = L.createContext(void 0), gA = () => {
             const e = L.useContext(pv);
             if (!e) throw new Error("useChatConfig must be used within a ChatConfigProvider");
@@ -14613,7 +14618,9 @@ Error generating stack: ` + o.message + `
                             disclaimer: l.disclaimer,
                             translations: {
                                 front_new_chat_button: l.translations.front_new_chat_button,
-                                front_input_placeholder: l.translations.front_input_placeholder
+                                front_input_placeholder: l.translations.front_input_placeholder,
+                                front_chats_button: l.translations.front_chats_button,
+                                front_loading_config: l.translations.front_loading_config
                             }
                         };
                         r(a)
@@ -14621,7 +14628,7 @@ Error generating stack: ` + o.message + `
                         console.error("Error fetching chat config:", s), r(mA)
                     }
                 })()
-            }, [e]), n ? _.jsx(pv.Provider, {value: n, children: t}) : _.jsx("div", {children: "Loading configuration..."})
+            }, [e]), n ? _.jsx(pv.Provider, {value: n, children: t}) : _.jsx("div", {children: mA.translations.front_loading_config})
         }, vA = e => {
             const t = gA(), [n, r] = L.useState([]), [i, o] = L.useState([]), [s, l] = L.useState(""), [a, u] = L.useState(!0), [c, f] = L.useState(!1), [h, d] = L.useState(0), [p, v] = L.useState(!1), [w, m] = L.useState(!1), [g, y] = L.useState(!1), [S, T] = L.useState(!1), [C, A] = L.useState(null),
                 b = L.useRef(""), [F, P] = L.useState("");
@@ -19249,7 +19256,7 @@ Error generating stack: ` + o.message + `
                 }), _.jsxs("button", {
                     onClick: () => y(!g),
                     className: `btn ilias-button-wrapper toggle-chat-button ${g ? "btn-primary" : "btn-default"}`,
-                    children: [_.jsx(KR, {size: 13}), "Chats"]
+                    children: [_.jsx(KR, {size: 13}), m.translations.front_chats_button]
                 }), _.jsx("div", {
                     className: `md:relative absolute chats-container ${g ? "active" : ""}`,
                     children: _.jsx(sA, {chats: t, activeChat: o, handleSetActiveChat: h, handleRemoveChat: w})

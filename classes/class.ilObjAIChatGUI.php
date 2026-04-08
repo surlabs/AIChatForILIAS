@@ -487,7 +487,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 return $this->object->getAIChat()->getChatsForApi($user_id);
             case "chat":
                 if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"]);
+                    $chat = $this->getAuthorizedChat((int) $data["chat_id"]);
 
                     $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
@@ -522,7 +522,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 return $chat->toArray();
             case "add_message":
                 if (isset($data["chat_id"]) && isset($data["message"])) {
-                    $chat = new Chat((int) $data["chat_id"]);
+                    $chat = $this->getAuthorizedChat((int) $data["chat_id"]);
 
                     $message = new Message();
 
@@ -556,7 +556,7 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
                 }
             case "delete_chat":
                 if (isset($data["chat_id"])) {
-                    $chat = new Chat((int) $data["chat_id"]);
+                    $chat = $this->getAuthorizedChat((int) $data["chat_id"]);
 
                     $chat->delete();
 
@@ -573,8 +573,27 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
     {
         return array(
             "front_new_chat_button" => $this->plugin->txt("front_new_chat_button"),
-            "front_input_placeholder" => $this->plugin->txt("front_input_placeholder")
+            "front_input_placeholder" => $this->plugin->txt("front_input_placeholder"),
+            "front_chats_button" => $this->plugin->txt("front_chats_button"),
+            "front_loading_config" => $this->plugin->txt("front_loading_config")
         );
+    }
+
+    private function getAuthorizedChat(int $chat_id): Chat
+    {
+        global $DIC;
+
+        $chat = new Chat($chat_id);
+
+        if (
+            $chat->getId() === 0 ||
+            $chat->getUserId() !== (int) $DIC->user()->getId() ||
+            $chat->getObjId() !== (int) $this->object->getId()
+        ) {
+            self::sendApiResponse(array("error" => "Chat not found"), 404);
+        }
+
+        return $chat;
     }
 
     public static function sendApiResponse($data, int $httpCode = 200): void

@@ -24,6 +24,8 @@ object_settings_msg_success#:#Einstellungen erfolgreich gespeichert.
 chat_default_title#:#Neuer Chat
 front_new_chat_button#:#Neuer Chat
 front_input_placeholder#:#Nachricht schreiben...
+front_chats_button#:#Chats
+front_loading_config#:#Konfiguration wird geladen...
 error_http#:#Fehler bei der Verbindung mit der API.
 error_apikey#:#Der API-Schlüssel ist ungültig.
 config_service_label#:#Dienst zur Nutzung
