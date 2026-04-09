@@ -432,11 +432,16 @@ class AIChat
         if (!empty($service_to_use)) {
             switch ($service_to_use) {
                 case "openai":
-                    $this->llm = new OpenAI($this->getOpenaiModel());
-                    $this->llm->setApiKey($this->getOpenaiApiKey());
-                    $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
-                    $this->llm->setPrompt($this->getPrompt());
-                    $this->llm->setStreaming($this->isOpenaiStreaming());
+                    $model = $this->getOpenaiModel();
+
+                    if (array_key_exists($model, OpenAI::MODEL_TYPES)) {
+                        $this->llm = new OpenAI($model);
+                        $this->llm->setApiKey($this->getOpenaiApiKey());
+                        $this->llm->setMaxMemoryMessages($this->getMaxMemoryMessages());
+                        $this->llm->setPrompt($this->getPrompt());
+                        $this->llm->setStreaming($this->isOpenaiStreaming());
+                    }
+
                     break;
                 case "ollama":
                     $models = $this->getOllamaModelsList();

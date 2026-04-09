@@ -218,15 +218,21 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
     }
 
     private function buildOpenAISection(): array {
+        $available_models = OpenAI::MODEL_TYPES;
+        $stored_model = AIChatConfig::get("openai_model");
 
         $models = $this->factory->input()->field()->select(
             $this->plugin_object->txt("config_openai_models_label"),
-            OpenAI::MODEL_TYPES
-        )->withValue(AIChatConfig::get("openai_model"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+            $available_models
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('openai_model', $v);
             }
         ))->withRequired(true);
+
+        if (array_key_exists($stored_model, $available_models)) {
+            $models = $models->withValue($stored_model);
+        }
 
         $api_key = $this->factory->input()->field()->text(
             $this->plugin_object->txt("config_openai_key_label"),
@@ -376,7 +382,14 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         );
 
         if ($this->request->getMethod() == "POST") {
-            $form = $form->withRequest($this->request);
+            $request = $this->sanitizeRequest();
+
+            try {
+                $form = $form->withRequest($request);
+            } catch (\InvalidArgumentException $e) {
+                $form = $form->withRequest($this->request->withParsedBody($this->sanitizeLegacyModelValues([])));
+            }
+
             $result = $form->getData();
             if ($result) {
                 $this->save();
@@ -384,6 +397,38 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         }
 
         return $this->renderer->render($form);
+    }
+
+    private function sanitizeRequest()
+    {
+        $parsed_body = $this->request->getParsedBody();
+
+        if (!is_array($parsed_body)) {
+            return $this->request;
+        }
+
+        return $this->request->withParsedBody($this->sanitizeOpenAIModelValues($parsed_body));
+    }
+
+    private function sanitizeOpenAIModelValues(array $input): array
+    {
+        $stored_model = AIChatConfig::get("openai_model");
+
+        if (empty($stored_model) || array_key_exists($stored_model, OpenAI::MODEL_TYPES)) {
+            return $input;
+        }
+
+        foreach ($input as $key => $value) {
+            if (is_array($value)) {
+                $input[$key] = $this->sanitizeOpenAIModelValues($value);
+                continue;
+            }
+
+            if (is_string($value) && $value === $stored_model) {
+                $input[$key] = "";
+            }
+        }
+        return $input;
     }
 
     public function save(): void
