@@ -152,19 +152,56 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         $saving_info = "";
 
         if ($this->request->getMethod() == "POST") {
-            $form = $form->withRequest($this->request);
-            $result = $form->getData();
-            if ($result) {
-                $saving_info = $this->saveSettings();
-
-                $form = $this->factory->input()->container()->form()->standard(
-                    $form_action,
-                    $this->buildSettingsForm()
-                );
+            try {
+                $form = $form->withRequest($this->sanitizeSettingsRequest());
+                $result = $form->getData();
+                if ($result) {
+                    $saving_info = $this->saveSettings();
+                    $form = $this->factory->input()->container()->form()->standard(
+                        $form_action,
+                        $this->buildSettingsForm()
+                    );
+                }
+            } catch (\InvalidArgumentException $e) {
+                // POST contains stale provider/model values (e.g. a now-disabled service).
+                // Render the form with current saved values without attempting to save.
             }
         }
 
         return $saving_info . $this->renderer->render($form);
+    }
+
+    private function sanitizeSettingsRequest()
+    {
+        $parsed_body = $this->request->getParsedBody();
+
+        if (!is_array($parsed_body)) {
+            return $this->request;
+        }
+
+        return $this->request->withParsedBody($this->sanitizeOpenAIModelValues($parsed_body));
+    }
+
+    private function sanitizeOpenAIModelValues(array $input): array
+    {
+        $stored_model = $this->object->getAIChat()->getOpenaiModel(true);
+
+        if (empty($stored_model) || array_key_exists($stored_model, OpenAI::MODEL_TYPES)) {
+            return $input;
+        }
+
+        foreach ($input as $key => $value) {
+            if (is_array($value)) {
+                $input[$key] = $this->sanitizeOpenAIModelValues($value);
+                continue;
+            }
+
+            if (is_string($value) && $value === $stored_model) {
+                $input[$key] = "";
+            }
+        }
+
+        return $input;
     }
 
     /**
@@ -255,15 +292,22 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
         switch ($aiChat->getServiceToUse()) {
             case "openai":
                 $models = OpenAI::MODEL_TYPES;
+                $stored_model = $aiChat->getOpenaiModel(true);
 
-                $apiControls[] = $this->factory->input()->field()->select(
+                $model = $this->factory->input()->field()->select(
                     $this->plugin->txt('config_openai_models_label'),
                     $models
-                )->withValue($aiChat->getOpenaiModel(true))->withAdditionalTransformation($this->refinery->custom()->transformation(
+                )->withAdditionalTransformation($this->refinery->custom()->transformation(
                     function ($v) use ($aiChat) {
                         $aiChat->setOpenaiModel($v);
                     }
-                ));
+                ))->withRequired(true);
+
+                if (array_key_exists($stored_model, $models)) {
+                    $model = $model->withValue($stored_model);
+                }
+
+                $apiControls[] = $model;
 
                 $apiControls[] = $this->factory->input()->field()->text(
                     $this->plugin->txt('config_openai_key_label'),

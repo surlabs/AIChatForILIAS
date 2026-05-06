@@ -219,19 +219,21 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
 
     private function buildOpenAISection(): array {
 
-        $openaiModel = AIChatConfig::get("openai_model");
-        if (!array_key_exists($openaiModel, OpenAI::MODEL_TYPES)) {
-            $openaiModel = array_key_first(OpenAI::MODEL_TYPES);
-        }
+        $available_models = OpenAI::MODEL_TYPES;
+        $stored_model = AIChatConfig::get("openai_model");
 
         $models = $this->factory->input()->field()->select(
             $this->plugin_object->txt("config_openai_models_label"),
-            OpenAI::MODEL_TYPES
-        )->withValue($openaiModel)->withAdditionalTransformation($this->refinery->custom()->transformation(
+            $available_models
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 AIChatConfig::set('openai_model', $v);
             }
         ))->withRequired(true);
+
+        if (array_key_exists($stored_model, $available_models)) {
+            $models = $models->withValue($stored_model);
+        }
 
         $api_key = $this->factory->input()->field()->text(
             $this->plugin_object->txt("config_openai_key_label"),
@@ -286,14 +288,14 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             if (empty($values)) {
                 $values = [];
             } else {
-                $values = array_keys($values);
+                $values = array_values(array_filter(array_keys($values), fn($v) => array_key_exists($v, $models)));
             }
 
             if (!empty($models)) {
-                $inputs[] = $this->factory->input()->field()->multiSelect(
+                $multiSelect = $this->factory->input()->field()->multiSelect(
                     $this->plugin_object->txt("config_ollama_models_label"),
                     $models
-                )->withValue($values)->withAdditionalTransformation($this->refinery->custom()->transformation(
+                )->withAdditionalTransformation($this->refinery->custom()->transformation(
                     function ($v) use ($models) {
                         $models_to_save = [];
 
@@ -304,6 +306,12 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                         AIChatConfig::set('ollama_models', $models_to_save);
                     }
                 ))->withRequired(true);
+
+                if (!empty($values)) {
+                    $multiSelect = $multiSelect->withValue($values);
+                }
+
+                $inputs[] = $multiSelect;
             } else {
                 $this->tpl->setOnScreenMessage("failure", $this->plugin_object->txt("config_ollama_models_error"));
             }
@@ -328,14 +336,14 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
             if (empty($values)) {
                 $values = [];
             } else {
-                $values = array_keys($values);
+                $values = array_values(array_filter(array_keys($values), fn($v) => array_key_exists($v, $models)));
             }
 
             if (!empty($models)) {
-                $inputs[] = $this->factory->input()->field()->multiSelect(
+                $multiSelect = $this->factory->input()->field()->multiSelect(
                     $this->plugin_object->txt("config_gwdg_models_label"),
                     $models
-                )->withValue($values)->withAdditionalTransformation($this->refinery->custom()->transformation(
+                )->withAdditionalTransformation($this->refinery->custom()->transformation(
                     function ($v) use ($models) {
                         $models_to_save = [];
 
@@ -346,6 +354,12 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
                         AIChatConfig::set('gwdg_models', $models_to_save);
                     }
                 ))->withRequired(true);
+
+                if (!empty($values)) {
+                    $multiSelect = $multiSelect->withValue($values);
+                }
+
+                $inputs[] = $multiSelect;
             } else {
                 $this->tpl->setOnScreenMessage("failure", $this->plugin_object->txt("config_gwdg_models_error"));
             }
@@ -382,14 +396,50 @@ class ilAIChatConfigGUI extends ilPluginConfigGUI
         );
 
         if ($this->request->getMethod() == "POST") {
-            $form = $form->withRequest($this->request);
-            $result = $form->getData();
-            if ($result) {
-                $this->save();
+            try {
+                $form = $form->withRequest($this->sanitizeRequest());
+                $result = $form->getData();
+                if ($result) {
+                    $this->save();
+                }
+            } catch (\InvalidArgumentException $e) {
+                // POST contains stale model values — render the form without saving.
             }
         }
 
         return $this->renderer->render($form);
+    }
+
+    private function sanitizeRequest()
+    {
+        $parsed_body = $this->request->getParsedBody();
+
+        if (!is_array($parsed_body)) {
+            return $this->request;
+        }
+
+        return $this->request->withParsedBody($this->sanitizeOpenAIModelValues($parsed_body));
+    }
+
+    private function sanitizeOpenAIModelValues(array $input): array
+    {
+        $stored_model = AIChatConfig::get("openai_model");
+
+        if (empty($stored_model) || array_key_exists($stored_model, OpenAI::MODEL_TYPES)) {
+            return $input;
+        }
+
+        foreach ($input as $key => $value) {
+            if (is_array($value)) {
+                $input[$key] = $this->sanitizeOpenAIModelValues($value);
+                continue;
+            }
+
+            if (is_string($value) && $value === $stored_model) {
+                $input[$key] = "";
+            }
+        }
+        return $input;
     }
 
     public function save(): void
