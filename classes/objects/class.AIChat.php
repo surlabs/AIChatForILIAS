@@ -500,7 +500,19 @@ class AIChat
             }
         }
     }
-    
+
+    public function isStreamingEnabled(): bool
+    {
+        switch ($this->getServiceToUse()) {
+            case "openai":
+                return (bool) $this->isOpenaiStreaming();
+            case "gwdg":
+                return (bool) $this->isGwdgStreaming();
+            default:
+                return false;
+        }
+    }
+
     /**
      * @throws AIChatException
      */
