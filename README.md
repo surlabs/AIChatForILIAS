@@ -42,20 +42,15 @@ This plugin has been developed to allow the use of different API-keys for differ
 - In case you want to connect with GPT on the cloud, AIChat requires at least one [OpenAI](https://openai.com) GPT API key to work on your ILIAS platform.
 
 ### Installation steps
-
-In ILIAS 11 the `Customizing` directory now lives inside the `public/` document root.
-
-1. Create the plugin subdirectories if they do not exist yet:
-```bash
-mkdir -p public/Customizing/global/plugins/Services/Repository/RepositoryObject
-```
-2. From `public/Customizing/global/plugins/Services/Repository/RepositoryObject/`, execute:
+1. Create subdirectories, if necessary for public/Customizing/global/plugins/Services/Repository/RepositoryObject/
+2. In public/Customizing/global/plugins/Services/Repository/RepositoryObject/
+3. Then, execute:
 ```bash
 git clone https://github.com/surlabs/AIChatForILIAS.git ./AIChat
 cd AIChat
 git checkout ilias11
 ```
-3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or updating the plugin, ensure you run on the ILIAS root folder:
+3. AI Chat uses the ILIAS composer autoloader functionality so, after installing or updating the plugin, ensure you run on the ILIAS root folder
 ```bash
 composer du
 ```
