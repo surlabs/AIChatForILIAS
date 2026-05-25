@@ -475,6 +475,18 @@ class AIChat
     /**
      * @throws AIChatException
      */
+    public function isStreamingEnabled(): bool
+    {
+        switch ($this->getServiceToUse()) {
+            case "openai":
+                return (bool) $this->isOpenaiStreaming();
+            case "gwdg":
+                return (bool) $this->isGwdgStreaming();
+            default:
+                return false;
+        }
+    }
+
     public function getLLMResponse(Chat $chat): Message
     {
         $llm_response = $this->llm->sendChat($chat);
