@@ -82,10 +82,24 @@ class OpenAI extends LLM
         $responseContent = '';
 
         if ($this->isStreaming()) {
+            ignore_user_abort(true);
+            set_time_limit(120);
+            if (function_exists('session_write_close')) {
+                session_write_close();
+            }
+
+            if (!headers_sent()) {
+                header('Content-Type: text/event-stream');
+                header('Cache-Control: no-cache');
+                header('X-Accel-Buffering: no');
+            }
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+
             curl_setopt($curlSession, CURLOPT_WRITEFUNCTION, function ($curlSession, $chunk) use (&$responseContent) {
                 $responseContent .= $chunk;
                 echo $chunk;
-                ob_flush();
                 flush();
                 return strlen($chunk);
             });
