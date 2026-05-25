@@ -63,7 +63,6 @@ class ilObjAIChatAccess extends ilObjectPluginAccess
 
     public static function getConditionOperators() : array
     {
-        include_once './Services/Conditions/classes/class.ilConditionHandler.php';
         return array(
             ilConditionHandler::OPERATOR_FAILED,
             ilConditionHandler::OPERATOR_PASSED

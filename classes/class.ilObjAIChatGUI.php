@@ -585,6 +585,14 @@ class ilObjAIChatGUI extends ilObjectPluginGUI
 
                     $chat->setMaxMessages($this->object->getAIChat()->getMaxMemoryMessages());
 
+                    if ($this->object->getAIChat()->isStreamingEnabled()) {
+                        $message->save();
+                        $chat->save();
+
+                        $this->object->getAIChat()->getLLMResponse($chat);
+                        exit;
+                    }
+
                     $retval = array(
                         "message" => $message->toArray(),
                         "llmresponse" => $this->object->getAIChat()->getLLMResponse($chat)->toArray()
