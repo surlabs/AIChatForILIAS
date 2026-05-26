@@ -14,16 +14,12 @@ This plugin enhances ILIAS platforms by enabling seamless integration with both 
 This plugin currently supports the following LLMs:
 
 - [OpenAI](https://openai.com)
+  - GPT-5.4  
+  - GPT-5.4 mini  
+  - GPT-5.4 nano  
+  - GPT-4.1
   - GPT-4o  
   - GPT-4o mini  
-  - GPT-4 Turbo  
-  - GPT-4  
-  - GPT-4.5 Preview  
-  - GPT-4.5 Preview 2025-02-27  
-  - GPT-4 Turbo Preview  
-  - GPT-4 0125 Preview  
-  - GPT-3.5 Turbo  
-  - GPT-3.5 Turbo 1106  
 
 - [Ollama](https://ollama.com/) (Local)
   - Compatible with any model that can be loaded in the Ollama runtime (e.g., LLaMa 3, CodeLLaMa, Mistral, Gemma, etc.)
