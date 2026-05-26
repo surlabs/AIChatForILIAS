@@ -34,7 +34,7 @@ This plugin has been developed to allow the use of different API-keys for differ
 ## Installation & Update
 
 ### Software Requirements
-- AI Chat requires [PHP](https://php.net) versions 8.2 or higher to work properly on your ILIAS 11 platform
+- AI Chat requires [PHP](https://php.net) versions 8.3 or higher to work properly on your ILIAS 11 platform
 - In case you want to connect with GPT on the cloud, AIChat requires at least one [OpenAI](https://openai.com) GPT API key to work on your ILIAS platform.
 
 ### Installation steps
